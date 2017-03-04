@@ -1,0 +1,1258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>hpsdr5-64.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>PowerSDR</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>PowerSDR</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>PowerSDR.Console</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ManifestCertificateThumbprint>AEF2072BFD4E1723668C4A72938E707A73AAFB8B</ManifestCertificateThumbprint>
+    <ManifestKeyFile>PowerSDR_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>false</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <UICulture>en-US</UICulture>
+    <PublishUrl>C:\Documents and Settings\w5wc\Desktop\PowerSDR 1.19.3\publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;NEW_KEYER</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NEW_KEYER</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE;</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Label="MultilingualAppToolkit">
+    <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
+    <MultilingualFallbackLanguage>en-US</MultilingualFallbackLanguage>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ADODB">
+      <Name>adodb</Name>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\adodb.dll</HintPath>
+      <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Release\SlimDX.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AmpView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AmpView.Designer.cs">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Channel.cs" />
+    <Compile Include="Clock.cs" />
+    <Compile Include="CW\CWInput.cs" />
+    <Compile Include="GlobalMouseHandler.cs" />
+    <Compile Include="HPSDR\Alex.cs" />
+    <Compile Include="alphawarnform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="audio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATTester.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CAT\RemoteProfiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CAT\SDRSerialPortII.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SerialPortPTT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SerialRxEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SIOListenerII.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="checksum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="common.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="console.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="cwedit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="cwx.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="database.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="deltacp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="display.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DiversityForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dsp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HPSDR\EP4NetFactory.cs" />
+    <Compile Include="eqform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FilterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="hiperftimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HPSDR\specHPSDR.cs" />
+    <Compile Include="hw_register.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="invoke.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Invoke\buttonts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\checkboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\comboboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\groupboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\invoke.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Invoke\labelts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\numericupdownts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\panelts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\radiobuttonts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\textboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\trackbarts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HPSDR\JanusAudio.cs" />
+    <Compile Include="HPSDR\JanusAudioImports.cs" />
+    <Compile Include="keyboard.cs" />
+    <Compile Include="logon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Memory\MemoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Memory\MemoryForm.designer.cs">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Memory\MemoryList.cs" />
+    <Compile Include="Memory\MemoryRecord.cs" />
+    <Compile Include="Midi2CatCommands.cs" />
+    <Compile Include="mixer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mobilewarnform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HPSDR\OzySDR1kControl.cs" />
+    <Compile Include="notch.cs" />
+    <Compile Include="notchlist.cs" />
+    <Compile Include="HPSDR\Penny.cs" />
+    <Compile Include="portaudio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrettyTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="process_sample_thread_controller.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="progress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PSForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PSForm.designer.cs">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="radio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RAForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RAForm.designer.cs">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="release_notes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ringbuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="setup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setup.designer.cs">
+      <DependentUpon>setup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Skin.cs" />
+    <Compile Include="SortableBindingList.cs" />
+    <Compile Include="splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThreadedBindingList.cs" />
+    <Compile Include="titlebar.cs" />
+    <Compile Include="TuneStep.cs" />
+    <Compile Include="usb.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="wave_options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="win32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="xvtr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="alphawarnform.de.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.es.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.fr.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.it.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.ja.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.ko.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.ru.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.zh-Hans.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alphawarnform.zh-Hant.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.de.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.es.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.fr.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.it.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.ja.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.ko.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.ru.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.zh-Hans.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.zh-Hant.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.de.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.es.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.fr.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.it.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.ja.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.ko.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.ru.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.zh-Hans.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.zh-Hant.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.de.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.es.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.fr.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.it.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.ja.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.ko.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.ru.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.zh-Hans.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.zh-Hant.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.de.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.es.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.fr.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.it.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.ja.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.ko.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.ru.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.zh-Hans.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.zh-Hant.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.de.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.es.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.fr.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.it.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.ja.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.ko.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.ru.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.zh-Hans.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.zh-Hant.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.de.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.es.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.fr.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.it.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.ja.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.ko.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.ru.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.zh-Hans.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.zh-Hant.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.de.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.es.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.fr.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.it.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.ja.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.ko.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.ru.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.zh-Hans.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.zh-Hant.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.de.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.es.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.fr.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.it.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.ja.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.ko.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.ru.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.zh-Hans.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.zh-Hant.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.de.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.es.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.fr.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.it.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.ja.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.ko.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.ru.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.zh-Hans.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.zh-Hant.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.de.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.es.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.fr.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.it.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.ja.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.ko.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.ru.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.zh-Hans.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.zh-Hant.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.de.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.es.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.fr.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.it.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.ja.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.ko.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.ru.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.zh-Hans.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.zh-Hant.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.de.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.es.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.fr.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.it.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.ja.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.ko.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.ru.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.zh-Hans.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.zh-Hant.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.de.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.es.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.fr.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.it.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.ja.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.ko.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.ru.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.zh-Hans.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.zh-Hant.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.de.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.es.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.fr.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.it.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.ja.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.ko.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.ru.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.zh-Hans.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.zh-Hant.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.de.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.es.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.fr.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.it.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.ja.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.ko.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.ru.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.zh-Hans.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.zh-Hant.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.de.resx" />
+    <EmbeddedResource Include="Properties\Resources.es.resx" />
+    <EmbeddedResource Include="Properties\Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\Resources.it.resx" />
+    <EmbeddedResource Include="Properties\Resources.ja.resx" />
+    <EmbeddedResource Include="Properties\Resources.ko.resx" />
+    <EmbeddedResource Include="Properties\Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\Resources.zh-Hans.resx" />
+    <EmbeddedResource Include="Properties\Resources.zh-Hant.resx" />
+    <EmbeddedResource Include="PSForm.de.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.es.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.fr.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.it.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.ja.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.ko.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.ru.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.zh-Hans.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.zh-Hant.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.de.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.es.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.fr.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.it.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.ja.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.ko.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.ru.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.zh-Hans.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.zh-Hant.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\digital7.ttf" />
+    <EmbeddedResource Include="setup.es.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.fr.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.it.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.ko.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.ru.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.zh-Hant.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.es.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.fr.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.it.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.ko.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.ru.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.zh-Hant.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.es.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.fr.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.it.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.ko.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.ru.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.zh-Hant.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.es.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.fr.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.it.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.ko.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.ru.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.zh-Hant.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.es.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.fr.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.it.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.ko.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.ru.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.zh-Hant.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.es.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.fr.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.it.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.ko.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.ru.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.zh-Hans.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.zh-Hant.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Resources\grabbing.cur" />
+    <None Include="Resources\grab.cur" />
+    <EmbeddedResource Include="alphawarnform.resx">
+      <DependentUpon>alphawarnform.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AmpView.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\RemoteProfiles.resx">
+      <DependentUpon>RemoteProfiles.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\clock.jpg" />
+    <EmbeddedResource Include="images\demi144-28frs.jpg" />
+    <EmbeddedResource Include="images\flex-5000.jpg" />
+    <EmbeddedResource Include="images\no_hardware.jpg" />
+    <EmbeddedResource Include="images\sdr-1000.jpg" />
+    <EmbeddedResource Include="images\sdr-atu.jpg" />
+    <EmbeddedResource Include="images\sdr-pa100.jpg" />
+    <EmbeddedResource Include="images\sdr-rfe.jpg" />
+    <EmbeddedResource Include="images\sdr-usb.jpg" />
+    <EmbeddedResource Include="images\softrock40.jpg" />
+    <EmbeddedResource Include="images\soundcard.jpg" />
+    <EmbeddedResource Include="images\splash.jpg" />
+    <EmbeddedResource Include="InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="logon.resx">
+      <DependentUpon>logon.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mobilewarnform.resx">
+      <DependentUpon>mobilewarnform.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.de.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.ja.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.zh-Hans.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.de.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.ja.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.zh-Hans.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.de.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.ja.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.zh-Hans.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.de.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.ja.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.zh-Hans.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.de.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.ja.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.zh-Hans.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.de.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.ja.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="CAT\CATStructs.xml" />
+    <EmbeddedResource Include="images\flex-3000.jpg" />
+    <Content Include="hpsdr5-64.ico" />
+    <Content Include="images\hpsdr.jpg" />
+    <Content Include="images\hpsdr5.png" />
+    <Content Include="images\openhpsdr4_splash.png" />
+    <Content Include="images\openhpsdr_splash.png" />
+    <Content Include="images\PowerSDR.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="PowerSDR_TemporaryKey.pfx" />
+    <None Include="Properties\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Midi2Cat\Midi2Cat.csproj">
+      <Project>{66ade184-31ba-4f5b-8007-f39ef1b90f95}</Project>
+      <Name>Midi2Cat</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <XliffResource Include="MultilingualResources\PowerSDR.de.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.es.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.fr.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.it.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.ja.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.ko.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.ru.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.zh-Hans.xlf" />
+    <XliffResource Include="MultilingualResources\PowerSDR.zh-Hant.xlf" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets')" />
+  <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets')" Label="MultilingualAppToolkit">
+    <Warning Text="$(MSBuildProjectFile) is Multilingual build enabled, but the Multilingual App Toolkit is unavailable during the build. If building with Visual Studio, please check to ensure that toolkit is properly installed." />
+  </Target>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)CAT\CATStructs.xml" "$(OutDir)";
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

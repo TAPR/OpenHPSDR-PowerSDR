@@ -1,0 +1,21 @@
+#
+# build Janus loopaback code 
+# 
+# 
+
+CFLAGS=-DLINUX
+CC=gcc
+
+all: loopBack 
+
+loopBack: loopBack.o callback-thread.o fifo.o globals.o io-thread.o OzyIO.o  PowerSDR-Interface.o 
+	gcc -o loopBack loopBack.o callback-thread.o fifo.o globals.o io-thread.o OzyIO.o  PowerSDR-Interface.o -lpthread -lusb 
+
+clean: 
+	-rm *.o 
+
+
+
+
+
+

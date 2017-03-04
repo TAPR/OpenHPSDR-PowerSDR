@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="portaudio">
+</Property><Property Name="Solution File" Value="C:\Documents and Settings\N4HY2\Desktop\Programming\portaudio_default\build\msvc\portaudio.sln">
+</Property><Property Name="User Options File" Value="C:\Documents and Settings\N4HY2\Desktop\Programming\portaudio_default\build\msvc\portaudio.suo">
+</Property><Property Name="Date" Value="Monday, February 09, 2009">
+</Property><Property Name="Time" Value="23:30 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="portaudio.sln" Description="File successfully backed up as C:\Documents and Settings\N4HY2\Desktop\Programming\portaudio_default\build\msvc\portaudio.sln.old">
+</Event><Event ErrorLevel="0" Project="" Source="portaudio.suo" Description="File successfully backed up as C:\Documents and Settings\N4HY2\Desktop\Programming\portaudio_default\build\msvc\portaudio.suo.old">
+</Event><Event ErrorLevel="0" Project="portaudio" Source="portaudio.vcproj" Description="Web deployment to the local IIS server is no longer supported. The Web Deployment build tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="portaudio" Source="portaudio.vcproj" Description="This application has been updated to include settings related to the User Account Control (UAC) feature of Windows Vista. By default, when run on Windows Vista with UAC enabled, this application is marked to run with the same privileges as the process that launched it. This marking also disables the application from running with virtualization. You can change UAC related settings from the Property Pages of the project.">
+</Event><Event ErrorLevel="0" Project="portaudio" Source="portaudio.vcproj" Description="Project file successfully backed up as 'C:\Documents and Settings\N4HY2\Desktop\Programming\portaudio_default\build\msvc\portaudio.vcproj.8.00.old'.">
+</Event><Event ErrorLevel="0" Project="portaudio" Source="portaudio.vcproj" Description="Project upgraded successfully.">
+</Event><Event ErrorLevel="3" Project="portaudio" Source="portaudio.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="portaudio.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="portaudio.sln" Description="Converted">
+</Event></UpgradeLog>

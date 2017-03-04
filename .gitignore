@@ -1,0 +1,7 @@
+Source/Console/obj
+bin
+Source/Midi2Cat/bin
+Source/Midi2Cat/obj
+lib/portaudio_VS2008/build/msvc/x64
+lib/fftw_wisdom/temp
+*.bak

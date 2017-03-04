@@ -1,0 +1,30 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: pthread - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x409 /fo"./version.res" /i "." /d "NDEBUG" /d "PTW32_RC_MSC" "C:\Documents and Settings\admin\My Documents\Visual Studio Projects\SDR\pthreads-snap-2005-01-25\version.rc"" 
+Creating temporary file "C:\DOCUME~1\admin\LOCALS~1\Temp\RSPF1.tmp" with contents
+[
+/nologo /MD /W3 /GX /O2 /I "." /D "__CLEANUP_C" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PTW32_BUILD" /Fp"./pthread.pch" /YX /Fo"./" /Fd"./" /FD /c 
+"C:\Documents and Settings\admin\My Documents\Visual Studio Projects\SDR\pthreads-snap-2005-01-25\pthread.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\admin\LOCALS~1\Temp\RSPF1.tmp" 
+Creating command line "link.exe kernel32.lib user32.lib ws2_32.lib /nologo /dll /pdb:none /machine:I386 /out:".\pthreadVC.dll" /implib:"./pthreadVC.lib"  ".\pthread.obj" ".\version.res" "
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+pthread.c
+Linking...
+   Creating library ./pthreadVC.lib and object ./pthreadVC.exp
+
+
+
+<h3>Results</h3>
+pthreadVC.dll - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
