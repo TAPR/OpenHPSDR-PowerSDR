@@ -1,7 +1,13 @@
-Source/Console/obj
+temp
 bin
+Source/Console/obj
+Source/Release
+Source/Debug
 Source/Midi2Cat/bin
 Source/Midi2Cat/obj
+Source/wdsp/Release
+Source/wdsp/Debug
 lib/portaudio_VS2008/build/msvc/x64
+lib/portaudio_VS2008/build/msvc/Win32
 lib/fftw_wisdom/temp
 *.bak

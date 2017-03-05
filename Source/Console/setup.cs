@@ -2736,6 +2736,7 @@ namespace PowerSDR
             clrbtnRX2WaterfallLow_Changed(this, e);
             chkRX1WaterfallAGC_CheckedChanged(this, e);
             chkRX2WaterfallAGC_CheckedChanged(this, e);
+            chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(this, e);
 
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
@@ -8072,6 +8073,8 @@ namespace PowerSDR
                // labelAlex1FilterHPF.Text = "BPF1";
                 panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(275, 0);
+                ud6mRx2LNAGainOffset.Visible = true;
+                lblRx26mLNA.Visible = true;
             }
             else
             {
@@ -8082,6 +8085,9 @@ namespace PowerSDR
                 tpAlexFilterControl.Text = "HPF/LPF";
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
+                ud6mRx2LNAGainOffset.Visible = false;
+                lblRx26mLNA.Visible = false;
+
             }
 
             if (radGenModelHermes.Checked || radGenModelHPSDR.Checked)
@@ -20029,6 +20035,11 @@ namespace PowerSDR
         private void udSpaceMoxDelay_ValueChanged(object sender, EventArgs e)
         {
             console.SpaceMoxDelay = (int)udSpaceMoxDelay.Value;
+        }
+
+        private void chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ANAN8000DLEDisplayVoltsAmps = chkANAN8000DLEDisplayVoltsAmps.Checked;
         }
 
     }

@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems 
-// Copyright (C) 2010-2015  Doug Wigley
+// Copyright (C) 2010-2017  Doug Wigley
 // Credit is given to Sizenko Alexander of Style-7 (http://www.styleseven.com/) for the Digital-7 font.
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -564,6 +564,7 @@ namespace PowerSDR
         private Thread poll_cw_thread;
         private Thread poll_pa_pwr_thread;					// polls the FWD and REV power if the PA is installed
         private Thread poll_tx_inhibit_thead;
+        private Thread display_volts_amps_thead;            // calculate and display volts and amps for ANAN-8000DLE
         private Thread sql_update_thread;					// polls the RX signal strength
         private Thread rx2_sql_update_thread;				// polls the RX2 signal strength
         private Thread vox_update_thread;					// polls the mic input
@@ -841,8 +842,6 @@ namespace PowerSDR
         public float alex_swr = 0.0f;
         private float average_drivepwr = 0.0f;
         private float volts_138 = 0.0f;
-        private float MKIIPAVolts = 0.0f;
-        private float MKIIPAAmps = 0.0f;
 
         private static MemoryStream msgrab = new MemoryStream(Properties.Resources.grab);
         private static MemoryStream msgrabbing = new MemoryStream(Properties.Resources.grabbing);
@@ -902,6 +901,11 @@ namespace PowerSDR
         private Point txt_display_cursor_freq_basis = new Point(100, 100);		//k6jca
         private Point txt_display_cursor_power_basis = new Point(100, 100);		//k6jca
         private Point txt_display_cursor_offset_basis = new Point(100, 100);		//k6jca
+
+        private Point txt_display_orion_mkii_pa_volts_basis = new Point(100, 100);		//k6jca
+        private Point txt_display_orion_mkii_blank_basis = new Point(100, 100);		//k6jca
+        private Point txt_display_orion_mkii_pa_amps_basis = new Point(100, 100);		//k6jca
+
         private Point gr_multirx_basis = new Point(100, 100);		//k6jca
 
         private Point pan_rx2_divider_basis = new Point(100, 100);
@@ -2388,12 +2392,12 @@ namespace PowerSDR
             this.lblDisplayPan = new System.Windows.Forms.LabelTS();
             this.picDisplay = new System.Windows.Forms.PictureBox();
             this.picWaterfall = new System.Windows.Forms.PictureBox();
-            this.txtDisplayCursorOffset = new System.Windows.Forms.TextBoxTS();
-            this.txtDisplayOrionMKIIPAVolts = new System.Windows.Forms.TextBoxTS();
-            this.txtDisplayOrionMKIIPAAmps = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayCursorFreq = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayOrionMKIIBlank = new System.Windows.Forms.TextBoxTS();
+            this.txtDisplayCursorOffset = new System.Windows.Forms.TextBoxTS();
+            this.txtDisplayOrionMKIIPAVolts = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayCursorPower = new System.Windows.Forms.TextBoxTS();
+            this.txtDisplayOrionMKIIPAAmps = new System.Windows.Forms.TextBoxTS();
             this.panelMode = new System.Windows.Forms.PanelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
@@ -6586,10 +6590,10 @@ namespace PowerSDR
             this.panelDisplay.Controls.Add(this.picWaterfall);
             this.panelDisplay.Controls.Add(this.txtDisplayCursorOffset);
             this.panelDisplay.Controls.Add(this.txtDisplayOrionMKIIPAVolts);
+            this.panelDisplay.Controls.Add(this.txtDisplayCursorPower);
             this.panelDisplay.Controls.Add(this.txtDisplayOrionMKIIPAAmps);
             this.panelDisplay.Controls.Add(this.txtDisplayCursorFreq);
             this.panelDisplay.Controls.Add(this.txtDisplayOrionMKIIBlank);
-            this.panelDisplay.Controls.Add(this.txtDisplayCursorPower);
             this.panelDisplay.Name = "panelDisplay";
             // 
             // txtDisplayPeakOffset
@@ -6669,6 +6673,26 @@ namespace PowerSDR
             this.picWaterfall.TabStop = false;
             this.picWaterfall.Resize += new System.EventHandler(this.picWaterfall_Resize);
             // 
+            // txtDisplayCursorFreq
+            // 
+            this.txtDisplayCursorFreq.BackColor = System.Drawing.Color.Black;
+            this.txtDisplayCursorFreq.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtDisplayCursorFreq.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.txtDisplayCursorFreq, "txtDisplayCursorFreq");
+            this.txtDisplayCursorFreq.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.txtDisplayCursorFreq.Name = "txtDisplayCursorFreq";
+            this.txtDisplayCursorFreq.ReadOnly = true;
+            // 
+            // txtDisplayOrionMKIIBlank
+            // 
+            this.txtDisplayOrionMKIIBlank.BackColor = System.Drawing.Color.Black;
+            this.txtDisplayOrionMKIIBlank.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtDisplayOrionMKIIBlank.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.txtDisplayOrionMKIIBlank, "txtDisplayOrionMKIIBlank");
+            this.txtDisplayOrionMKIIBlank.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.txtDisplayOrionMKIIBlank.Name = "txtDisplayOrionMKIIBlank";
+            this.txtDisplayOrionMKIIBlank.ReadOnly = true;
+            // 
             // txtDisplayCursorOffset
             // 
             this.txtDisplayCursorOffset.BackColor = System.Drawing.Color.Black;
@@ -6690,36 +6714,6 @@ namespace PowerSDR
             this.txtDisplayOrionMKIIPAVolts.Name = "txtDisplayOrionMKIIPAVolts";
             this.txtDisplayOrionMKIIPAVolts.ReadOnly = true;
             // 
-            // txtDisplayOrionMKIIPAAmps
-            // 
-            this.txtDisplayOrionMKIIPAAmps.BackColor = System.Drawing.Color.Black;
-            this.txtDisplayOrionMKIIPAAmps.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtDisplayOrionMKIIPAAmps.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtDisplayOrionMKIIPAAmps, "txtDisplayOrionMKIIPAAmps");
-            this.txtDisplayOrionMKIIPAAmps.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.txtDisplayOrionMKIIPAAmps.Name = "txtDisplayOrionMKIIPAAmps";
-            this.txtDisplayOrionMKIIPAAmps.ReadOnly = true;
-            // 
-            // txtDisplayCursorFreq
-            // 
-            this.txtDisplayCursorFreq.BackColor = System.Drawing.Color.Black;
-            this.txtDisplayCursorFreq.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtDisplayCursorFreq.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtDisplayCursorFreq, "txtDisplayCursorFreq");
-            this.txtDisplayCursorFreq.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.txtDisplayCursorFreq.Name = "txtDisplayCursorFreq";
-            this.txtDisplayCursorFreq.ReadOnly = true;
-            // 
-            // txtDisplayOrionMKIIBlank
-            // 
-            this.txtDisplayOrionMKIIBlank.BackColor = System.Drawing.Color.Black;
-            this.txtDisplayOrionMKIIBlank.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtDisplayOrionMKIIBlank.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtDisplayOrionMKIIBlank, "txtDisplayOrionMKIIBlank");
-            this.txtDisplayOrionMKIIBlank.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.txtDisplayOrionMKIIBlank.Name = "txtDisplayOrionMKIIBlank";
-            this.txtDisplayOrionMKIIBlank.ReadOnly = true;
-            // 
             // txtDisplayCursorPower
             // 
             this.txtDisplayCursorPower.BackColor = System.Drawing.Color.Black;
@@ -6729,6 +6723,16 @@ namespace PowerSDR
             this.txtDisplayCursorPower.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayCursorPower.Name = "txtDisplayCursorPower";
             this.txtDisplayCursorPower.ReadOnly = true;
+            // 
+            // txtDisplayOrionMKIIPAAmps
+            // 
+            this.txtDisplayOrionMKIIPAAmps.BackColor = System.Drawing.Color.Black;
+            this.txtDisplayOrionMKIIPAAmps.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtDisplayOrionMKIIPAAmps.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.txtDisplayOrionMKIIPAAmps, "txtDisplayOrionMKIIPAAmps");
+            this.txtDisplayOrionMKIIPAAmps.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.txtDisplayOrionMKIIPAAmps.Name = "txtDisplayOrionMKIIPAAmps";
+            this.txtDisplayOrionMKIIPAAmps.ReadOnly = true;
             // 
             // panelMode
             // 
@@ -18182,6 +18186,8 @@ namespace PowerSDR
             }
         }
 
+        public bool ANAN8000DLEDisplayVoltsAmps { get; set; }
+
         private bool rx1_step_att_present = false;
         public bool RX1StepAttPresent
         {
@@ -27544,13 +27550,11 @@ namespace PowerSDR
 
             }
 
-            if (anan8000dpresent)
+            if (anan8000dpresent && ANAN8000DLEDisplayVoltsAmps)
             {
                 txtDisplayOrionMKIIPAVolts.BringToFront();
                 txtDisplayOrionMKIIPAAmps.BringToFront();
                 txtDisplayOrionMKIIBlank.BringToFront();
-                txtDisplayOrionMKIIPAVolts.Text = MKIIPAVolts.ToString("f1");
-                txtDisplayOrionMKIIPAAmps.Text = MKIIPAAmps.ToString("f1");
             }
             else
             {
@@ -31344,26 +31348,52 @@ namespace PowerSDR
             return batt_volts;
         }
 
-        public float computeMKIIPAVolts()
+        private void displayMKIIPAVoltsAmps()
         {
+            while (chkPower.Checked && anan8000dpresent)
+            {
+                computeMKIIPAVolts();
+                computeMKIIPAAmps();
+                Thread.Sleep(600);
+            }
+        }
+        public void computeMKIIPAVolts()
+        {
+            float adc = 0;
+            float addadc = 0;
             float volt_div = (22.0f + 1.0f) / 1.1f; // Voltage divider (R1 + R2) / R2
-            int adc = JanusAudio.getAIN3();
-            float volts = ((float)adc / 4095.0f) * 5.0f;
+
+            for (int count = 0; count < 100; count++)
+            {
+                Thread.Sleep(1);
+                adc = JanusAudio.getAIN3();
+                addadc += adc;
+            }
+            adc = addadc / 100.0f;
+
+            float volts = (adc / 4095.0f) * 5.0f;
             volts = volts * volt_div;
-            return volts;
-            // return adc;
+
+            txtDisplayOrionMKIIPAVolts.Text = "Vd " + volts.ToString("N1") + "V";
         }
 
-        public float computeMKIIPAAmps()
+        public void computeMKIIPAAmps()
         {
-            // float volt_div = (22.0f + 1.0f) / 1.1f; // Voltage divider (R1 + R2) / R2
-            int adc = JanusAudio.getAIN4();
-            float volts = ((float)adc / 4095.0f) * 5000.0f;
-            float amps = ((volts - 360.0f) / 120.0f);
-            // float amps = (adc - 410.0f) * 6.5f;
+            float adc = 0;
+            float addadc = 0;
+
+            for (int count = 0; count < 100; count++)
+            {
+                Thread.Sleep(1);
+                adc = JanusAudio.getAIN4();
+                addadc += adc;
+            }
+            adc = addadc / 100.0f;
+           // float volts = ((float)adc / 4095.0f) * 5000.0f;
+            //float amps = ((volts - 360.0f) / 120.0f);
+            float amps = (0.01f * adc - 2.91f);
             if (amps < 0) amps = 0.0f;
-            return amps;
-            // return adc;
+            txtDisplayOrionMKIIPAAmps.Text = "Id " + amps.ToString("N1") + "A";
         }
 
         public float computeRefPower()
@@ -32601,8 +32631,8 @@ namespace PowerSDR
                 // volts_138 = computeHermesDCVoltage();
                 if (anan8000dpresent)
                 {
-                    MKIIPAVolts = computeMKIIPAVolts();
-                    MKIIPAAmps = computeMKIIPAAmps();
+                   // MKIIPAVolts = computeMKIIPAVolts();
+                   // MKIIPAAmps = computeMKIIPAAmps();
                 }
 
                 Thread.Sleep(100);
@@ -34259,6 +34289,16 @@ namespace PowerSDR
                     poll_tx_inhibit_thead.Start();
                 }
 
+                if ((display_volts_amps_thead == null || !display_volts_amps_thead.IsAlive) && anan8000dpresent)
+                {
+                    display_volts_amps_thead = new Thread(new ThreadStart(displayMKIIPAVoltsAmps));
+                    display_volts_amps_thead.Name = "Update Volts Amps Thread";
+                    display_volts_amps_thead.Priority = ThreadPriority.Normal;
+                    display_volts_amps_thead.IsBackground = true;
+                    display_volts_amps_thead.Start();
+                }
+
+
                 if (!rx_only)
                 {
                     chkMOX.Enabled = true;
@@ -34385,7 +34425,11 @@ namespace PowerSDR
                     if (!poll_cw_thread.Join(500))
                         poll_cw_thread.Abort();
                 }
-
+                if (display_volts_amps_thead != null)
+                {
+                    if (!display_volts_amps_thead.Join(500))
+                        display_volts_amps_thead.Abort();
+                }
             }
 
             panelVFOAHover.Invalidate();
@@ -44874,6 +44918,10 @@ namespace PowerSDR
                     txtDisplayCursorPower.Location = new Point(txt_display_cursor_power_basis.X, txt_display_cursor_power_basis.Y + v_delta);
                     txtDisplayCursorOffset.Location = new Point(txt_display_cursor_offset_basis.X, txt_display_cursor_offset_basis.Y + v_delta);
 
+                    txtDisplayOrionMKIIPAVolts.Location = new Point(txt_display_orion_mkii_pa_volts_basis.X, txt_display_orion_mkii_pa_volts_basis.Y + v_delta);
+                    txtDisplayOrionMKIIBlank.Location = new Point(txt_display_orion_mkii_blank_basis.X, txt_display_orion_mkii_blank_basis.Y + v_delta);
+                    txtDisplayOrionMKIIPAAmps.Location = new Point(txt_display_orion_mkii_pa_amps_basis.X, txt_display_orion_mkii_pa_amps_basis.Y + v_delta);
+
                     //chkPower.Location = new Point(chk_power_basis.X, chk_power_basis.Y + (v_delta / 8));
                     panelPower.Location = new Point(gr_power_basis.X, gr_power_basis.Y + (v_delta / 8));
                     //chkRX2.Location = new Point(chk_rx2_enable_basis.X, chk_rx2_enable_basis.Y + v_delta);
@@ -44985,6 +45033,11 @@ namespace PowerSDR
             txt_display_cursor_freq_basis = this.txtDisplayCursorFreq.Location;
             txt_display_cursor_power_basis = this.txtDisplayCursorPower.Location;
             txt_display_cursor_offset_basis = this.txtDisplayCursorOffset.Location;
+
+            txt_display_orion_mkii_pa_volts_basis = this.txtDisplayOrionMKIIPAVolts.Location;
+            txt_display_orion_mkii_blank_basis = this.txtDisplayOrionMKIIBlank.Location;
+            txt_display_orion_mkii_pa_amps_basis = this.txtDisplayOrionMKIIPAAmps.Location;
+
             chk_power_basis = this.chkPower.Location;
             gr_power_basis = this.panelPower.Location;
             gr_rx2_enable_basis = this.panelRX2Power.Location;
@@ -49342,6 +49395,10 @@ namespace PowerSDR
             txtDisplayCursorPower.Location = new Point(txt_display_cursor_power_basis.X, txt_display_cursor_power_basis.Y + v_delta);
             txtDisplayCursorOffset.Location = new Point(txt_display_cursor_offset_basis.X, txt_display_cursor_offset_basis.Y + v_delta);
 
+            txtDisplayOrionMKIIPAVolts.Location = new Point(txt_display_orion_mkii_pa_volts_basis.X, txt_display_orion_mkii_pa_volts_basis.Y + v_delta);
+            txtDisplayOrionMKIIBlank.Location = new Point(txt_display_orion_mkii_blank_basis.X, txt_display_orion_mkii_blank_basis.Y + v_delta);
+            txtDisplayOrionMKIIPAAmps.Location = new Point(txt_display_orion_mkii_pa_amps_basis.X, txt_display_orion_mkii_pa_amps_basis.Y + v_delta);
+
             // :NOTE: Force update on pan control
             ptbDisplayPan.Value = ptbDisplayPan.Value;
             ptbDisplayPan_Scroll(this, EventArgs.Empty);
@@ -49977,6 +50034,10 @@ namespace PowerSDR
             txtDisplayPeakOffset.Location = new Point(txtOverload.Location.X + txtOverload.Width, top);
             txtDisplayPeakPower.Location = new Point(txtDisplayPeakOffset.Location.X + txtDisplayPeakOffset.Width, top);
             txtDisplayPeakFreq.Location = new Point(txtDisplayPeakPower.Location.X + txtDisplayPeakPower.Width, top);
+
+            txtDisplayOrionMKIIPAVolts.Location = new Point(picDisplay.Location.X, top);
+            txtDisplayOrionMKIIPAAmps.Location = new Point(txtDisplayOrionMKIIPAVolts.Location.X + txtDisplayOrionMKIIPAVolts.Width, top);
+            txtDisplayOrionMKIIBlank.Location = new Point(txtDisplayOrionMKIIPAAmps.Location.X + txtDisplayOrionMKIIPAAmps.Width, top);
 
             top = txtDisplayPeakOffset.Location.Y + txtDisplayPeakOffset.Height + 5;
             int dynamicWidth = picDisplay.Width - (lblDisplayPan.Width + btnDisplayPanCenter.Width + 5 +

@@ -40,7 +40,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenHPSDR")]
 [assembly: AssemblyProduct("PowerSDR")]
-[assembly: AssemblyCopyright("2016")]
+[assembly: AssemblyCopyright("2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 //In order to begin building localizable applications, set 
@@ -63,7 +63,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("3.3.10.0")]
+[assembly: AssemblyVersion("3.3.11.0")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

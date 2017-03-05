@@ -11970,6 +11970,33 @@
   <data name="&gt;&gt;txtDisplayOrionMKIIPAVolts.ZOrder" xml:space="preserve">
     <value>16</value>
   </data>
+  <data name="txtDisplayCursorPower.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Arial, 9.75pt</value>
+  </data>
+  <data name="txtDisplayCursorPower.Location" type="System.Drawing.Point, System.Drawing">
+    <value>97, 252</value>
+  </data>
+  <data name="txtDisplayCursorPower.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 15</value>
+  </data>
+  <data name="txtDisplayCursorPower.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="txtDisplayCursorPower.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Center</value>
+  </data>
+  <data name="&gt;&gt;txtDisplayCursorPower.Name" xml:space="preserve">
+    <value>txtDisplayCursorPower</value>
+  </data>
+  <data name="&gt;&gt;txtDisplayCursorPower.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, PowerSDR, Version=3.3.10.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtDisplayCursorPower.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;txtDisplayCursorPower.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
   <data name="txtDisplayOrionMKIIPAAmps.Font" type="System.Drawing.Font, System.Drawing">
     <value>Arial, 9.75pt</value>
   </data>
@@ -11995,7 +12022,7 @@
     <value>panelDisplay</value>
   </data>
   <data name="&gt;&gt;txtDisplayOrionMKIIPAAmps.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="txtDisplayCursorFreq.Font" type="System.Drawing.Font, System.Drawing">
     <value>Arial, 9.75pt</value>
@@ -12022,7 +12049,7 @@
     <value>panelDisplay</value>
   </data>
   <data name="&gt;&gt;txtDisplayCursorFreq.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>19</value>
   </data>
   <data name="txtDisplayOrionMKIIBlank.Font" type="System.Drawing.Font, System.Drawing">
     <value>Arial, 9.75pt</value>
@@ -12049,33 +12076,6 @@
     <value>panelDisplay</value>
   </data>
   <data name="&gt;&gt;txtDisplayOrionMKIIBlank.ZOrder" xml:space="preserve">
-    <value>19</value>
-  </data>
-  <data name="txtDisplayCursorPower.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Arial, 9.75pt</value>
-  </data>
-  <data name="txtDisplayCursorPower.Location" type="System.Drawing.Point, System.Drawing">
-    <value>97, 252</value>
-  </data>
-  <data name="txtDisplayCursorPower.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 15</value>
-  </data>
-  <data name="txtDisplayCursorPower.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="txtDisplayCursorPower.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Center</value>
-  </data>
-  <data name="&gt;&gt;txtDisplayCursorPower.Name" xml:space="preserve">
-    <value>txtDisplayCursorPower</value>
-  </data>
-  <data name="&gt;&gt;txtDisplayCursorPower.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBoxTS, PowerSDR, Version=3.3.10.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;txtDisplayCursorPower.Parent" xml:space="preserve">
-    <value>panelDisplay</value>
-  </data>
-  <data name="&gt;&gt;txtDisplayCursorPower.ZOrder" xml:space="preserve">
     <value>20</value>
   </data>
   <data name="panelDisplay.Location" type="System.Drawing.Point, System.Drawing">
