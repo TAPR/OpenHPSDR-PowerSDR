@@ -1596,8 +1596,8 @@ void IOThreadMainLoop(void) {
 					case 30:
 						FPGAWriteBufp[writebufpos] =  eer_pwm_min & 0x03;
 						break;
-					case 32: // BPF2
-						FPGAWriteBufp[writebufpos] = 0;
+					case 32: // xvtr
+						FPGAWriteBufp[writebufpos] = xvtr_enable & 0x01;
 						break;
 					}
 

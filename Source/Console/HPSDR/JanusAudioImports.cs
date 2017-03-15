@@ -7,9 +7,12 @@ namespace PowerSDR
     {
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DeInitMetisSockets();
-
+        
         [DllImport("JanusAudio.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern int nativeInitMetis(String netaddr);
+
+        [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetXVTREnable(int enable);
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPennyPresent(int present);

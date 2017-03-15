@@ -37691,16 +37691,32 @@ namespace PowerSDR
                 RX1XVTRGainOffset = XVTRForm.GetRXGain(rx1_xvtr_index);
                 if (tx_xvtr_index >= 0)
                 {
-                    if (XVTRForm.GetDisablePA(tx_xvtr_index)) JanusAudio.SetAlexTRRelayBit(1);
-                    else JanusAudio.SetAlexTRRelayBit(0);
+                    if (XVTRForm.GetDisablePA(tx_xvtr_index))
+                    {
+                        JanusAudio.SetXVTREnable(0); 
+                        JanusAudio.SetAlexTRRelayBit(1);
+                    }
+                    else
+                    {
+                        JanusAudio.SetXVTREnable(1); 
+                        JanusAudio.SetAlexTRRelayBit(0);
+                    }
                 }
             }
 
             if (rx1_xvtr_index < 0)
             {
                 RX1XVTRGainOffset = 0.0f;
-                if (hf_tr_relay) JanusAudio.SetAlexTRRelayBit(1);
-                else JanusAudio.SetAlexTRRelayBit(0);
+                if (hf_tr_relay)
+                {
+                    JanusAudio.SetXVTREnable(0); 
+                    JanusAudio.SetAlexTRRelayBit(1);
+                }
+                else
+                {
+                    JanusAudio.SetXVTREnable(1); 
+                    JanusAudio.SetAlexTRRelayBit(0);
+                }
 
                 if (rx1_step_att_present) udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 else comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
@@ -38503,8 +38519,16 @@ namespace PowerSDR
             {
                 tx_freq = XVTRForm.TranslateFreq(tx_freq);
 
-                if (XVTRForm.GetDisablePA(tx_xvtr_index)) JanusAudio.SetAlexTRRelayBit(1);
-                else JanusAudio.SetAlexTRRelayBit(0);
+                if (XVTRForm.GetDisablePA(tx_xvtr_index))
+                {
+                    JanusAudio.SetXVTREnable(0); 
+                    JanusAudio.SetAlexTRRelayBit(1);
+                }
+                else
+                {
+                    JanusAudio.SetXVTREnable(1); 
+                    JanusAudio.SetAlexTRRelayBit(0);
+                }
             }
 
             //tx
@@ -38532,8 +38556,16 @@ namespace PowerSDR
                     return;
                 }
 
-                if (hf_tr_relay) JanusAudio.SetAlexTRRelayBit(1);
-                else JanusAudio.SetAlexTRRelayBit(0);
+                if (hf_tr_relay)
+                {
+                    JanusAudio.SetXVTREnable(0); 
+                    JanusAudio.SetAlexTRRelayBit(1);
+                }
+                else
+                {
+                    JanusAudio.SetXVTREnable(1); 
+                    JanusAudio.SetAlexTRRelayBit(0);
+                }
 
             }
 

@@ -1438,6 +1438,12 @@ C1
 | | +---------------------- 
 | +------------------------ 
 +-------------------------- RX2 Ground
+
+C2
+0 0 0 0 0 0 0 0
+              |
+              +------------ XVTR Enable ( Enables transverter T/R relay on the ANAN-8000DLE )
+
 */
 
 KD5TFDVK6APHAUDIO_API void SetAlex2HPFBits(int bits) {
@@ -1450,6 +1456,10 @@ KD5TFDVK6APHAUDIO_API void SetGndRx2onTx(int e)
 	gndrx2ontx = e << 7;
 }
 
+KD5TFDVK6APHAUDIO_API void SetXVTREnable(int e)
+{
+	xvtr_enable = e;
+}
 
 KD5TFDVK6APHAUDIO_API void SetEERPWMmax(int max) {
          eer_pwm_max = max; 
