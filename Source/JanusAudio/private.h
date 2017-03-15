@@ -407,6 +407,7 @@ extern int amp_protect_on;
 extern int ain4_voltage;
 
 extern int gndrx2ontx;
+extern int xvtr_enable;
 
 /* Metis stuff */
 extern int isMetis;
