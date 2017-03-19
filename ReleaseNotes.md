@@ -1,9 +1,9 @@
-Program: PowerSDR_mRX_PSVersion: 3.2.21.0Date: January 23, 2015
+# Program: PowerSDR_mRX_PSVersion: 3.2.21.0Date: January 23, 2015
 
 
 
 
-3.2.21 (2015-1-23)
+# 3.2.21 (2015-1-23)
 
 -CESSB (Controlled Envelope Single SideBand):
 Dave Hershberger, W9GR, published an interesting article on "CESSB" in the November/December 2014 issue of QEX.  The intent of his algorithm is to increase "talk-power" by bringing the average power/speech level closer to the peak level.  This is also the algorithm that Flex chose for incorporation in their recent 6000 series transceivers.  The algorithm can be viewed as comprising two series-connected blocks:  (1) the "baseband RF Speech Clipper," and (2) the filter overshoot control.  
@@ -21,11 +21,11 @@ This new control has been added in Setup on the DSP -> AM/SAM tab.
 - 'Disable PA' control now takes effect immediately.
 - Added shortcut keys that will allow the CWX memories to be called without the CWX form being open. To use press <CNTRL> + F1-F10. This changed was submitted by Roberto, IK4JPN
 
-3.2.22 (2015-1-24) 
+# 3.2.22 (2015-1-24) 
 - Fix for bug introduced in 3.2.21 causing XVTR Form to crash. 
 - RIT will control RX1 and RX2 when VFOSunc is enabled. 
 
-3.2.23 (2015-1-30)
+# 3.2.23 (2015-1-30)
 - Corrects the sideband reversal when using the SAM sideband select feature.
 - Corrects the NaN error in the SWR display.
 - Corrects error in reporting negative 6m reverse power values.
@@ -33,7 +33,7 @@ This new control has been added in Setup on the DSP -> AM/SAM tab.
 - Added workaround for initializing Hermes PA relays.
 - Added "Stereo Diversity" capability for Beta testing.
 
-3.2.28 (2015-10-3)
+# 3.2.28 (2015-10-3)
 - added Spectral Noise Blanker (SNB)
 - Radio Astronomy (RA) enhanced for use with Rx2
 - corrected a undesired behavior preventing discovery from working when using a static IP address
@@ -42,13 +42,13 @@ This new control has been added in Setup on the DSP -> AM/SAM tab.
 - fixed 6m panadapter display reading for the Anan-10E
 - fixed crashing on startup when the Disable PA for HF/VHF is enabled
 
-3.2.29 (2015-10-4)
+# 3.2.29 (2015-10-4)
 - fixed open collectors not functioning during transmit
 - fixed the problem with crashing using Split mode
 - removed the German console language translation, ToolTip translation remains 
 - added a colon to the LED fonts
 
-3.3.6 (2015-11-16)
+# 3.3.6 (2015-11-16)
 - Add Multi Notch Filter
 - Added CAT command for Spectral Noise Blanker ZZNN RX1 & ZZNO RX2.
 - Added 25Hz Step Tune.
@@ -58,7 +58,7 @@ This new control has been added in Setup on the DSP -> AM/SAM tab.
 - Improved Russian language translation for the ToolTips by Michael, R2AGG.
 - Corrected a problem with the VFO not updating when dragging the panadapter in CW mode
 
-3.3.7 (2016-4-3)
+# 3.3.7 (2016-4-3)
 * Added a completely new MIDI mapping interface from Andrew, M0YGG. This new interface is called Midi2Cat and replaces the DJ Console midi controller interface. It has the ability to map any midi device. We want to give Andrew a huge thanks for sharing this very nice project.
 The User Guide for MidiCat is located in the PowerSDR program folder or can be downloaded from the Yahoo Apache Labs group files folder. Look for 'Midi2Cat_Instructions_V3.pdf'. One change to note that has changed since the user guide was written is the Midi Interface is located on the 'CAT' page within the Setup Form.
 
