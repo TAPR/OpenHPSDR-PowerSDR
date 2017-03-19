@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # PowerSDR_mRX_PSVersion: 3.2.21.0 January 23, 2015
-=======
-# PowerSDR_mRX_PSVersion: 3.2.21.0Date: January 23, 2015
->>>>>>> d1b40c8935e40835e810fd6fd087c10700a80c48
 
 
 
