@@ -1,4 +1,4 @@
-# Program: PowerSDR_mRX_PSVersion: 3.2.21.0Date: January 23, 2015
+# PowerSDR_mRX_PSVersion: 3.2.21.0Date: January 23, 2015
 
 
 
