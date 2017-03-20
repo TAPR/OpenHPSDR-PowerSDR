@@ -28,7 +28,24 @@
 - removed the German console language translation, ToolTip translation remains 
 - added a colon to the LED fonts
 
-# 3.3.6
+# 3.2.21 (2015-1-23)
+-CESSB (Controlled Envelope Single SideBand):
+Dave Hershberger, W9GR, published an interesting article on "CESSB" in the November/December 2014 issue of QEX.  The intent of his algorithm is to increase "talk-power" by bringing the average power/speech level closer to the peak level.  This is also the algorithm that Flex chose for incorporation in their recent 6000 series transceivers.  The algorithm can be viewed as comprising two series-connected blocks:  (1) the "baseband RF Speech Clipper," and (2) the filter overshoot control.  
+The first block, the "baseband RF Speech Clipper" is what we've used for speech processor ("COMP") functionality for the last three years or so.  
+(Phil used this in KISS even before that.)  This release adds the "filter overshoot control" block which can be optionally enabled in Setup on the DSP/Options tab.  Note that block (2) will NOT function unless "COMP" is enabled.  However, COMP will function as before whether or not (2) is enabled.  In our implementation, this functionality is available for ALL voice modes, not just SSB.  We are grateful to several members of our group who have tested and provided feedback on this addition!  Note that not everyone has gotten the same results by enabling item (2); this may depend upon voice characteristics and other settings.
+
+-RX2 DSP Buffer Size bug:
+Jack, K1VT, reported what we believe to be a long-standing bug that resulted in the DSP Buffer Size for the second receiver, RX2, to be set to the default value rather than the database-saved value when PowerSDR was opened.  This resulted in noticeably different delays through RX1 and RX2 when listening to the same station with both receivers.  This has been fixed.
+
+-Squelch Tail Length Control for NON-FM (SSB/AM/CW/...) modes:
+This new control has been added in Setup on the DSP -> AM/SAM tab.
+
+- Diversity 'Enable' button text changed to 'Enabled' with green background when ON and 'Disabled' with red background when OFF.
+- Bar meter (Original) implemented in the 'Collapse' display.
+- 'Disable PA' control now takes effect immediately.
+- Added shortcut keys that will allow the CWX memories to be called without the CWX form being open. To use press <CNTRL> + F1-F10. This changed was submitted by Roberto, IK4JPN
+
+# 3.3.6 (2015-11-16)
 This release includes another tool for your Noise/Interference Toolbox.  
 This particular tool, Multi Notch Filter (MNF), allows you to specify up to 1024 notches.  The notches are specified by RF frequency and width and will be invoked, as needed, when they overlap the passband.  This feature is useful for those who have interference that consistently appears on specific frequencies.
 
@@ -47,23 +64,6 @@ Other changes include:
 - Extended out-of-band transmit between 29.7-61.44MHz.
 - Improved Russian language translation for the ToolTips by Michael, R2AGG.
 - Corrected a problem with the VFO not updating when dragging the panadapter in CW mode.
-
-# 3.2.21 (2015-1-23)
--CESSB (Controlled Envelope Single SideBand):
-Dave Hershberger, W9GR, published an interesting article on "CESSB" in the November/December 2014 issue of QEX.  The intent of his algorithm is to increase "talk-power" by bringing the average power/speech level closer to the peak level.  This is also the algorithm that Flex chose for incorporation in their recent 6000 series transceivers.  The algorithm can be viewed as comprising two series-connected blocks:  (1) the "baseband RF Speech Clipper," and (2) the filter overshoot control.  
-The first block, the "baseband RF Speech Clipper" is what we've used for speech processor ("COMP") functionality for the last three years or so.  
-(Phil used this in KISS even before that.)  This release adds the "filter overshoot control" block which can be optionally enabled in Setup on the DSP/Options tab.  Note that block (2) will NOT function unless "COMP" is enabled.  However, COMP will function as before whether or not (2) is enabled.  In our implementation, this functionality is available for ALL voice modes, not just SSB.  We are grateful to several members of our group who have tested and provided feedback on this addition!  Note that not everyone has gotten the same results by enabling item (2); this may depend upon voice characteristics and other settings.
-
--RX2 DSP Buffer Size bug:
-Jack, K1VT, reported what we believe to be a long-standing bug that resulted in the DSP Buffer Size for the second receiver, RX2, to be set to the default value rather than the database-saved value when PowerSDR was opened.  This resulted in noticeably different delays through RX1 and RX2 when listening to the same station with both receivers.  This has been fixed.
-
--Squelch Tail Length Control for NON-FM (SSB/AM/CW/...) modes:
-This new control has been added in Setup on the DSP -> AM/SAM tab.
-
-- Diversity 'Enable' button text changed to 'Enabled' with green background when ON and 'Disabled' with red background when OFF.
-- Bar meter (Original) implemented in the 'Collapse' display.
-- 'Disable PA' control now takes effect immediately.
-- Added shortcut keys that will allow the CWX memories to be called without the CWX form being open. To use press <CNTRL> + F1-F10. This changed was submitted by Roberto, IK4JPN
 
 # 3.3.7 (2016-4-3)
 * Added a completely new MIDI mapping interface from Andrew, M0YGG. This new interface is called Midi2Cat and replaces the DJ Console midi controller interface. It has the ability to map any midi device. We want to give Andrew a huge thanks for sharing this very nice project.
