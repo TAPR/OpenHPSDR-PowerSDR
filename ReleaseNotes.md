@@ -1,25 +1,4 @@
-# PowerSDR_mRX_PSVersion: 3.2.21.0 January 23, 2015
-
-
-
-
-# 3.2.21 (2015-1-23)
-
--CESSB (Controlled Envelope Single SideBand):
-Dave Hershberger, W9GR, published an interesting article on "CESSB" in the November/December 2014 issue of QEX.  The intent of his algorithm is to increase "talk-power" by bringing the average power/speech level closer to the peak level.  This is also the algorithm that Flex chose for incorporation in their recent 6000 series transceivers.  The algorithm can be viewed as comprising two series-connected blocks:  (1) the "baseband RF Speech Clipper," and (2) the filter overshoot control.  
-The first block, the "baseband RF Speech Clipper" is what we've used for speech processor ("COMP") functionality for the last three years or so.  
-(Phil used this in KISS even before that.)  This release adds the "filter overshoot control" block which can be optionally enabled in Setup on the DSP/Options tab.  Note that block (2) will NOT function unless "COMP" is enabled.  However, COMP will function as before whether or not (2) is enabled.  In our implementation, this functionality is available for ALL voice modes, not just SSB.  We are grateful to several members of our group who have tested and provided feedback on this addition!  Note that not everyone has gotten the same results by enabling item (2); this may depend upon voice characteristics and other settings.
-
--RX2 DSP Buffer Size bug:
-Jack, K1VT, reported what we believe to be a long-standing bug that resulted in the DSP Buffer Size for the second receiver, RX2, to be set to the default value rather than the database-saved value when PowerSDR was opened.  This resulted in noticeably different delays through RX1 and RX2 when listening to the same station with both receivers.  This has been fixed.
-
--Squelch Tail Length Control for NON-FM (SSB/AM/CW/...) modes:
-This new control has been added in Setup on the DSP -> AM/SAM tab.
-
-- Diversity 'Enable' button text changed to 'Enabled' with green background when ON and 'Disabled' with red background when OFF.
-- Bar meter (Original) implemented in the 'Collapse' display.
-- 'Disable PA' control now takes effect immediately.
-- Added shortcut keys that will allow the CWX memories to be called without the CWX form being open. To use press <CNTRL> + F1-F10. This changed was submitted by Roberto, IK4JPN
+# PowerSDR_mRX_PS 3.3.9.0 June 15, 2016
 
 # 3.2.22 (2015-1-24) 
 - Fix for bug introduced in 3.2.21 causing XVTR Form to crash. 
@@ -48,15 +27,42 @@ This new control has been added in Setup on the DSP -> AM/SAM tab.
 - removed the German console language translation, ToolTip translation remains 
 - added a colon to the LED fonts
 
-# 3.3.6 (2015-11-16)
-- Add Multi Notch Filter
+# 3.3.6
+This release includes another tool for your Noise/Interference Toolbox.  
+This particular tool, Multi Notch Filter (MNF), allows you to specify up to 1024 notches.  The notches are specified by RF frequency and width and will be invoked, as needed, when they overlap the passband.  This feature is useful for those who have interference that consistently appears on specific frequencies.
+
+To avoid phase distortion, the notches are implemented with linear phase.  Also, they introduce no additional processing delay nor do they consume any additional CPU cycles once you're on frequency and the notches are set up.  This is all accomplished by simply "cutting" the notches into the existing bandpass filters rather than adding additional filters.
+
+Sorry, there's currently no fancy on-panadapter UI for this.  If you have programming talents and would like to write one, please let us know.
+
+To enter notches, in Setup, go to the new DSP / MNF tab.  To Add a notch, click Add then enter the Center Frequency and Notch Width and click Enter.  Once multiple notches are in the database, you can scroll back and forth through them using the up/down arrows on the "Notch #" 
+control.  When you add a new notch, it will be added immediately after the notch being viewed.  You can Edit notches by clicking Edit, making your changes, then clicking Enter.  You can Delete a notch by scrolling to the notch and clicking Delete.  If you were to enter very narrow notch widths (less than 200Hz with default filter settings), you might not achieve the full attenuation of >100dB.  By leaving "Auto-Increase width" checked, if your specified width is not enough to achieve >100dB notch depth, it will be automatically increased for you when the filter is cut in the passband.  When you are entering a new notch, rather than typing in the Center Frequency, you also have the option to tune VFO-A to the desired frequency and then click the VFOA button. 
+
+Other changes include:
 - Added CAT command for Spectral Noise Blanker ZZNN RX1 & ZZNO RX2.
 - Added 25Hz Step Tune.
 - Extended CAT command ZZPB to set & get 10dB, 20dB, and 30dB settings.
 - Removed the subnet mask requirement for static ip addresses.
 - Extended out-of-band transmit between 29.7-61.44MHz.
 - Improved Russian language translation for the ToolTips by Michael, R2AGG.
-- Corrected a problem with the VFO not updating when dragging the panadapter in CW mode
+- Corrected a problem with the VFO not updating when dragging the panadapter in CW mode.
+
+# 3.2.21 (2015-1-23)
+-CESSB (Controlled Envelope Single SideBand):
+Dave Hershberger, W9GR, published an interesting article on "CESSB" in the November/December 2014 issue of QEX.  The intent of his algorithm is to increase "talk-power" by bringing the average power/speech level closer to the peak level.  This is also the algorithm that Flex chose for incorporation in their recent 6000 series transceivers.  The algorithm can be viewed as comprising two series-connected blocks:  (1) the "baseband RF Speech Clipper," and (2) the filter overshoot control.  
+The first block, the "baseband RF Speech Clipper" is what we've used for speech processor ("COMP") functionality for the last three years or so.  
+(Phil used this in KISS even before that.)  This release adds the "filter overshoot control" block which can be optionally enabled in Setup on the DSP/Options tab.  Note that block (2) will NOT function unless "COMP" is enabled.  However, COMP will function as before whether or not (2) is enabled.  In our implementation, this functionality is available for ALL voice modes, not just SSB.  We are grateful to several members of our group who have tested and provided feedback on this addition!  Note that not everyone has gotten the same results by enabling item (2); this may depend upon voice characteristics and other settings.
+
+-RX2 DSP Buffer Size bug:
+Jack, K1VT, reported what we believe to be a long-standing bug that resulted in the DSP Buffer Size for the second receiver, RX2, to be set to the default value rather than the database-saved value when PowerSDR was opened.  This resulted in noticeably different delays through RX1 and RX2 when listening to the same station with both receivers.  This has been fixed.
+
+-Squelch Tail Length Control for NON-FM (SSB/AM/CW/...) modes:
+This new control has been added in Setup on the DSP -> AM/SAM tab.
+
+- Diversity 'Enable' button text changed to 'Enabled' with green background when ON and 'Disabled' with red background when OFF.
+- Bar meter (Original) implemented in the 'Collapse' display.
+- 'Disable PA' control now takes effect immediately.
+- Added shortcut keys that will allow the CWX memories to be called without the CWX form being open. To use press <CNTRL> + F1-F10. This changed was submitted by Roberto, IK4JPN
 
 # 3.3.7 (2016-4-3)
 * Added a completely new MIDI mapping interface from Andrew, M0YGG. This new interface is called Midi2Cat and replaces the DJ Console midi controller interface. It has the ability to map any midi device. We want to give Andrew a huge thanks for sharing this very nice project.
@@ -91,6 +97,53 @@ Other additions and fix that were added are:
 - Corrected a problem when using CTUN when Stereo Diversity (SD) is enabled.
 - Added a Keyboard mapping for Transmit and Receive.
 - Corrected several issues with the Waterfall display.
+
+# 3.3.8 (2016-6-9)
+CRASH BUG FIX
+
+Some experienced a crash in 3.3.7, especially when changing DSP Buffer Sizes or during RX/TX transitions.  We believe this has been totally resolved.
+
+SIGNIFICANTLY LOWER LATENCY
+
+Receive latency is the time between when RF reaches your antenna and the corresponding audio is produced in your speaker or headphones.  
+Similarly, transmit latency is, for example, the time between audio reaching your microphone and RF being on its way to your antenna.  For many SDRs, especially those with sharp "brick wall" filters, the latency can be much larger than you might expect.  Depending upon the radio design and various settings, SDR latencies can significantly exceed 100mS.  Long latencies can create problems for the operator in contest operation, high-speed break-in CW, and even SSB rapid-turnaround VOX operation.
+
+This release incorporates some technologies that allow us to achieve low latencies in the same category as leading conventional radios.  
+Furthermore, we can do this with extremely sharp filters.
+
+First of all, a couple basics:
+
+* Sometime ago, we moved CW Transmit from software to the FPGA in the radio hardware.  This means that CW transmit latency was already very low, really based upon your delay settings which are chosen to avoid any hot-switching of relays.
+
+* It has always been the case that the Buffer Size setting on the Setup=>Audio/Primary tab effects latency.  The lower the size, the lower the latency.  However, the lower the size, the more CPU cycles are required.  Depending upon the speed of your computer, you may be limited in how low you can go.  Fortunately, this is not likely to have such a large impact on your latency.  For a very rough estimate of the latency due to this buffer, divide the buffer size by the sample rate.  For example, a buffer of size 256, at a sample rate of 192K, contributes only about 256/192000 = 1.33mS.
+
+As of this release, there are some new features and corresponding controls to allow you to achieve much lower latency:
+
+* Up until this release, "Filter Size" and "DSP Buffer Size" have been the same and there has only been one setting, called "DSP Buffer Size."  
+Filter Size determines how sharp your filters are; higher filter size leads to sharper filters.  However, higher DSP Buffer Size leads to more latency because we must collect enough samples to fill the buffer before the buffer can be processed.  As of this release, DSP Buffer Size and Filter Size are separate and can be set by mode on the Setup=>DSP/Options tab.  So, using a very low DSP Buffer size minimizes latency and using a high Filter Size leads to sharper filters.  The trade-off here is that using lower DSP buffer sizes requires somewhat more CPU cycles and using a high Filter Size does as well.  With a reasonably fast computer, you will likely be able to run at a DSP Buffer Size of 64, the minimum, except, perhaps, for the FM mode.  With filter sizes of 1024 or 2048, the sharpness of our filters rival the best radios. However, larger sizes, up to 16384, are available if you need them.
+
+* You now have a choice of Filter Type, with two types available:  
+Linear Phase and Low Latency.  In the past, our filters have always been Linear Phase.  Linear Phase filters have the property that all frequencies are delayed by the same amount of time as the signal is processed through the filter.  This means that the time-domain waveform of a signal that is totally within the passband will look the same at the input of the filter and the output of the filter.  The Low Latency filter does not strictly comply with this same type of operation.  With the Low Latency filter, signals at frequencies very near the lower and upper edges of the passband may experience more delay than signals at other frequencies.  Comparing the two types of filters, beta testers have reported little, if any, difference in sound quality, no problems with several digital modes that have been tested, and no significant negative impacts at all from using the Low Latency filters.  However, both filter types are provided for your comparison and your choice.  Of course, the Low Latency filters provide lower latency.  In fact, the latency of Linear Phase filters increases linearly with Filter Size while the latency of the Low Latency filters is very low and nearly independent of Filter Size.
+
+Benchmark Comparisons:
+
+* For CW/SSB receive, using minimum Buffer Sizes and Low Latency filters, our beta testers have measured receive latencies in the 15mS to 20mS range.  Using minimum Buffer Sizes and Linear Phase filters, the latencies are 25mS to 30mS for a Filter Size of 1024 and 35mS to 40mS for a Filter Size of 2048.  Using features such as noise blankers, EQ, and noise reduction will add some amount to that, depending upon the
+feature(s) and settings.  These numbers compare with ~65mS and ~120mS using DSP Buffer sizes of 1024 and 2048, respectively, in prior software releases.
+
+MINOR CHANGES
+The following list of values and states where added to the TX Profiles
+- selection for mic in or line in
+- 20dB mic boost
+- line in gain
+- CESSB state
+- PureSignal state
+
+# 3.3.9 (2016-6-15)
+- waterfall display showing incorrect levels on the left hand section when using stitched receivers. In some instances caused the program to crash.
+- focus problem when setup or cwx form is open 
+- led font not being initialized properly
+- 20dB Boost not being initialized properly
+
 
 
 
