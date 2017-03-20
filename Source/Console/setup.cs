@@ -7670,8 +7670,8 @@ namespace PowerSDR
                 radRX6ADC3.Enabled = false;
                 radRX7ADC3.Enabled = false;
 
-                chkDisableRXOut.Visible = false;
-                chkBPF2Gnd.Visible = true;
+                //chkDisableRXOut.Visible = false;
+                //chkBPF2Gnd.Visible = true;
             }
             else
             {
@@ -8045,8 +8045,17 @@ namespace PowerSDR
             grpHPSDRFreqCalDbg.Visible = true;
 
             if (radGenModelANAN8000D.Checked)
+            {
                 console.MKIIBPFPresent = true;
-            else console.MKIIBPFPresent = false;
+                chkDisableRXOut.Visible = false;
+                chkBPF2Gnd.Visible = true;
+            }
+            else
+            {
+                console.MKIIBPFPresent = false;
+                chkDisableRXOut.Visible = true;
+                chkBPF2Gnd.Visible = false;
+            }
 
             if (radGenModelANAN10.Checked || radGenModelANAN10E.Checked)
             {
