@@ -314,5 +314,8 @@
     <ClCompile Include="firmin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

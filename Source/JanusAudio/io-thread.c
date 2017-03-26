@@ -1597,7 +1597,7 @@ void IOThreadMainLoop(void) {
 						FPGAWriteBufp[writebufpos] =  eer_pwm_min & 0x03;
 						break;
 					case 32: // xvtr
-						FPGAWriteBufp[writebufpos] = xvtr_enable & 0x01;
+						FPGAWriteBufp[writebufpos] = (xvtr_enable << 1) & 0x02;
 						break;
 					}
 

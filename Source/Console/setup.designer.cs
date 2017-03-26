@@ -9,6 +9,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TabPage tpAlexAntCtrl;
             System.Windows.Forms.GroupBoxTS grpKBCW;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
             this.chkBPF2Gnd = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRXOut = new System.Windows.Forms.CheckBoxTS();
             this.chkEXT2OutOnTx = new System.Windows.Forms.CheckBoxTS();
@@ -2715,6 +2716,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkEnableXVTRHF = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             grpKBCW = new System.Windows.Forms.GroupBoxTS();
             tpAlexAntCtrl.SuspendLayout();
@@ -3584,6 +3586,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkEnableXVTRHF);
             tpAlexAntCtrl.Controls.Add(this.chkBPF2Gnd);
             tpAlexAntCtrl.Controls.Add(this.chkDisableRXOut);
             tpAlexAntCtrl.Controls.Add(this.chkEXT2OutOnTx);
@@ -29036,7 +29039,7 @@
             this.udANAN8000DPAGainVHF13.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF13.TabIndex = 113;
             this.udANAN8000DPAGainVHF13.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29076,7 +29079,7 @@
             this.udANAN8000DPAGainVHF12.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF12.TabIndex = 111;
             this.udANAN8000DPAGainVHF12.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29116,7 +29119,7 @@
             this.udANAN8000DPAGainVHF11.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF11.TabIndex = 109;
             this.udANAN8000DPAGainVHF11.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29156,7 +29159,7 @@
             this.udANAN8000DPAGainVHF10.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF10.TabIndex = 107;
             this.udANAN8000DPAGainVHF10.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29196,7 +29199,7 @@
             this.udANAN8000DPAGainVHF9.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF9.TabIndex = 105;
             this.udANAN8000DPAGainVHF9.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29236,7 +29239,7 @@
             this.udANAN8000DPAGainVHF8.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF8.TabIndex = 103;
             this.udANAN8000DPAGainVHF8.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29276,7 +29279,7 @@
             this.udANAN8000DPAGainVHF7.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF7.TabIndex = 101;
             this.udANAN8000DPAGainVHF7.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29316,7 +29319,7 @@
             this.udANAN8000DPAGainVHF6.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF6.TabIndex = 99;
             this.udANAN8000DPAGainVHF6.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29356,7 +29359,7 @@
             this.udANAN8000DPAGainVHF5.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF5.TabIndex = 97;
             this.udANAN8000DPAGainVHF5.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29396,7 +29399,7 @@
             this.udANAN8000DPAGainVHF4.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF4.TabIndex = 95;
             this.udANAN8000DPAGainVHF4.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29436,7 +29439,7 @@
             this.udANAN8000DPAGainVHF3.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF3.TabIndex = 93;
             this.udANAN8000DPAGainVHF3.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29476,7 +29479,7 @@
             this.udANAN8000DPAGainVHF2.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF2.TabIndex = 91;
             this.udANAN8000DPAGainVHF2.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29516,7 +29519,7 @@
             this.udANAN8000DPAGainVHF1.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF1.TabIndex = 89;
             this.udANAN8000DPAGainVHF1.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -29556,7 +29559,7 @@
             this.udANAN8000DPAGainVHF0.Size = new System.Drawing.Size(48, 20);
             this.udANAN8000DPAGainVHF0.TabIndex = 87;
             this.udANAN8000DPAGainVHF0.Value = new decimal(new int[] {
-            629,
+            631,
             0,
             0,
             65536});
@@ -45345,6 +45348,19 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkEnableXVTRHF
+            // 
+            this.chkEnableXVTRHF.AutoSize = true;
+            this.chkEnableXVTRHF.Image = null;
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(449, 290);
+            this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
+            this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
+            this.chkEnableXVTRHF.TabIndex = 18;
+            this.chkEnableXVTRHF.Text = "Enable XVTR HF";
+            this.toolTip1.SetToolTip(this.chkEnableXVTRHF, "Enables the XVTR T/R relay on HF");
+            this.chkEnableXVTRHF.UseVisualStyleBackColor = true;
+            this.chkEnableXVTRHF.CheckedChanged += new System.EventHandler(this.chkEnableXVTRHF_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -45357,6 +45373,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Menu = this.mainMenu1;
             this.Name = "Setup";
@@ -47623,5 +47640,6 @@
         private System.Windows.Forms.LabelTS lblRx26mLNA;
         private System.Windows.Forms.GroupBoxTS grpDisplay8000DLE;
         private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
+        private System.Windows.Forms.CheckBoxTS chkEnableXVTRHF;
    }
 }

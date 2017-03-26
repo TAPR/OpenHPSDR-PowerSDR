@@ -242,6 +242,7 @@
     <ClCompile Include="snb.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />
+    <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />
   </ItemGroup>
