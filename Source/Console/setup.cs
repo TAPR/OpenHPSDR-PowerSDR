@@ -2947,7 +2947,7 @@ namespace PowerSDR
             udDSPSNBThresh2_ValueChanged(this, e);
             // MNF
             chkMNFAutoIncrease_CheckedChanged(this, e);
-
+            chkEnableXVTRHF_CheckedChanged(this, e);
             chkWheelReverse_CheckedChanged(this, e);
         }
 
@@ -8049,12 +8049,14 @@ namespace PowerSDR
                 console.MKIIBPFPresent = true;
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
+                chkEnableXVTRHF.Visible = true;
             }
             else
             {
                 console.MKIIBPFPresent = false;
                 chkDisableRXOut.Visible = true;
                 chkBPF2Gnd.Visible = false;
+                chkEnableXVTRHF.Visible = false;
             }
 
             if (radGenModelANAN10.Checked || radGenModelANAN10E.Checked)
@@ -8074,24 +8076,30 @@ namespace PowerSDR
             {
                 chkRxOutOnTx.Visible = false;
                 chkEXT1OutOnTx.Visible = false;
-               // chkEXT2OutOnTx.Checked = false;
                 chkEXT2OutOnTx.Visible = false;
                 // panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "BPF1/LPF";
                 tpAlex2FilterControl.Text = "BPF2";
-               // labelAlex1FilterHPF.Text = "BPF1";
+                chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
+                chkDisableHPFonTX.Text = "BPF ByPass on TX";
                 panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
+ 
             }
             else
             {
+                chkRxOutOnTx.Visible = true;
+                chkEXT1OutOnTx.Visible = true;
+                chkEXT2OutOnTx.Visible = true;
                 chkRxOutOnTx.Enabled = true;
                 chkEXT1OutOnTx.Enabled = true;
                 chkEXT2OutOnTx.Enabled = true;
                 panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "HPF/LPF";
+                chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
+                chkDisableHPFonTX.Text = "HPF ByPass on TX";
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
@@ -12628,20 +12636,20 @@ namespace PowerSDR
                 ANAN8000DPAGain10 = 44.3f;
                 ANAN8000DPAGain6 = 40.0f;
 
-                udANAN8000DPAGainVHF0.Value = 62.9M;
-                udANAN8000DPAGainVHF1.Value = 62.9M;
-                udANAN8000DPAGainVHF2.Value = 62.9M;
-                udANAN8000DPAGainVHF3.Value = 62.9M;
-                udANAN8000DPAGainVHF4.Value = 62.9M;
-                udANAN8000DPAGainVHF5.Value = 62.9M;
-                udANAN8000DPAGainVHF6.Value = 62.9M;
-                udANAN8000DPAGainVHF7.Value = 62.9M;
-                udANAN8000DPAGainVHF8.Value = 62.9M;
-                udANAN8000DPAGainVHF9.Value = 62.9M;
-                udANAN8000DPAGainVHF10.Value = 62.9M;
-                udANAN8000DPAGainVHF11.Value = 62.9M;
-                udANAN8000DPAGainVHF12.Value = 62.9M;
-                udANAN8000DPAGainVHF13.Value = 62.9M;
+                udANAN8000DPAGainVHF0.Value = 65.0M;
+                udANAN8000DPAGainVHF1.Value = 65.0M;
+                udANAN8000DPAGainVHF2.Value = 65.0M;
+                udANAN8000DPAGainVHF3.Value = 65.0M;
+                udANAN8000DPAGainVHF4.Value = 65.0M;
+                udANAN8000DPAGainVHF5.Value = 65.0M;
+                udANAN8000DPAGainVHF6.Value = 65.0M;
+                udANAN8000DPAGainVHF7.Value = 65.0M;
+                udANAN8000DPAGainVHF8.Value = 65.0M;
+                udANAN8000DPAGainVHF9.Value = 65.0M;
+                udANAN8000DPAGainVHF10.Value = 65.0M;
+                udANAN8000DPAGainVHF11.Value = 65.0M;
+                udANAN8000DPAGainVHF12.Value = 65.0M;
+                udANAN8000DPAGainVHF13.Value = 65.0M;
             }
 
             if (radGenModelHermes.Checked)
@@ -20049,6 +20057,11 @@ namespace PowerSDR
         private void chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(object sender, EventArgs e)
         {
             console.ANAN8000DLEDisplayVoltsAmps = chkANAN8000DLEDisplayVoltsAmps.Checked;
+        }
+
+        private void chkEnableXVTRHF_CheckedChanged(object sender, EventArgs e)
+        {
+            console.EnableXVTRHF = chkEnableXVTRHF.Checked;
         }
 
     }

@@ -411,22 +411,22 @@ KD5TFDVK6APHAUDIO_API int getAndResetADC_Overload() {
 
 KD5TFDVK6APHAUDIO_API int getUserI01() { 
 
-	return User_I01; 
+	return User_I01; // IO4
 } 
 
 KD5TFDVK6APHAUDIO_API int getUserI02() { 
 
-	return User_I02; 
+	return User_I02; // IO5
 }
 
 KD5TFDVK6APHAUDIO_API int getUserI03() { 
 
-	return User_I03; 
+	return User_I03;  // IO6
 }
 
 KD5TFDVK6APHAUDIO_API int getUserI04() { 
 
-	return User_I04; 
+	return User_I04; // IO8
 }
 
 //C2 – 	Mercury software serial number  (0 to 255) - set to 0 when Hermes

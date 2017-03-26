@@ -18186,6 +18186,16 @@ namespace PowerSDR
             }
         }
 
+        private bool enable_xvtr_hf = false;
+        public bool EnableXVTRHF
+        {
+            get { return enable_xvtr_hf; }
+            set
+            {
+                enable_xvtr_hf = value;
+            }
+        }
+
         public bool ANAN8000DLEDisplayVoltsAmps { get; set; }
 
         private bool rx1_step_att_present = false;
@@ -28143,7 +28153,7 @@ namespace PowerSDR
                                                 else
                                                     pixel_x = (int)(256 + (num - 50) / 50 * 32);
                                             }
-                                            else if (anan8000dpresent)
+                                            else if (anan8000dpresent &&  tx_xvtr_index < 0)
                                             {
                                                 if (num <= 1.0f)
                                                     pixel_x = (int)(0 + num * 16);
@@ -28160,7 +28170,7 @@ namespace PowerSDR
                                                 else
                                                     pixel_x = (int)(256 + (num - 120) / 20 * 32);
                                             }
-                                            else if (alexpresent)
+                                            else if (alexpresent && !anan8000dpresent)
                                             {
                                                 if (num <= 1.0f)
                                                     pixel_x = (int)(0 + num * 16);
@@ -28235,7 +28245,7 @@ namespace PowerSDR
                                                 else
                                                     pixel_x = (int)(122 + (num - 50) / 50 * 16);
                                             }
-                                            else if (anan8000dpresent)
+                                            else if (anan8000dpresent && tx_xvtr_index < 0)
                                             {
                                                 if (num <= 5.0f)
                                                     pixel_x = (int)(0 + num * 2);
@@ -28252,7 +28262,7 @@ namespace PowerSDR
                                                 else
                                                     pixel_x = (int)(122 + (num - 250) / 20 * 16);
                                             }
-                                            else if (alexpresent)
+                                            else if (alexpresent && !anan8000dpresent)
                                             {
                                                 if (num <= 1.0f)
                                                     pixel_x = (int)(0 + num * 2);
@@ -28768,7 +28778,8 @@ namespace PowerSDR
                             case MeterTXMode.FORWARD_POWER:
                             case MeterTXMode.REVERSE_POWER:
                                 if (alexpresent || apollopresent) num = Math.Round(num);
-                                if (alexpresent && (orionmkiipresent || anan8000dpresent))
+
+                                if (alexpresent && ((orionmkiipresent || anan8000dpresent) && tx_xvtr_index < 0) )
                                 {
                                     g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
                                     g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 10, 2);
@@ -28823,7 +28834,7 @@ namespace PowerSDR
                                     }
                                 }
 
-                                else if ((alexpresent || pa_present) && (!anan10present && !anan10Epresent && !apollopresent))
+                                else if ((alexpresent || pa_present) && (!anan10present && !anan10Epresent && !apollopresent && !anan8000dpresent))
                                 {
                                     g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
                                     g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 10, 2);
@@ -29984,7 +29995,13 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                 case MeterTXMode.SWR_POWER:
                                     if (anan10present || anan10Epresent || apollopresent) output = num.ToString(format) + " W";
-                                    else if (alexpresent || pa_present) output = num.ToString(format) + " W";
+                                    else if ((alexpresent || pa_present))
+                                    {
+                                        if (anan8000dpresent && tx_xvtr_index >= 0)
+                                            output = num.ToString(format) + " mW";
+                                        else
+                                            output = num.ToString(format) + " W";
+                                    }
                                     else output = num.ToString(format) + " mW";
                                     break;
                                 case MeterTXMode.SWR:
@@ -31170,14 +31187,34 @@ namespace PowerSDR
                                 break;
                             case MeterTXMode.FORWARD_POWER:
                             case MeterTXMode.SWR_POWER:
-                                if (alexpresent || apollopresent)
+                               if (alexpresent || apollopresent)
                                 {
-                                    new_meter_data = calfwdpower;
-                                    if (pa_values)
+                                    if (anan8000dpresent)
                                     {
-                                        // SetupForm.textDriveFwdADCValue.Text = new_meter_data.ToString("f1") + " W";
-                                        SetupForm.textPAFwdPower.Text = alex_fwd.ToString("f1") + " W";
-                                        SetupForm.textPARevPower.Text = alex_rev.ToString("f1") + " W";
+                                        if (tx_xvtr_index >= 0)
+                                        {
+                                            new_meter_data = drivepwr;
+                                        }
+                                        else
+                                        {
+                                            new_meter_data = calfwdpower;
+                                            if (pa_values)
+                                            {
+                                                // SetupForm.textDriveFwdADCValue.Text = new_meter_data.ToString("f1") + " W";
+                                                SetupForm.textPAFwdPower.Text = alex_fwd.ToString("f1") + " W";
+                                                SetupForm.textPARevPower.Text = alex_rev.ToString("f1") + " W";
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        new_meter_data = calfwdpower;
+                                        if (pa_values)
+                                        {
+                                            // SetupForm.textDriveFwdADCValue.Text = new_meter_data.ToString("f1") + " W";
+                                            SetupForm.textPAFwdPower.Text = alex_fwd.ToString("f1") + " W";
+                                            SetupForm.textPARevPower.Text = alex_rev.ToString("f1") + " W";
+                                        }
                                     }
                                 }
                                 else
@@ -31398,6 +31435,9 @@ namespace PowerSDR
 
         public float computeRefPower()
         {
+            float adc = 0;
+            float addadc = 0;
+
             float bridge_volt = 0.09f;
             float refvoltage = 3.3f;
             int adc_cal_offset = 10;
@@ -31409,10 +31449,24 @@ namespace PowerSDR
                 current_hpsdr_model == HPSDRModel.ANAN100D) bridge_volt = 0.095f;
 
             if (current_hpsdr_model == HPSDRModel.ANAN200D) bridge_volt = 0.108f;
-            if (current_hpsdr_model == HPSDRModel.ANAN8000D) bridge_volt = 0.08f;
 
-            int adc = JanusAudio.getRefPower();
-            if (adc < adc_cal_offset) adc = adc_cal_offset = 0;
+            if (current_hpsdr_model == HPSDRModel.ANAN8000D)
+            {
+                bridge_volt = 0.08f;
+                adc_cal_offset = 14;
+            }
+
+           // int adc = JanusAudio.getRefPower();
+
+            for (int count = 0; count < 10; count++)
+            {
+                Thread.Sleep(1);
+                adc = JanusAudio.getRefPower();
+                addadc += adc;
+            }
+            adc = addadc / 10;
+
+            if (adc < 0) adc = adc_cal_offset = 0;
             float volts = (float)((adc - adc_cal_offset) / 4095.0 * refvoltage);
             float watts = (float)(Math.Pow(volts, 2) / bridge_volt);
             if (watts < 0) watts = 0;
@@ -31446,13 +31500,13 @@ namespace PowerSDR
             if (current_hpsdr_model == HPSDRModel.ANAN200D) bridge_volt = 0.108f; // 0.083f;
             if (current_hpsdr_model == HPSDRModel.ANAN8000D) bridge_volt = 0.08f;
 
-            for (int count = 0; count < 3; count++)
+            for (int count = 0; count < 10; count++)
             {
                 Thread.Sleep(1);
                 adc = JanusAudio.getAlexFwdPower();
                 addadc += adc;
             }
-            adc = addadc / 3;
+            adc = addadc / 10;
 
             float volts = (float)(adc / 4095.0f * refvoltage);
             float watts = (float)(Math.Pow(volts, 2) / bridge_volt);
@@ -32089,11 +32143,16 @@ namespace PowerSDR
 
         private void PollTXInhibit()
         {
+            bool inhibit_input;
             while (chkPower.Checked)
             {
                 if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
                 {
-                    bool inhibit_input = JanusAudio.getUserI01();
+                    if (anan8000dpresent)
+                    inhibit_input = JanusAudio.getUserI02();
+                    else
+                    inhibit_input = JanusAudio.getUserI01();
+
                     if (tx_inhibit_sense)
                     {
                         if (inhibit_input) TXInhibit = true;
@@ -32599,6 +32658,9 @@ namespace PowerSDR
                         }
                         else swr_pass = false;
                     }
+
+                    if (tx_xvtr_index >= 0 || hf_tr_relay)
+                        swr_pass = true;
 
                     if (swr > 2.0 && swrprotection && !swr_pass)
                     {
@@ -35469,7 +35531,12 @@ namespace PowerSDR
                     // Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, mox);
 
                     if (alex_ant_ctrl_enabled)
-                        Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    {
+                       // if(anan8000dpresent)
+                       //     Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, false);
+                       // else
+                            Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    }
                 }
                 else
                 {
@@ -35542,7 +35609,12 @@ namespace PowerSDR
                     // Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, mox);
 
                     if (alex_ant_ctrl_enabled)
-                        Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    {
+                      //  if (anan8000dpresent)
+                       //     Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, false);
+                      //  else
+                            Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    }
                 }
                 else
                 {
@@ -37693,13 +37765,13 @@ namespace PowerSDR
                 {
                     if (XVTRForm.GetDisablePA(tx_xvtr_index))
                     {
-                        JanusAudio.SetXVTREnable(0); 
-                        JanusAudio.SetAlexTRRelayBit(1);
+                        JanusAudio.SetXVTREnable(1); // enable
+                        JanusAudio.SetAlexTRRelayBit(1); // disable
                     }
                     else
                     {
-                        JanusAudio.SetXVTREnable(1); 
-                        JanusAudio.SetAlexTRRelayBit(0);
+                        JanusAudio.SetXVTREnable(0); // disable
+                        JanusAudio.SetAlexTRRelayBit(0); // enable
                     }
                 }
             }
@@ -37709,14 +37781,19 @@ namespace PowerSDR
                 RX1XVTRGainOffset = 0.0f;
                 if (hf_tr_relay)
                 {
-                    JanusAudio.SetXVTREnable(0); 
+                   // JanusAudio.SetXVTREnable(0); 
                     JanusAudio.SetAlexTRRelayBit(1);
                 }
                 else
                 {
-                    JanusAudio.SetXVTREnable(1); 
+                   // JanusAudio.SetXVTREnable(0); 
                     JanusAudio.SetAlexTRRelayBit(0);
                 }
+
+                if (enable_xvtr_hf)
+                    JanusAudio.SetXVTREnable(1); // enable
+                else 
+                    JanusAudio.SetXVTREnable(0); // disable
 
                 if (rx1_step_att_present) udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 else comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
@@ -37787,7 +37864,12 @@ namespace PowerSDR
                     // Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, mox);
 
                     if (alex_ant_ctrl_enabled)
-                        Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    {
+                       // if (anan8000dpresent)
+                       //     Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, false);
+                       // else
+                            Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    }
                 }
                 else
                 {
@@ -38521,12 +38603,12 @@ namespace PowerSDR
 
                 if (XVTRForm.GetDisablePA(tx_xvtr_index))
                 {
-                    JanusAudio.SetXVTREnable(0); 
+                    JanusAudio.SetXVTREnable(1); 
                     JanusAudio.SetAlexTRRelayBit(1);
                 }
                 else
                 {
-                    JanusAudio.SetXVTREnable(1); 
+                    JanusAudio.SetXVTREnable(0); 
                     JanusAudio.SetAlexTRRelayBit(0);
                 }
             }
@@ -38558,14 +38640,19 @@ namespace PowerSDR
 
                 if (hf_tr_relay)
                 {
-                    JanusAudio.SetXVTREnable(0); 
+                  //  JanusAudio.SetXVTREnable(0); 
                     JanusAudio.SetAlexTRRelayBit(1);
                 }
                 else
                 {
-                    JanusAudio.SetXVTREnable(1); 
+                  //  JanusAudio.SetXVTREnable(0); 
                     JanusAudio.SetAlexTRRelayBit(0);
                 }
+
+                if (enable_xvtr_hf)
+                    JanusAudio.SetXVTREnable(1); // enable
+                else
+                    JanusAudio.SetXVTREnable(0); // disable
 
             }
 
