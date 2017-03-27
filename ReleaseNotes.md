@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.3.9.0 June 15, 2016
+# PowerSDR_mRX_PS 3.3.14.0 March 26, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -144,6 +144,19 @@ The following list of values and states where added to the TX Profiles
 - focus problem when setup or cwx form is open 
 - led font not being initialized properly
 - 20dB Boost not being initialized properly
+
+# 3.3.14 (2017-3-26)
+- PureSignal updated to v2.0.
+- Add capibities for the ANAN-8000DLE transceiver.
+- Bryan, W4WMT added a bug fix to the VAC feature that dramatically reduced buffer overruns     when using smaller buffers.
+- Corrected out of band errors for the Japan region
+- Fixed CTUN so that the settings would be restored correctly after restarting the program.
+- Added NR2 and SNB to the DSP menu when in the Collapsed mode.
+- Added the following CAT Commands:
+  -- ZZLI - Sets or Reads the PureSignal (PS-A) button status
+  -- ZZNS - Sets or Reads the RX1 NR2 button status
+  -- ZZNV - Sets or Reads the RX2 NR button status
+  -- ZZNW - Sets or Reads the RX2 NR2 button status
 
 
 
