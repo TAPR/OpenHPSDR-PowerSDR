@@ -10,7 +10,7 @@ Latest Release v3.3.14 March 26, 2017
 - Fixed CTUN so that the settings would be restored correctly after restarting the program.
 - Added NR2 and SNB to the DSP menu when in the Collapsed mode.
 - Added the following CAT Commands:
-  -- ZZLI - Sets or Reads the PureSignal (PS-A) button status
-  -- ZZNS - Sets or Reads the RX1 NR2 button status
-  -- ZZNV - Sets or Reads the RX2 NR button status
-  -- ZZNW - Sets or Reads the RX2 NR2 button status
+  - ZZLI - Sets or Reads the PureSignal (PS-A) button status
+  - ZZNS - Sets or Reads the RX1 NR2 button status
+  - ZZNV - Sets or Reads the RX2 NR button status
+  - ZZNW - Sets or Reads the RX2 NR2 button status
