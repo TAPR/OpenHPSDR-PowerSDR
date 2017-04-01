@@ -868,37 +868,37 @@ namespace PowerSDR
             public static float computeRefPower()
             {
                 Console c = Console.getConsole();
-                int adc = JanusAudio.getRefPower();
-                if (adc < 300) adc = 0;
-                float volts = (float)adc * (3.3f / 4095.0f);
-                float watts = (float)(Math.Pow(volts, 2) / 0.095f);
+                int fwd_adc = JanusAudio.getRefPower();
+                if (fwd_adc < 300) fwd_adc = 0;
+                float fwdvolts = (float)fwd_adc * (3.3f / 4095.0f);
+                float fwdwatts = (float)(Math.Pow(fwdvolts, 2) / 0.095f);
 
                 if (c != null && c.PAValues)
                 {
-                    c.SetupForm.txtRevADCValue.Text = adc.ToString();
-                    c.SetupForm.txtRevVoltage.Text = volts.ToString();
-                  //  c.SetupForm.txtPARevPower.Text = watts.ToString();              
+                    c.SetupForm.txtRevADCValue.Text = fwd_adc.ToString();
+                    c.SetupForm.txtRevVoltage.Text = fwdvolts.ToString();
+                  //  c.SetupForm.txtPARevPower.Text = fwdwatts.ToString();              
                 } 
 
-                return watts;
+                return fwdwatts;
             }
 
             public static float computeAlexFwdPower()
             {
                 Console c = Console.getConsole();
-                int adc = JanusAudio.getAlexFwdPower();
-                if (adc < 300) adc = 0;
-                float volts = (float)adc * (3.3f / 4095.0f);
-                float watts = (float)(Math.Pow(volts, 2) / 0.095f);
+                int fwd_adc = JanusAudio.getAlexFwdPower();
+                if (fwd_adc < 300) fwd_adc = 0;
+                float fwdvolts = (float)fwd_adc * (3.3f / 4095.0f);
+                float fwdwatts = (float)(Math.Pow(fwdvolts, 2) / 0.095f);
 
                 if (c != null && c.PAValues)
                 {
-                    c.SetupForm.txtFwdADCValue.Text = adc.ToString();
-                    c.SetupForm.txtFwdVoltage.Text = volts.ToString();
-                   // c.SetupForm.txtPAFwdPower.Text = watts.ToString();
+                    c.SetupForm.txtFwdADCValue.Text = fwd_adc.ToString();
+                    c.SetupForm.txtFwdVoltage.Text = fwdvolts.ToString();
+                   // c.SetupForm.txtPAFwdPower.Text = fwdwatts.ToString();
                 } 
 
-                return watts;
+                return fwdwatts;
             }
 
             public static float computePower(int power_int)
@@ -951,7 +951,7 @@ namespace PowerSDR
                     }
                 }
 
-                result = result / 1000;  //convert to watts 
+                result = result / 1000;  //convert to fwdwatts 
                 // c.SetupForm.txtFwdPower.Text = result.ToString();
                 // c.SetupForm.txtFwdADC.Text = power_int.ToString();
 
