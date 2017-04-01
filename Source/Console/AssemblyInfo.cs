@@ -49,6 +49,7 @@ using System.Runtime.CompilerServices;
 //in your source files, set the <UICulture> to en-US.  Then uncomment
 //the NeutralResourceLanguage attribute below.  Update the "en-US" in
 //the line below to match the UICulture setting in the project file.
+//
 
 [assembly: NeutralResourcesLanguage("en-US")]
 
