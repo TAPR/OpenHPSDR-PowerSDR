@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.3.14.0 March 26, 2017
+# PowerSDR_mRX_PS 3.3.15.0 March 31, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -158,13 +158,9 @@ The following list of values and states where added to the TX Profiles
   -- ZZNV - Sets or Reads the RX2 NR button status
   -- ZZNW - Sets or Reads the RX2 NR2 button status
 
-<<<<<<< HEAD
-=======
-  # 3.3.15 (2017-3-31)
+# 3.3.15 (2017-3-31)
   - Corrected sporadic HIGH SWR message seen in v3.3.14
   
-  
->>>>>>> 4fb411e356843fb74ddc202a21d6bc22d044a65a
 
 
 
