@@ -158,6 +158,13 @@ The following list of values and states where added to the TX Profiles
   -- ZZNV - Sets or Reads the RX2 NR button status
   -- ZZNW - Sets or Reads the RX2 NR2 button status
 
+<<<<<<< HEAD
+=======
+  # 3.3.15 (2017-3-31)
+  - Corrected sporadic HIGH SWR message seen in v3.3.14
+  
+  
+>>>>>>> 4fb411e356843fb74ddc202a21d6bc22d044a65a
 
 
 
