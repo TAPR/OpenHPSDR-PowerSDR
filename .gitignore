@@ -12,4 +12,5 @@ Source/*.suo
 lib/portaudio_VS2008/build/msvc/x64
 lib/portaudio_VS2008/build/msvc/Win32
 lib/fftw_wisdom/temp
+lib/pthread/Win32
 *.bak
