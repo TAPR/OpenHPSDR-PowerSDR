@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2014, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2014, 2016, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -28,7 +28,9 @@ warren@wpratt.com
 
 void create_txa (int channel)
 {
-	txa[channel].mode = TXA_LSB;
+	txa[channel].mode   = TXA_LSB;
+	txa[channel].f_low  = -5000.0;
+	txa[channel].f_high = - 100.0;
 	txa[channel].inbuff  = (double *) malloc0 (1 * ch[channel].dsp_insize  * sizeof (complex));
 	txa[channel].outbuff = (double *) malloc0 (1 * ch[channel].dsp_outsize * sizeof (complex));
 	txa[channel].midbuff = (double *) malloc0 (2 * ch[channel].dsp_size    * sizeof (complex));
@@ -94,7 +96,7 @@ void create_txa (int channel)
 		0.000,										// minimum tail length
 		0.025,										// maximum tail length
 		0.200);										// muted gain
-	
+
 	{
 	double default_F[11] = {0.0,  32.0,  63.0, 125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0, 16000.0};
 	double default_G[11] = {0.0, -12.0, -12.0, -12.0,  -1.0,  +1.0,   +4.0,   +9.0,  +12.0,  -10.0,   -10.0};
@@ -130,7 +132,7 @@ void create_txa (int channel)
 		0);											// pointer for gain computation
 
 	txa[channel].preemph.p = create_emphp (
-		1,											// run
+		0,											// run
 		1,											// position
 		ch[channel].dsp_size,						// size
 		2048,										// number of filter coefficients
@@ -182,6 +184,39 @@ void create_txa (int channel)
 		TXA_LVLR_GAIN,								// index for gain value
 		&txa[channel].leveler.p->gain);				// pointer for gain computation
 
+	txa[channel].phrot.p = create_phrot (
+		0,											// run
+		ch[channel].dsp_size,						// size
+		txa[channel].midbuff,						// input buffer
+		txa[channel].midbuff,						// output buffer
+		ch[channel].dsp_rate,						// samplerate
+		338.0,										// 1/2 of phase frequency
+		8);											// number of stages
+
+	{
+	double default_F[5] = {200.0, 1000.0, 2000.0, 3000.0, 4000.0};
+	double default_G[5] = {0.0, 5.0, 10.0, 10.0, 5.0};
+	double default_E[5] = {7.0, 7.0, 7.0, 7.0, 7.0};
+	txa[channel].cfcomp.p = create_cfcomp (
+		0,										// run
+		0,										// position
+		0,										// post-equalizer run
+		ch[channel].dsp_size,					// size
+		txa[channel].midbuff,					// input buffer
+		txa[channel].midbuff,					// output buffer
+		2048,									// fft size
+		4,										// overlap
+		ch[channel].dsp_rate,					// samplerate
+		1,										// window type
+		0,										// compression method
+		5,										// nfreqs
+		0.0,									// pre-compression
+		0.0,									// pre-postequalization
+		default_F,								// frequency array
+		default_G,								// compression array
+		default_E);								// eq array
+	}
+
 	txa[channel].bp0.p = create_bandpass (
 		1,											// always runs
 		0,											// position
@@ -190,20 +225,11 @@ void create_txa (int channel)
 		0,											// flag for minimum phase
 		txa[channel].midbuff,						// pointer to input buffer
 		txa[channel].midbuff,						// pointer to output buffer 
-		32.0,										// low freq cutoff
-		23000.0,									// high freq cutoff
+		txa[channel].f_low,							// low freq cutoff
+		txa[channel].f_high,						// high freq cutoff
 		ch[channel].dsp_rate,						// samplerate
 		1,											// wintype
 		2.0);										// gain
-
-	txa[channel].pfgain0.p = create_gain (
-		0,											// run - depends upon mode
-		0,											// 
-		ch[channel].dsp_size,						// size
-		txa[channel].midbuff,						// pointer to input buffer
-		txa[channel].midbuff,						// pointer to output buffer
-		0.5,										// Igain
-		0.0);										// Qgain
 
 	txa[channel].compressor.p = create_compressor (
 		0,											// run - OFF by default
@@ -220,21 +246,11 @@ void create_txa (int channel)
 		0,											// flag for minimum phase
 		txa[channel].midbuff,						// pointer to input buffer
 		txa[channel].midbuff,						// pointer to output buffer 
-		32.0,										// low freq cutoff
-		23000.0,									// high freq cutoff
+		txa[channel].f_low,							// low freq cutoff
+		txa[channel].f_high,						// high freq cutoff
 		ch[channel].dsp_rate,						// samplerate
 		1,											// wintype
 		2.0);										// gain	
-
-	txa[channel].pfgain1.p = create_gain (
-		0,											// run - depends upon mode
-		&(txa[channel].compressor.p->run),			// run only if compressor is on
-		ch[channel].dsp_size,						// size
-		txa[channel].midbuff,						// pointer to input buffer
-		txa[channel].midbuff,						// pointer to output buffer
-		0.5,										// Igain
-		0.0);										// Qgain
-
 
 	txa[channel].osctrl.p = create_osctrl (
 		0,											// run
@@ -252,8 +268,8 @@ void create_txa (int channel)
 		0,											// flag for minimum phase
 		txa[channel].midbuff,						// pointer to input buffer
 		txa[channel].midbuff,						// pointer to output buffer 
-		32.0,										// low freq cutoff
-		23000.0,									// high freq cutoff
+		txa[channel].f_low,							// low freq cutoff
+		txa[channel].f_high,						// high freq cutoff
 		ch[channel].dsp_rate,						// samplerate
 		1,											// wintype
 		1.0);										// gain
@@ -461,11 +477,11 @@ void destroy_txa (int channel)
 	destroy_meter (txa[channel].compmeter.p);
 	destroy_bandpass (txa[channel].bp2.p);
 	destroy_osctrl (txa[channel].osctrl.p);
-	destroy_gain (txa[channel].pfgain1.p);
 	destroy_bandpass (txa[channel].bp1.p);
 	destroy_compressor (txa[channel].compressor.p);
-	destroy_gain (txa[channel].pfgain0.p);
 	destroy_bandpass (txa[channel].bp0.p);
+	destroy_cfcomp (txa[channel].cfcomp.p);
+	destroy_phrot (txa[channel].phrot.p);
 	destroy_meter (txa[channel].lvlrmeter.p);
 	destroy_wcpagc (txa[channel].leveler.p);
 	destroy_emphp (txa[channel].preemph.p);
@@ -496,11 +512,11 @@ void flush_txa (int channel)
 	flush_emphp (txa[channel].preemph.p);
 	flush_wcpagc (txa[channel].leveler.p);
 	flush_meter (txa[channel].lvlrmeter.p);
+	flush_phrot (txa[channel].phrot.p);
+	flush_cfcomp (txa[channel].cfcomp.p);
 	flush_bandpass (txa[channel].bp0.p);
-	flush_gain (txa[channel].pfgain0.p);
 	flush_compressor (txa[channel].compressor.p);
 	flush_bandpass (txa[channel].bp1.p);
-	flush_gain (txa[channel].pfgain1.p);
 	flush_osctrl (txa[channel].osctrl.p);
 	flush_bandpass (txa[channel].bp2.p);
 	flush_meter (txa[channel].compmeter.p);
@@ -530,11 +546,11 @@ void xtxa (int channel)
 	xemphp (txa[channel].preemph.p, 0);
 	xwcpagc (txa[channel].leveler.p);
 	xmeter (txa[channel].lvlrmeter.p);
+	xphrot (txa[channel].phrot.p);
+	xcfcomp (txa[channel].cfcomp.p, 0);
 	xbandpass (txa[channel].bp0.p, 0);
-	xgain (txa[channel].pfgain0.p);
 	xcompressor (txa[channel].compressor.p);
 	xbandpass (txa[channel].bp1.p, 0);
-	xgain (txa[channel].pfgain1.p);
 	xosctrl (txa[channel].osctrl.p);
 	xbandpass (txa[channel].bp2.p, 0);
 	xmeter (txa[channel].compmeter.p);
@@ -603,11 +619,11 @@ void setDSPSamplerate_txa (int channel)
 	setSamplerate_emphp (txa[channel].preemph.p, ch[channel].dsp_rate);
 	setSamplerate_wcpagc (txa[channel].leveler.p, ch[channel].dsp_rate);
 	setSamplerate_meter (txa[channel].lvlrmeter.p, ch[channel].dsp_rate);
+	setSamplerate_phrot (txa[channel].phrot.p, ch[channel].dsp_rate);
+	setSamplerate_cfcomp (txa[channel].cfcomp.p, ch[channel].dsp_rate);
 	setSamplerate_bandpass (txa[channel].bp0.p, ch[channel].dsp_rate);
-	setSamplerate_gain (txa[channel].pfgain0.p, ch[channel].dsp_rate);
 	setSamplerate_compressor (txa[channel].compressor.p, ch[channel].dsp_rate);
 	setSamplerate_bandpass (txa[channel].bp1.p, ch[channel].dsp_rate);
-	setSamplerate_gain (txa[channel].pfgain1.p, ch[channel].dsp_rate);
 	setSamplerate_osctrl (txa[channel].osctrl.p, ch[channel].dsp_rate);
 	setSamplerate_bandpass (txa[channel].bp2.p, ch[channel].dsp_rate);
 	setSamplerate_meter (txa[channel].compmeter.p, ch[channel].dsp_rate);
@@ -660,16 +676,16 @@ void setDSPBuffsize_txa (int channel)
 	setSize_wcpagc (txa[channel].leveler.p, ch[channel].dsp_size);
 	setBuffers_meter (txa[channel].lvlrmeter.p, txa[channel].midbuff);
 	setSize_meter (txa[channel].lvlrmeter.p, ch[channel].dsp_size);
+	setBuffers_phrot (txa[channel].phrot.p, txa[channel].midbuff, txa[channel].midbuff);
+	setSize_phrot (txa[channel].phrot.p, ch[channel].dsp_size);
+	setBuffers_cfcomp (txa[channel].cfcomp.p, txa[channel].midbuff, txa[channel].midbuff);
+	setSize_cfcomp (txa[channel].cfcomp.p, ch[channel].dsp_size);
 	setBuffers_bandpass (txa[channel].bp0.p, txa[channel].midbuff, txa[channel].midbuff);
 	setSize_bandpass (txa[channel].bp0.p, ch[channel].dsp_size);
-	setBuffers_gain (txa[channel].pfgain0.p, txa[channel].midbuff, txa[channel].midbuff);
-	setSize_gain (txa[channel].pfgain0.p, ch[channel].dsp_size);
 	setBuffers_compressor (txa[channel].compressor.p, txa[channel].midbuff, txa[channel].midbuff);
 	setSize_compressor (txa[channel].compressor.p, ch[channel].dsp_size);
 	setBuffers_bandpass (txa[channel].bp1.p, txa[channel].midbuff, txa[channel].midbuff);
 	setSize_bandpass (txa[channel].bp1.p, ch[channel].dsp_size);
-	setBuffers_gain (txa[channel].pfgain1.p, txa[channel].midbuff, txa[channel].midbuff);
-	setSize_gain (txa[channel].pfgain1.p, ch[channel].dsp_size);
 	setBuffers_osctrl (txa[channel].osctrl.p, txa[channel].midbuff, txa[channel].midbuff);
 	setSize_osctrl (txa[channel].osctrl.p, ch[channel].dsp_size);
 	setBuffers_bandpass (txa[channel].bp2.p, txa[channel].midbuff, txa[channel].midbuff);
@@ -711,40 +727,53 @@ void setDSPBuffsize_txa (int channel)
 PORT
 void SetTXAMode (int channel, int mode)
 {
-	EnterCriticalSection (&ch[channel].csDSP);
-	txa[channel].mode = mode;
-	txa[channel].ammod.p->run   = 0;
-	txa[channel].fmmod.p->run   = 0;
-	txa[channel].pfgain0.p->run = 0;
-	txa[channel].pfgain1.p->run = 0;
-	txa[channel].preemph.p->run = 0;
-	switch (mode)
+	if (txa[channel].mode != mode)
 	{
-	case TXA_AM:
-	case TXA_SAM:
-		txa[channel].ammod.p->run   = 1;
-		txa[channel].ammod.p->mode  = 0;
-		txa[channel].pfgain0.p->run = 1;
-		txa[channel].pfgain1.p->run = 1;
-		break;
-	case TXA_DSB:
-		txa[channel].ammod.p->run   = 1;
-		txa[channel].ammod.p->mode  = 1;
-		txa[channel].pfgain0.p->run = 1;
-		txa[channel].pfgain1.p->run = 1;
-		break;
-	case TXA_FM:
-		txa[channel].fmmod.p->run   = 1;
-		txa[channel].pfgain0.p->run = 1;
-		txa[channel].pfgain1.p->run = 1;
-		txa[channel].preemph.p->run = 1;
-		break;
-	default:
+		EnterCriticalSection (&ch[channel].csDSP);
+		txa[channel].mode = mode;
+		txa[channel].ammod.p->run   = 0;
+		txa[channel].fmmod.p->run   = 0;
+		txa[channel].preemph.p->run = 0;
+		switch (mode)
+		{
+		case TXA_AM:
+		case TXA_SAM:
+			txa[channel].ammod.p->run   = 1;
+			txa[channel].ammod.p->mode  = 0;
+			break;
+		case TXA_DSB:
+			txa[channel].ammod.p->run   = 1;
+			txa[channel].ammod.p->mode  = 1;
+			break;
+		case TXA_AM_LSB:
+		case TXA_AM_USB:
+			txa[channel].ammod.p->run   = 1;
+			txa[channel].ammod.p->mode  = 2;
+			break;
+		case TXA_FM:
+			txa[channel].fmmod.p->run   = 1;
+			txa[channel].preemph.p->run = 1;
+			break;
+		default:
 
-		break;
+			break;
+		}
+		TXASetupBPFilters (channel);
+		LeaveCriticalSection (&ch[channel].csDSP);
 	}
-	LeaveCriticalSection (&ch[channel].csDSP);
 }
+
+PORT
+void SetTXABandpassFreqs (int channel, double f_low, double f_high)
+{
+	if ((txa[channel].f_low != f_low) || (txa[channel].f_high != f_high))
+	{
+		txa[channel].f_low = f_low;
+		txa[channel].f_high = f_high;
+		TXASetupBPFilters (channel);
+	}
+}
+
 
 /********************************************************************************************************
 *																										*
@@ -768,6 +797,82 @@ int TXAUslewCheck (int channel)
 			(txa[channel].fmmod.p->run == 1) ||
 			(txa[channel].gen0.p->run  == 1) ||
 			(txa[channel].gen1.p->run  == 1);
+}
+
+void TXASetupBPFilters (int channel)
+{
+	txa[channel].bp0.p->run = 1;
+	txa[channel].bp1.p->run = 0;
+	txa[channel].bp2.p->run = 0;
+	switch (txa[channel].mode)
+	{
+	case TXA_LSB:
+	case TXA_USB:
+	case TXA_CWL:
+	case TXA_CWU:
+	case TXA_DIGL:
+	case TXA_DIGU:
+	case TXA_SPEC:
+	case TXA_DRM:
+		CalcBandpassFilter (txa[channel].bp0.p, txa[channel].f_low, txa[channel].f_high, 2.0);
+		if (txa[channel].compressor.p->run)
+		{
+			CalcBandpassFilter (txa[channel].bp1.p, txa[channel].f_low, txa[channel].f_high, 2.0);
+			txa[channel].bp1.p->run = 1;
+			if (txa[channel].osctrl.p->run)
+			{
+				CalcBandpassFilter (txa[channel].bp2.p, txa[channel].f_low, txa[channel].f_high, 1.0);
+				txa[channel].bp2.p->run = 1;
+			}
+		}
+		break;
+	case TXA_DSB:
+	case TXA_AM:
+	case TXA_SAM:
+	case TXA_FM:
+		if (txa[channel].compressor.p->run)
+		{
+			CalcBandpassFilter (txa[channel].bp0.p, 0.0, txa[channel].f_high, 2.0);
+			CalcBandpassFilter (txa[channel].bp1.p, 0.0, txa[channel].f_high, 2.0);
+			txa[channel].bp1.p->run = 1;
+			if (txa[channel].osctrl.p->run)
+			{
+				CalcBandpassFilter (txa[channel].bp2.p, 0.0, txa[channel].f_high, 1.0);
+				txa[channel].bp2.p->run = 1;
+			}
+		}
+		else
+		{
+			CalcBandpassFilter (txa[channel].bp0.p, txa[channel].f_low, txa[channel].f_high, 1.0);
+		}
+		break;
+	case TXA_AM_LSB:
+		CalcBandpassFilter (txa[channel].bp0.p, -txa[channel].f_high, 0.0, 2.0);
+		if (txa[channel].compressor.p->run)
+		{
+			CalcBandpassFilter (txa[channel].bp1.p, -txa[channel].f_high, 0.0, 2.0);
+			txa[channel].bp1.p->run = 1;
+			if (txa[channel].osctrl.p->run)
+			{
+				CalcBandpassFilter (txa[channel].bp2.p, -txa[channel].f_high, 0.0, 1.0);
+				txa[channel].bp2.p->run = 1;
+			}
+		}
+		break;
+	case TXA_AM_USB:
+		CalcBandpassFilter (txa[channel].bp0.p, 0.0, txa[channel].f_high, 2.0);
+		if (txa[channel].compressor.p->run)
+		{
+			CalcBandpassFilter (txa[channel].bp1.p, 0.0, txa[channel].f_high, 2.0);
+			txa[channel].bp1.p->run = 1;
+			if (txa[channel].osctrl.p->run)
+			{
+				CalcBandpassFilter (txa[channel].bp2.p, 0.0, txa[channel].f_high, 1.0);
+				txa[channel].bp2.p->run = 1;
+			}
+		}
+		break;
+	}
 }
 
 /********************************************************************************************************

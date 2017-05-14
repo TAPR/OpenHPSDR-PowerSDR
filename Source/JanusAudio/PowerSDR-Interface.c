@@ -469,7 +469,7 @@ KD5TFDVK6APHAUDIO_API int getFwdPower() {
 	return FwdPower; 
 } 
 
-KD5TFDVK6APHAUDIO_API int getAlexFwdPower() { 
+KD5TFDVK6APHAUDIO_API float getAlexFwdPower() { 
 	if ( !isMetis ) { 
 		getI2CBytes(I2C_PENNY_FWD);
 	}
@@ -485,7 +485,7 @@ C3 – Bits 15-8 of AIN3 from Penny or Hermes*
 C4 – Bits 7-0  of AIN3 from Penny or Hermes*
 */
 
-KD5TFDVK6APHAUDIO_API int getRefPower() { 
+KD5TFDVK6APHAUDIO_API float getRefPower() { 
 	if ( !isMetis ) { 
 		getI2CBytes(I2C_PENNY_REV);
 	}

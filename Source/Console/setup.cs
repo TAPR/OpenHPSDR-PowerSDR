@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2016  Doug Wigley
+// Copyright (C) 2010-2017  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -2793,6 +2793,7 @@ namespace PowerSDR
             radRX2USB_CheckedChanged(this, e);
             chkCBlock_CheckedChanged(this, e);
             chkRX2CBlock_CheckedChanged(this, e);
+            radTXDSB_CheckedChanged(this, e);
             // FM Tab
             chkEmphPos_CheckedChanged(this, e);
             chkRemoveTone_CheckedChanged(this, e);
@@ -2947,7 +2948,22 @@ namespace PowerSDR
             udDSPSNBThresh2_ValueChanged(this, e);
             // MNF
             chkMNFAutoIncrease_CheckedChanged(this, e);
-            chkEnableXVTRHF_CheckedChanged(this, e);
+
+			chkEnableXVTRHF_CheckedChanged(this, e);
+
+            // CFCompressor
+            chkCFCEnable_CheckedChanged(this, e);
+            setCFCProfile(this, e);
+            tbCFCPRECOMP_Scroll(this, e);
+            chkCFCPeqEnable_CheckedChanged(this, e);
+            tbCFCPEG_Scroll(this, e);
+            // Phase Rotator
+            chkPHROTEnable_CheckedChanged(this, e);
+            udPhRotFreq_ValueChanged(this, e);
+            udPHROTStages_ValueChanged(this, e);
+            // TXEQ
+            console.EQForm.setTXEQProfile(this, e);
+
             chkWheelReverse_CheckedChanged(this, e);
         }
 
@@ -3009,7 +3025,7 @@ namespace PowerSDR
             if (console.EQForm.TXEQEnabled != (bool)rows[0]["TXEQEnabled"])
                 return true;
 
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
             {
                 if (eq[i] != (int)rows[0]["TXEQ" + i])
                     return true;
@@ -3052,10 +3068,10 @@ namespace PowerSDR
             dr["TXEQNumBands"] = console.EQForm.NumBands;
             int[] eq = console.EQForm.TXEQ;
             dr["TXEQPreamp"] = eq[0];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 dr["TXEQ" + i.ToString()] = eq[i];
-            for (int i = eq.Length; i < 11; i++)
-                dr["TXEQ" + i.ToString()] = 0;
+            for (int i = 11; i < 21; i++)
+                dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
 
             dr["DXOn"] = console.DX;
             dr["DXLevel"] = console.DXLevel;
@@ -3158,8 +3174,23 @@ namespace PowerSDR
 
             dr["CESSB_On"] = chkDSPCESSB.Checked;
             dr["Disable_Pure_Signal"] = chkDisablePureSignal.Checked;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+
+            //CFC
+            dr["CFCEnabled"] = chkCFCEnable.Checked;
+            dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
+            dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
+            dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
+            dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
+            int[] cfceq = CFCCOMPEQ;
+            dr["CFCPreComp"] = cfceq[0];
+            for (int i = 1; i < 11; i++)
+                dr["CFCPreComp" + (i - 1).ToString()] = cfceq[i];
+            dr["CFCPostEqGain"] = cfceq[11];
+            for (int i = 12; i < 22; i++)
+                dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
+            for (int i = 22; i < 32; i++)
+                dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
+
         }
 
         public void UpdateWaterfallBandInfo()
@@ -6310,86 +6341,270 @@ namespace PowerSDR
 
         public float PA10W
         {
-            get { return (float)udPA10W.Value; }
-            set { udPA10W.Value = (decimal)value; }
+            get 
+            {
+                float rv = (float)ud100PA10W.Value;
+
+                switch(console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                     rv = (float)ud10PA1W.Value; 
+                       break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA20W.Value;
+                        break;
+                }
+                return rv;
+
+            }
         }
 
         public float PA20W
         {
-            get { return (float)udPA20W.Value; }
-            set { udPA20W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA20W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA2W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA40W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA30W
         {
-            get { return (float)udPA30W.Value; }
-            set { udPA30W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA30W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                     rv = (float)ud10PA3W.Value;
+                       break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA60W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA40W
         {
-            get { return (float)udPA40W.Value; }
-            set { udPA40W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA40W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA4W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA80W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA50W
         {
-            get { return (float)udPA50W.Value; }
-            set { udPA50W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA50W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA5W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA100W.Value;
+                       break;
+                }
+                 return rv;
+            }
         }
 
         public float PA60W
         {
-            get { return (float)udPA60W.Value; }
-            set { udPA60W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA60W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA6W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                     rv = (float)ud200PA120W.Value;
+                       break;
+                }
+                return rv;
+            }
         }
 
         public float PA70W
         {
-            get { return (float)udPA70W.Value; }
-            set { udPA70W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA70W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA7W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA140W.Value;
+                       break;
+                }
+                return rv;
+            }
         }
 
         public float PA80W
         {
-            get { return (float)udPA80W.Value; }
-            set { udPA80W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA80W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA8W.Value;
+                         break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA160W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA90W
         {
-            get { return (float)udPA90W.Value; }
-            set { udPA90W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA90W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA9W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA180W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA100W
         {
-            get { return (float)udPA100W.Value; }
-            set { udPA100W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA100W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA10W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA200W.Value;
+                        break;
+                }
+                 return rv;
+            }
         }
 
         public float PA110W
         {
-            get { return (float)udPA110W.Value; }
-            set { udPA110W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA110W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                    rv = (float)ud10PA11W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                    rv = (float)ud200PA220W.Value;
+                        break;
+                }
+                return rv;
+            }
         }
 
         public float PA120W
         {
-            get { return (float)udPA120W.Value; }
-            set { udPA120W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA120W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                   rv = (float)ud10PA12W.Value;
+                         break;
+                    case HPSDRModel.ANAN8000D:
+                     rv = (float)ud200PA240W.Value;
+                       break;
+                }
+                return rv;
+            }
         }
 
         public float PA130W
         {
-            get { return (float)udPA130W.Value; }
-            set { udPA130W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA130W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                   rv = (float)ud10PA13W.Value;
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                     rv = (float)ud200PA260W.Value;
+                        break;
+                }
+                 return rv;
+            }
         }
 
         public float PA140W
         {
-            get { return (float)udPA140W.Value; }
-            set { udPA140W.Value = (decimal)value; }
+            get
+            {
+                float rv = (float)ud100PA140W.Value;
+                switch (console.CurrentHPSDRModel)
+                {
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                     rv = (float)ud10PA14W.Value;
+                       break;
+                    case HPSDRModel.ANAN8000D:
+                     rv = (float)ud200PA280W.Value;
+                        break;
+                }
+                 return rv;
+            }
         }
 
         // Added 06/21/05 BT for CAT commands
@@ -6690,6 +6905,96 @@ namespace PowerSDR
                 firmware_bypass = value;
             }
         }
+
+        public int[] CFCCOMPEQ
+		{
+			get
+			{
+					int[] cfceq = new int[32];
+					cfceq[0] = tbCFCPRECOMP.Value;
+					cfceq[1] = tbCFC0.Value;
+					cfceq[2] = tbCFC1.Value;
+					cfceq[3] = tbCFC2.Value;
+					cfceq[4] = tbCFC3.Value;
+					cfceq[5] = tbCFC4.Value;
+					cfceq[6] = tbCFC5.Value;
+					cfceq[7] = tbCFC6.Value;
+					cfceq[8] = tbCFC7.Value;
+					cfceq[9] = tbCFC8.Value;
+					cfceq[10] = tbCFC9.Value;
+
+					cfceq[11] = tbCFCPEQGAIN.Value;
+					cfceq[12] = tbCFCEQ0.Value;
+					cfceq[13] = tbCFCEQ1.Value;
+					cfceq[14] = tbCFCEQ2.Value;
+					cfceq[15] = tbCFCEQ3.Value;
+					cfceq[16] = tbCFCEQ4.Value;
+					cfceq[17] = tbCFCEQ5.Value;
+					cfceq[18] = tbCFCEQ6.Value;
+					cfceq[19] = tbCFCEQ7.Value;
+					cfceq[20] = tbCFCEQ8.Value;
+					cfceq[21] = tbCFCEQ9.Value;
+
+                    cfceq[22] = (int)udCFC0.Value;
+                    cfceq[23] = (int)udCFC1.Value;
+                    cfceq[24] = (int)udCFC2.Value;
+                    cfceq[25] = (int)udCFC3.Value;
+                    cfceq[26] = (int)udCFC4.Value;
+                    cfceq[27] = (int)udCFC5.Value;
+                    cfceq[28] = (int)udCFC6.Value;
+                    cfceq[29] = (int)udCFC7.Value;
+                    cfceq[30] = (int)udCFC8.Value;
+                    cfceq[31] = (int)udCFC9.Value;	
+
+					return cfceq;
+			}
+
+			set
+			{
+					if(value.Length < 32)
+					{
+						MessageBox.Show("Error setting CFC EQ");
+						return; 
+					}					
+					tbCFCPRECOMP.Value = Math.Max(tbCFCPRECOMP.Minimum, Math.Min(tbCFCPRECOMP.Maximum, value[0]));					
+					tbCFC0.Value = Math.Max(tbCFC0.Minimum, Math.Min(tbCFC0.Maximum, value[1]));					
+					tbCFC1.Value = Math.Max(tbCFC1.Minimum, Math.Min(tbCFC1.Maximum, value[2]));					
+					tbCFC2.Value = Math.Max(tbCFC2.Minimum, Math.Min(tbCFC2.Maximum, value[3]));						
+					tbCFC3.Value = Math.Max(tbCFC3.Minimum, Math.Min(tbCFC3.Maximum, value[4]));						
+					tbCFC4.Value = Math.Max(tbCFC4.Minimum, Math.Min(tbCFC4.Maximum, value[5]));						
+					tbCFC5.Value = Math.Max(tbCFC5.Minimum, Math.Min(tbCFC5.Maximum, value[6]));						
+					tbCFC6.Value = Math.Max(tbCFC6.Minimum, Math.Min(tbCFC6.Maximum, value[7]));						
+					tbCFC7.Value = Math.Max(tbCFC7.Minimum, Math.Min(tbCFC7.Maximum, value[8]));						
+					tbCFC8.Value = Math.Max(tbCFC8.Minimum, Math.Min(tbCFC8.Maximum, value[9]));						
+					tbCFC9.Value = Math.Max(tbCFC9.Minimum, Math.Min(tbCFC9.Maximum, value[10]));						
+					tbCFCPEQGAIN.Value = Math.Max(tbCFCPEQGAIN.Minimum, Math.Min(tbCFCPEQGAIN.Maximum, value[11]));				
+					tbCFCEQ0.Value = Math.Max(tbCFCEQ0.Minimum, Math.Min(tbCFCEQ0.Maximum, value[12]));
+					tbCFCEQ1.Value = Math.Max(tbCFCEQ1.Minimum, Math.Min(tbCFCEQ1.Maximum, value[13]));
+					tbCFCEQ2.Value = Math.Max(tbCFCEQ2.Minimum, Math.Min(tbCFCEQ2.Maximum, value[14]));	
+					tbCFCEQ3.Value = Math.Max(tbCFCEQ3.Minimum, Math.Min(tbCFCEQ3.Maximum, value[15]));	
+					tbCFCEQ4.Value = Math.Max(tbCFCEQ4.Minimum, Math.Min(tbCFCEQ4.Maximum, value[16]));	
+					tbCFCEQ5.Value = Math.Max(tbCFCEQ5.Minimum, Math.Min(tbCFCEQ5.Maximum, value[17]));	
+					tbCFCEQ6.Value = Math.Max(tbCFCEQ6.Minimum, Math.Min(tbCFCEQ6.Maximum, value[18]));	
+					tbCFCEQ7.Value = Math.Max(tbCFCEQ7.Minimum, Math.Min(tbCFCEQ7.Maximum, value[19]));	
+					tbCFCEQ8.Value = Math.Max(tbCFCEQ8.Minimum, Math.Min(tbCFCEQ8.Maximum, value[20]));	
+					tbCFCEQ9.Value = Math.Max(tbCFCEQ9.Minimum, Math.Min(tbCFCEQ9.Maximum, value[21]));
+                    udCFC0.Value = Math.Max(udCFC0.Minimum, Math.Min(udCFC0.Maximum, value[22]));
+                    udCFC1.Value = Math.Max(udCFC1.Minimum, Math.Min(udCFC1.Maximum, value[23]));
+                    udCFC2.Value = Math.Max(udCFC2.Minimum, Math.Min(udCFC2.Maximum, value[24]));
+                    udCFC3.Value = Math.Max(udCFC3.Minimum, Math.Min(udCFC3.Maximum, value[25]));
+                    udCFC4.Value = Math.Max(udCFC4.Minimum, Math.Min(udCFC4.Maximum, value[26]));
+                    udCFC5.Value = Math.Max(udCFC5.Minimum, Math.Min(udCFC5.Maximum, value[27]));
+                    udCFC6.Value = Math.Max(udCFC6.Minimum, Math.Min(udCFC6.Maximum, value[28]));
+                    udCFC7.Value = Math.Max(udCFC7.Minimum, Math.Min(udCFC7.Maximum, value[29]));
+                    udCFC8.Value = Math.Max(udCFC8.Minimum, Math.Min(udCFC8.Maximum, value[30]));
+                    udCFC9.Value = Math.Max(udCFC9.Minimum, Math.Min(udCFC9.Maximum, value[31]));						
+	
+				    tbCFCPRECOMP_Scroll(this, EventArgs.Empty);
+                    tbCFCPEG_Scroll(this, EventArgs.Empty);
+                    setCFCProfile(this, EventArgs.Empty);
+			}
+		}
+
 
 
         #endregion
@@ -7695,22 +8000,46 @@ namespace PowerSDR
                 panelAlex1HPFControl.Visible = false;
 
             }
-            console.ANAN8000DPresent = radGenModelANAN8000D.Checked;
             radGenModelHPSDR_or_Hermes_CheckedChanged(sender, e, true);
 
             if (radGenModelANAN8000D.Checked)
             {
-                bool power = console.PowerOn;
+                int nr;
+                bool pwr_cycled = false;
+                if (chkLimitRX.Checked) nr = 2;
+                else nr = 4;
 
-                if (power && (old_model != console.CurrentHPSDRModel))
+                if (chkLimitRX.Checked)
+                    console.StitchedReceivers = 1;
+                else console.StitchedReceivers = 3;
+                if (!chkDisablePureSignal.Checked)
+                    nr = console.psform.NRX(nr, console.CurrentHPSDRModel);
+
+                int old_rate = console.NReceivers;
+                int new_rate = nr;
+                bool power = console.PowerOn;
+                if (power && new_rate != old_rate)
                 {
                     console.PowerOn = false;
                     Thread.Sleep(100);
                 }
+                console.psform.SetPSReceivers(console.CurrentHPSDRModel);
+                console.NReceivers = nr;
 
-                if (power && (old_model != console.CurrentHPSDRModel))
+                if (power && new_rate != old_rate)
                 {
+                    pwr_cycled = true;
                     console.PowerOn = true;
+                }
+
+                if (power && !pwr_cycled)
+                {
+                    if (old_model != console.CurrentHPSDRModel)
+                    {
+                        console.PowerOn = false;
+                        Thread.Sleep(100);
+                        console.PowerOn = true;
+                    }
                 }
             }
         }
@@ -8071,6 +8400,10 @@ namespace PowerSDR
                 tpAlexFilterControl.Text = "LPF";
                 panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(298, 0);
+              //  grp10WattMeterTrim.Visible = true;
+              //  grp100WattMeterTrim.Visible = false;
+              //  grp200WattMeterTrim.Visible = false;
+                grp10WattMeterTrim.BringToFront();
             }
             else if (radGenModelANAN8000D.Checked)
             {
@@ -8086,7 +8419,10 @@ namespace PowerSDR
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
- 
+             //   grp10WattMeterTrim.Visible = false;
+              //  grp100WattMeterTrim.Visible = false;
+              //  grp200WattMeterTrim.Visible = true;
+                grp200WattMeterTrim.BringToFront();
             }
             else
             {
@@ -8104,7 +8440,10 @@ namespace PowerSDR
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
                 lblRx26mLNA.Visible = false;
-
+            //    grp10WattMeterTrim.Visible = false;
+             //   grp100WattMeterTrim.Visible = true;
+             //   grp200WattMeterTrim.Visible = false;
+                grp100WattMeterTrim.BringToFront();
             }
 
             if (radGenModelHermes.Checked || radGenModelHPSDR.Checked)
@@ -8189,11 +8528,12 @@ namespace PowerSDR
                    tcAudio.SelectedIndex = 0;
                } */
 
-            /*  if (tcDSP.TabPages.Contains(tpDSPImageReject))
+            // Hide CFC tab
+            if (tcDSP.TabPages.Contains(tpDSPCFC))
               {
-                  tcDSP.TabPages.Remove(tpDSPImageReject);
+                  tcDSP.TabPages.Remove(tpDSPCFC);
                   tcDSP.SelectedIndex = 0;
-              } */
+              } 
 
             /* if (tcDSP.TabPages.Contains(tpDSPEER))
               {
@@ -11947,14 +12287,18 @@ namespace PowerSDR
 
             DataRow dr = rows[0];
             int[] eq = null;
-            eq = new int[11];
+            eq = new int[21];
+            int[] cfceq = null;
+            cfceq = new int[32];
 
             console.EQForm.TXEQEnabled = (bool)dr["TXEQEnabled"];
             console.EQForm.NumBands = (int)dr["TXEQNumBands"];
 
             eq[0] = (int)dr["TXEQPreamp"];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 eq[i] = (int)dr["TXEQ" + i.ToString()];
+            for (int i = 11; i < 21; i++)
+                eq[i] = (int)dr["TxEqFreq" + (i - 10).ToString()];
             console.EQForm.TXEQ = eq;
 
             udTXFilterLow.Value = Math.Min(Math.Max((int)dr["FilterLow"], udTXFilterLow.Minimum), udTXFilterLow.Maximum);
@@ -12063,6 +12407,26 @@ namespace PowerSDR
             chkDSPCESSB.Checked = (bool)dr["CESSB_On"];
             chkDisablePureSignal.Checked = (bool)dr["Disable_Pure_Signal"];
 
+            //CFC
+            chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
+            chkCFCPeqEnable.Checked = (bool)dr["CFCPostEqEnabled"];
+            chkPHROTEnable.Checked = (bool)dr["CFCPhaseRotatorEnabled"];
+
+            udPhRotFreq.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorFreq"], udPhRotFreq.Minimum), udPhRotFreq.Maximum);
+            udPHROTStages.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorStages"], udPHROTStages.Minimum), udPHROTStages.Maximum);
+
+            cfceq[0] = (int)dr["CFCPreComp"];
+            for (int i = 1; i < 11; i++)
+                cfceq[i] = (int)dr["CFCPreComp" + (i - 1).ToString()];
+
+            cfceq[11] = (int)dr["CFCPostEqGain"];
+            for (int i = 12; i < 22; i++)
+                cfceq[i] = (int)dr["CFCPostEqGain" + (i - 12).ToString()];
+            for (int i = 22; i < 32; i++)
+                cfceq[i] = (int)dr["CFCEqFreq" + (i - 22).ToString()];
+
+            CFCCOMPEQ = cfceq;
+
             current_profile = comboTXProfileName.Text;
         }
 
@@ -12110,10 +12474,10 @@ namespace PowerSDR
             dr["TXEQNumBands"] = console.EQForm.NumBands;
             int[] eq = console.EQForm.TXEQ;
             dr["TXEQPreamp"] = eq[0];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 dr["TXEQ" + i.ToString()] = eq[i];
-            for (int i = eq.Length; i < 11; i++)
-                dr["TXEQ" + i.ToString()] = 0;
+            for (int i = 11; i < 21; i++)
+                dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
 
             dr["DXOn"] = console.DX;
             dr["DXLevel"] = console.DXLevel;
@@ -12216,8 +12580,22 @@ namespace PowerSDR
             dr["Line_Input_Level"] = udLineInBoost.Value;
             dr["CESSB_On"] = chkDSPCESSB.Checked;
             dr["Disable_Pure_Signal"] = chkDisablePureSignal.Checked;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+
+            //CFC
+            dr["CFCEnabled"] = chkCFCEnable.Checked;
+            dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
+            dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
+            dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
+            dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
+            int[] cfceq = CFCCOMPEQ;
+            dr["CFCPreComp"] = cfceq[0];
+            for (int i = 1; i < 11; i++)
+                dr["CFCPreComp" + (i - 1).ToString()] = cfceq[i];
+            dr["CFCPostEqGain"] = cfceq[11];
+            for (int i = 12; i < 22; i++)
+                dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
+            for (int i = 22; i < 32; i++)
+                dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -18524,6 +18902,9 @@ namespace PowerSDR
                 case HPSDRModel.ANAN200D:
                     radGenModelANAN200D_CheckedChanged(this, EventArgs.Empty);
                     break;
+                case HPSDRModel.ANAN8000D:
+                    radGenModelANAN8000D_CheckedChanged(this, EventArgs.Empty);
+                    break;
             }
         }
 
@@ -18679,25 +19060,65 @@ namespace PowerSDR
             textPARevPower.Text = "";
             textRevADCValue.Text = "";
             textRevVoltage.Text = "";
+            textCaldFwdPower.Text = "";
+            textSWR.Text = "";
         }
 
         private void btnResetWattMeterValues_Click(object sender, EventArgs e)
         {
-            udPA10W.Value = 10;
-            udPA20W.Value = 20;
-            udPA30W.Value = 30;
-            udPA40W.Value = 40;
-            udPA50W.Value = 50;
-            udPA60W.Value = 60;
-            udPA70W.Value = 70;
-            udPA80W.Value = 80;
-            udPA90W.Value = 90;
-            udPA100W.Value = 100;
-            udPA110W.Value = 110;
-            udPA120W.Value = 120;
-            udPA130W.Value = 130;
-            udPA140W.Value = 140;
-        }
+            switch(console.CurrentHPSDRModel)
+            {
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                ud10PA1W.Value = 1;
+                ud10PA2W.Value = 2;
+                ud10PA3W.Value = 3;
+                ud10PA4W.Value = 4;
+                ud10PA5W.Value = 5;
+                ud10PA6W.Value = 6;
+                ud10PA7W.Value = 7;
+                ud10PA8W.Value = 8;
+                ud10PA9W.Value = 9;
+                ud10PA10W.Value = 10;
+                ud10PA11W.Value = 11;
+                ud10PA12W.Value = 12;
+                ud10PA13W.Value = 13;
+                ud10PA14W.Value = 14;
+                    break;
+                case HPSDRModel.ANAN8000D:
+                ud200PA20W.Value = 20;
+                ud200PA40W.Value = 40;
+                ud200PA60W.Value = 60;
+                ud200PA80W.Value = 80;
+                ud200PA100W.Value = 100;
+                ud200PA120W.Value = 120;
+                ud200PA140W.Value = 140;
+                ud200PA160W.Value = 160;
+                ud200PA180W.Value = 180;
+                ud200PA200W.Value = 200;
+                ud200PA220W.Value = 220;
+                ud200PA240W.Value = 240;
+                ud200PA260W.Value = 260;
+                ud200PA280W.Value = 280;
+                   break;
+                default:
+                ud100PA10W.Value = 10;
+                ud100PA20W.Value = 20;
+                ud100PA30W.Value = 30;
+                ud100PA40W.Value = 40;
+                ud100PA50W.Value = 50;
+                ud100PA60W.Value = 60;
+                ud100PA70W.Value = 70;
+                ud100PA80W.Value = 80;
+                ud100PA90W.Value = 90;
+                ud100PA100W.Value = 100;
+                ud100PA110W.Value = 110;
+                ud100PA120W.Value = 120;
+                ud100PA130W.Value = 130;
+                ud100PA140W.Value = 140;
+                    break;
+            }
+       }
 
         public void ForceEnablePureSignal()
         {
@@ -20064,6 +20485,106 @@ namespace PowerSDR
             console.EnableXVTRHF = chkEnableXVTRHF.Checked;
         }
 
+        private void chkCFCEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkCFCEnable.Checked) run = 1;
+            else                      run = 0;
+            wdsp.SetTXACFCOMPRun(wdsp.id(1, 0), run);
+        }
+
+        private void setCFCProfile(object sender, EventArgs e)
+        {
+            const int nfreqs = 10;
+            double[]F = new double[nfreqs];
+            double[]G = new double[nfreqs];
+            double[]E = new double[nfreqs];
+            F[0] = (double)udCFC0.Value;
+            F[1] = (double)udCFC1.Value;
+            F[2] = (double)udCFC2.Value;
+            F[3] = (double)udCFC3.Value;
+            F[4] = (double)udCFC4.Value;
+            F[5] = (double)udCFC5.Value;
+            F[6] = (double)udCFC6.Value;
+            F[7] = (double)udCFC7.Value;
+            F[8] = (double)udCFC8.Value;
+            F[9] = (double)udCFC9.Value;
+            G[0] = (double)tbCFC0.Value;
+            G[1] = (double)tbCFC1.Value;
+            G[2] = (double)tbCFC2.Value;
+            G[3] = (double)tbCFC3.Value;
+            G[4] = (double)tbCFC4.Value;
+            G[5] = (double)tbCFC5.Value;
+            G[6] = (double)tbCFC6.Value;
+            G[7] = (double)tbCFC7.Value;
+            G[8] = (double)tbCFC8.Value;
+            G[9] = (double)tbCFC9.Value;
+            E[0] = (double)tbCFCEQ0.Value;
+            E[1] = (double)tbCFCEQ1.Value;
+            E[2] = (double)tbCFCEQ2.Value;
+            E[3] = (double)tbCFCEQ3.Value;
+            E[4] = (double)tbCFCEQ4.Value;
+            E[5] = (double)tbCFCEQ5.Value;
+            E[6] = (double)tbCFCEQ6.Value;
+            E[7] = (double)tbCFCEQ7.Value;
+            E[8] = (double)tbCFCEQ8.Value;
+            E[9] = (double)tbCFCEQ9.Value;
+            unsafe 
+            {
+                fixed (double* Fptr = &F[0], Gptr = &G[0], Eptr = &E[0])
+                {
+                    wdsp.SetTXACFCOMPprofile(wdsp.id(1, 0), nfreqs, Fptr, Gptr, Eptr);
+                }
+            }
+        }
+
+        private void tbCFCPRECOMP_Scroll(object sender, EventArgs e)
+        {
+            wdsp.SetTXACFCOMPPrecomp(wdsp.id(1, 0), (double)tbCFCPRECOMP.Value);
+        }
+
+        private void chkCFCPeqEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkCFCPeqEnable.Checked)    run = 1;
+            else                            run = 0;
+            wdsp.SetTXACFCOMPPeqRun(wdsp.id(1, 0), run);
+        }
+
+        private void chkPHROTEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkPHROTEnable.Checked) run = 1;
+            else run = 0;
+            wdsp.SetTXAPHROTRun(wdsp.id(1, 0), run);
+        }
+
+        private void udPhRotFreq_ValueChanged(object sender, EventArgs e)
+        {
+            wdsp.SetTXAPHROTCorner(wdsp.id(1, 0), (double)udPhRotFreq.Value);
+        }
+
+        private void udPHROTStages_ValueChanged(object sender, EventArgs e)
+        {
+            wdsp.SetTXAPHROTNstages(wdsp.id(1, 0), (int)udPHROTStages.Value);
+        }
+
+        private void tbCFCPEG_Scroll(object sender, EventArgs e)
+        {
+            wdsp.SetTXACFCOMPPrePeq(wdsp.id(1, 0), (double)tbCFCPEQGAIN.Value);
+        }
+
+        private void radTXDSB_CheckedChanged(object sender, EventArgs e)
+        {
+            int value = 0;
+            if (radTXDSB.Checked)
+                value = 0;
+            else if (radTXLSB.Checked)
+                value = 1;
+            else if (radTXUSB.Checked)
+                value = 2;
+            console.radio.GetDSPTX(0).SubAMMode = value;
+        }
     }
 
     #region PADeviceInfo Helper Class

@@ -44,6 +44,7 @@ namespace PowerSDR
         private int rptr;	/// Read Pointer
         private int size;	/// Size of the RingBuffer
         private int mask;	/// mask used to speed reads/writes
+		private bool writeFlag;
 
         #endregion
 
@@ -55,6 +56,7 @@ namespace PowerSDR
             buf = new float[size];
             mask = size - 1;
             wptr = rptr = 0;
+			writeFlag = false;
         }
 
         #endregion
@@ -88,7 +90,8 @@ namespace PowerSDR
         {
             int w = wptr, r = rptr;
             if (w > r) return w - r;
-            else return (size - r + w) & mask;
+            else if (w < r) return (size - r + w);
+			else return !writeFlag ? 0 : size;
         }
 
         /// <summary>
@@ -98,9 +101,9 @@ namespace PowerSDR
         public int WriteSpace()
         {
             int w = wptr, r = rptr;
-            if (w > r) return ((size - w + r) & mask) - 1;
-            else if (w < r) return r - w - 1;
-            else return size - 1;
+            if (w > r) return (size - w + r);
+            else if (w < r) return r - w;
+            else return writeFlag ? 0 : size;
         }
 
         /// <summary>
@@ -136,6 +139,9 @@ namespace PowerSDR
                 Array.Copy(buf, rptr, dest, n1, n2);
                 rptr = (rptr + n2) & mask;
             }
+			
+			writeFlag = false;
+			
             return to_read;
         }
 
@@ -173,6 +179,9 @@ namespace PowerSDR
                 Marshal.Copy(buf, 0, new IntPtr(&dest[n1]), n2);
                 rptr = (rptr + n2) & mask;
             }
+			
+			writeFlag = false;
+			
             return to_read;
         }
 
@@ -210,6 +219,9 @@ namespace PowerSDR
                 Array.Copy(src, n1, buf, wptr, n2);
                 wptr = (wptr + n2) & mask;
             }
+			
+			writeFlag = true;
+			
             return to_write;
         }
 
@@ -247,6 +259,9 @@ namespace PowerSDR
                 Marshal.Copy(new IntPtr(&src[n1]), buf, wptr, n2);
                 wptr = (wptr + n2) & mask;
             }
+			
+			writeFlag = true;
+			
             return to_write;
         }
 
@@ -257,6 +272,7 @@ namespace PowerSDR
         {
             rptr = 0;
             wptr = 0;
+			writeFlag = false;
         }
 
         /// <summary>

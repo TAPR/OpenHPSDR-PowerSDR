@@ -358,8 +358,8 @@ extern int AlexRxAnt;
 extern int AlexTxAnt;
 extern int AlexRxOut;
 extern int FwdPower;
-extern int RefPower;
-extern int AlexFwdPower;
+extern float RefPower;
+extern float AlexFwdPower;
 extern int AIN3;
 extern int AIN4;
 

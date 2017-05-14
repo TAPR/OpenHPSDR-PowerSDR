@@ -1851,6 +1851,7 @@ namespace PowerSDR
 			//BufferSize = buffer_size;
 			AudioSize = audio_size;			
 			CurrentDSPMode = current_dsp_mode;
+            SubAMMode = sub_am_mode;
 			SetTXFilter(tx_filter_low, tx_filter_high);
             FilterSize = filter_size;
             FilterType = filter_type;
@@ -2045,12 +2046,59 @@ namespace PowerSDR
 				{
 					if(value != current_dsp_mode_dsp || force)
 					{
-                        wdsp.SetTXAMode(wdsp.id(thread, 0), value);
+                        if (current_dsp_mode == DSPMode.AM || current_dsp_mode == DSPMode.SAM)
+                        {
+                            switch (sub_am_mode)
+                            {
+                                case 0: // double-sided AM
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM);
+                                    break;
+                                case 1:
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM_LSB);
+                                    break;
+                                case 2:
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM_USB);
+                                    break;
+                            }
+                        }
+                        else
+                            wdsp.SetTXAMode(wdsp.id(thread, 0), value);
 						current_dsp_mode_dsp = value;
 					}
 				}
 			}
 		}
+
+        private int sub_am_mode_dsp = 0;
+        private int sub_am_mode = 0;
+        public int SubAMMode
+        {
+            get { return sub_am_mode; }
+            set
+            {
+                sub_am_mode = value;
+                if (update)
+                {
+                    if (value != sub_am_mode_dsp || force)
+                    {
+                        if (current_dsp_mode == DSPMode.AM || current_dsp_mode == DSPMode.SAM)
+                            switch (sub_am_mode)
+                            {
+                                case 0: // double-sided AM
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM);
+                                    break;
+                                case 1:
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM_LSB);
+                                    break;
+                                case 2:
+                                    wdsp.SetTXAMode(wdsp.id(thread, 0), DSPMode.AM_USB);
+                                    break;
+                            }
+                        sub_am_mode_dsp = value;
+                    }
+                }
+            }
+        }
 
 		public void SetTXFilter(int low, int high)
 		{
@@ -2161,11 +2209,11 @@ namespace PowerSDR
 					tx_eq3[i] = value[i];
 				if(update)
 				{
-                    unsafe
-                    {
-                        fixed (int* ptr = &(tx_eq3[0]))
-                            wdsp.SetTXAGrphEQ(wdsp.id(thread, 0), ptr);
-                    }
+                    //unsafe
+                    //{
+                    //    fixed (int* ptr = &(tx_eq3[0]))
+                    //        wdsp.SetTXAGrphEQ(wdsp.id(thread, 0), ptr);
+                    //}
 						for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
 							tx_eq3_dsp[i] = value[i];
 				}
@@ -2183,11 +2231,11 @@ namespace PowerSDR
 					tx_eq10[i] = value[i];
 				if(update)
 				{
-                    unsafe
-                    {
-                        fixed (int* ptr = &(tx_eq10[0]))
-                            wdsp.SetTXAGrphEQ10(wdsp.id(thread, 0), ptr);
-                    }
+                    //unsafe
+                    //{
+                    //    fixed (int* ptr = &(tx_eq10[0]))
+                    //        wdsp.SetTXAGrphEQ10(wdsp.id(thread, 0), ptr);
+                    //}
 						for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
 							tx_eq10_dsp[i] = value[i];
 				}

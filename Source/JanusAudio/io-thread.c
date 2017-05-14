@@ -766,6 +766,23 @@ void processOverloadBit(int bit, int bit2) {
 int last_xmit_bit = 0;
 #endif
 
+#define MDECAY  0.9992f
+void PeakAlexFwdPower(float alex_fwd)
+{
+	if (alex_fwd > AlexFwdPower)
+		AlexFwdPower = alex_fwd;
+	else
+		AlexFwdPower *= MDECAY;
+}
+
+void PeakRefPower(float alex_ref)
+{
+	if (alex_ref > RefPower)
+		RefPower = alex_ref;
+	else
+		RefPower *= MDECAY;
+}
+
 
 // main loop of the iothread -- real work happens here
 // read data out of the xylo, block it, and put it into a fifo  to go to the callback thread
@@ -1061,7 +1078,8 @@ void IOThreadMainLoop(void) {
 						break;
 					case 0x10:
 						ref_power_stage |=  (((int)(ControlBytesIn[2])) & 0xff); // bits 7-0 (AIN2) Alex reverse power
-						RefPower = ref_power_stage;
+						// RefPower = ref_power_stage;
+						PeakRefPower ((float)ref_power_stage);
 						break;
 					case 0x18:
 						ain4 |=  (((int)(ControlBytesIn[2])) & 0xff); // bits 7-0 of AIN4
@@ -1119,7 +1137,8 @@ void IOThreadMainLoop(void) {
 						break;
 					case 0x8:
 						alex_fwd_power |=  (((int)(ControlBytesIn[4])) & 0xff); // bits 7-0 (AIN1) Alex
-						AlexFwdPower = alex_fwd_power;
+						// AlexFwdPower = alex_fwd_power;
+						PeakAlexFwdPower ((float)alex_fwd_power);
 						break;
 					case 0x10:	
 						ain3 |=  (((int)(ControlBytesIn[4])) & 0xff);

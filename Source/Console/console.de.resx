@@ -8641,4 +8641,19 @@
   <data name="txtDisplayOrionMKIIBlank.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Center</value>
   </data>
+  <data name="chkSyncIT.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkSyncIT.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkSyncIT.Location" type="System.Drawing.Point, System.Drawing">
+    <value>45, 121</value>
+  </data>
+  <data name="chkSyncIT.Size" type="System.Drawing.Size, System.Drawing">
+    <value>54, 17</value>
+  </data>
+  <data name="chkSyncIT.TabIndex" type="System.Int32, mscorlib">
+    <value>146</value>
+  </data>
 </root>

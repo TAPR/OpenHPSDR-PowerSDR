@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at:  midi2cat@cametrix.com
 
+Modifications to support the Behringer CMD PL-1 controller
+by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
+
 */
 
 using Midi2Cat.Helpers;
@@ -29,7 +32,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PowerSDR;
+using PowerSDR; 
 
 namespace Midi2Cat.Data
 {
@@ -364,5 +367,17 @@ namespace Midi2Cat.Data
         WaterfallHighLimit = 229,
         [CatCommandAttribute("Stereo Balance RX2 (PAN) ", ControlType.Knob_or_Slider)]
         RX2Pan = 230,
+        [CatCommandAttribute("Volume VfoA Incr", ControlType.Wheel)]  //-W2PA Added Wheel versions for Behrihger CMD PL-1 and others
+        VolumeVfoA_inc = 241,
+        [CatCommandAttribute("Volume VfoB Incr", ControlType.Wheel)]
+        VolumeVfoB_inc = 242,
+        [CatCommandAttribute("RX1 AGC Level Incr", ControlType.Wheel)]
+        AGCLevel_inc = 243,
+        [CatCommandAttribute("RX2 AGC Level Incr", ControlType.Wheel)]
+        RX2AGCLevel_inc = 244,
+        [CatCommandAttribute("CW Speed Incr", ControlType.Wheel)]
+        CWSpeed_inc = 245,
+        [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel
+        ToggleVFOWheel = 700
     }
 }// namespace

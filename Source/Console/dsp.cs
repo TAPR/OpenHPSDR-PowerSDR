@@ -607,6 +607,40 @@ namespace PowerSDR
         [DllImport("wdsp.dll", EntryPoint = "TXASetNC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TXASetNC(int channel, int nc);
 
+        // cfcomp
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPRun(int channel, int run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPprofile", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPosition(int channel, int pos);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPrecomp", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPrecomp (int channel, double precomp);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPeqRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPeqRun(int channel, int run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXACFCOMPPrePeq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPrePeq(int channel, double prepeq);
+
+        // phrot
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPHROTRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTRun(int channel, int run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPHROTCorner", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTCorner (int channel, double corner);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPHROTNstages", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTNstages(int channel, int nstages);
+
+        // TXEQ
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G);
+
         #endregion
 
         #region Enums
