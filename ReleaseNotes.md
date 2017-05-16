@@ -170,6 +170,7 @@ The following list of values and states where added to the TX Profiles
 
 # 3.3.17 (2017-5-16)
 - Corrects a compatibility issue with DDUtil
+- Corrects the 10x watt meter reading for the Anan-10/10E transceivers
 
 
 

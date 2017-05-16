@@ -13904,6 +13904,10 @@ namespace PowerSDR
                 case HPSDRModel.ANAN8000D:
                     interval = 20.0f;
                     break;
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                    interval = 1.0f;
+                    break;
                 default:
                     interval = 10.0f;
                     break;
