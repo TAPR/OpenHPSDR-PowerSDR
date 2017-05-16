@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.3.16.0 May 14, 2017
+# PowerSDR_mRX_PS 3.3.17.0 May 16, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -168,6 +168,8 @@ The following list of values and states where added to the TX Profiles
 - Corrected an issue with the 'Limit Stitched Receivers' feature not updating when using the 8000DLE.
 - Added 200W Meter Trim range for the 8000DLE.
 
+# 3.3.17 (2017-5-16)
+- Corrects a compatibility issue with DDUtil
 
 
 
