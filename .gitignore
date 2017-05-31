@@ -1,15 +1,15 @@
-temp
-Source/Console/obj
-Source/Release
-Source/Debug
-Source/Midi2Cat/bin
-Source/Midi2Cat/obj
-Source/wdsp/Release
-Source/wdsp/Debug
-Source/PowerSDR.sln
-Source/*.suo
-lib/portaudio_VS2008/build/msvc/x64
-lib/portaudio_VS2008/build/msvc/Win32
-lib/fftw_wisdom/temp
-lib/pthread/Win32
-*.bak
+Project Files/temp
+Project Files/Source/Console/obj
+Project Files/Source/Release
+Project Files/Source/Debug
+Project Files/Source/Midi2Cat/bin
+Project Files/Source/Midi2Cat/obj
+Project Files/Source/wdsp/Release
+Project Files/Source/wdsp/Debug
+Project Files/Source/PowerSDR.sln
+Project Files/Source/*.suo
+Project Files/lib/portaudio_VS2008/build/msvc/x64
+Project Files/lib/portaudio_VS2008/build/msvc/Win32
+Project Files/lib/fftw_wisdom/temp
+Project Files/lib/pthread/Win32
+Project Files/*.bak
