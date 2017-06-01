@@ -188,6 +188,9 @@ void calc_cfcomp(CFCOMP a)
 	a->comp = (double *) malloc0 (a->msize * sizeof (double));
 	a->peq  = (double *) malloc0 (a->msize * sizeof (double));
 	calc_comp (a);
+
+	a->gain = 0.0;
+	a->mmult = exp (-1.0 / (a->rate * a->ovrlp * a->mtau));
 }
 
 void decalc_cfcomp(CFCOMP a)
@@ -215,7 +218,7 @@ void decalc_cfcomp(CFCOMP a)
 }
 
 CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E)
+	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau)
 {
 	CFCOMP a = (CFCOMP) malloc0 (sizeof (cfcomp));
 	
@@ -233,6 +236,7 @@ CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, 
 	a->nfreqs = nfreqs;
 	a->precomp = precomp;
 	a->prepeq = prepeq;
+	a->mtau = mtau;					// compression metering time constant
 	a->F = (double *)malloc0 (a->nfreqs * sizeof (double));
 	a->G = (double *)malloc0 (a->nfreqs * sizeof (double));
 	a->E = (double *)malloc0 (a->nfreqs * sizeof (double));
@@ -256,6 +260,7 @@ void flush_cfcomp (CFCOMP a)
 	a->oainidx  = a->init_oainidx;
 	a->oaoutidx = 0;
 	a->saveidx  = 0;
+	a->gain = 0.0;
 }
 
 void destroy_cfcomp (CFCOMP a)
@@ -276,17 +281,20 @@ void calc_mask (CFCOMP a)
 	{
 	case 0:
 		{
-			double mag;
+			double mag, test;
 			for (i = 0; i < a->msize; i++)
 			{
 				mag = sqrt (a->forfftout[2 * i + 0] * a->forfftout[2 * i + 0] 
 					      + a->forfftout[2 * i + 1] * a->forfftout[2 * i + 1]);
 				comp = a->precomplin * a->comp[i];
-				if (comp * mag > 1.0)
+				test = comp * mag;
+				if (test > 1.0)
 					mask = 1.0 / mag;
 				else
 					mask = comp;
 				a->mask[i] = mask;
+				if (test > a->gain) a->gain = test;
+				else a->gain = a->mmult * a->gain;
 			}
 			break;
 		}

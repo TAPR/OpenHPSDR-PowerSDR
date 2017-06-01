@@ -587,6 +587,12 @@ namespace PowerSDR
 
 			switch(extended)
 			{
+                case "ZZAA":
+                    rtncmd = cmdlist.ZZAA(suffix);
+                    break;
+                case "ZZAB":
+                    rtncmd = cmdlist.ZZAB(suffix);
+                    break;
                 case "ZZAC":
                     rtncmd = cmdlist.ZZAC(suffix);
                     break;
@@ -599,11 +605,17 @@ namespace PowerSDR
 				case "ZZAI":
 					rtncmd = cmdlist.ZZAI(suffix);
 					break;
-				case "ZZAR":
+                case "ZZAP":
+                    rtncmd = cmdlist.ZZAP(suffix);
+                    break;
+                case "ZZAR":
 					rtncmd = cmdlist.ZZAR(suffix);
 					break;
                 case "ZZAS":
                     rtncmd = cmdlist.ZZAS(suffix);
+                    break;
+                case "ZZAT":
+                    rtncmd = cmdlist.ZZAT(suffix);
                     break;
                 case "ZZAU":
                     rtncmd = cmdlist.ZZAU(suffix);

@@ -19597,8 +19597,9 @@
           <target state="needs-review-translation" state-qualifier="mt-suggestion">優先の CW のトーン周波数を選択します。</target>
         </trans-unit>
         <trans-unit id="udCWBreakInDelay.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>147, 16</source>
+          <source>163, 16</source>
           <target state="needs-review-translation">147, 16</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="udCWBreakInDelay.Size" translate="yes" extype="System.Drawing.Size, System.Drawing" xml:space="preserve">
           <source>48, 20</source>
@@ -19633,16 +19634,17 @@
           <target state="needs-review-translation">11, 18</target>
         </trans-unit>
         <trans-unit id="chkCWBreakInEnabled.Size" translate="yes" extype="System.Drawing.Size, System.Drawing" xml:space="preserve">
-          <source>80, 16</source>
+          <source>96, 16</source>
           <target state="needs-review-translation">80, 16</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="chkCWBreakInEnabled.TabIndex" translate="yes" extype="System.Int32, mscorlib" xml:space="preserve">
           <source>36</source>
           <target state="needs-review-translation">36</target>
         </trans-unit>
         <trans-unit id="chkCWBreakInEnabled.Text" translate="yes" xml:space="preserve">
-          <source>Enabled</source>
-          <target state="new">Enabled</target>
+          <source>Semi Break-In</source>
+          <target state="new">Semi Break-In</target>
         </trans-unit>
         <trans-unit id="chkCWBreakInEnabled.ToolTip" translate="yes" xml:space="preserve">
           <source>Enables Semi Break In operation.</source>
@@ -20790,7 +20792,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnZeroBeat.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>22, 28</source>
+          <source>18, 28</source>
           <target state="needs-review-translation">22, 30</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20831,7 +20833,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="chkVFOSplit.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>22, 5</source>
+          <source>18, 5</source>
           <target state="needs-review-translation">22, 7</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20868,7 +20870,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnRITReset.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>108, 78</source>
+          <source>44, 76</source>
           <target state="needs-review-translation">108, 83</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20901,7 +20903,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnXITReset.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>52, 78</source>
+          <source>105, 76</source>
           <target state="needs-review-translation">52, 83</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20922,7 +20924,7 @@
           <target state="needs-review-translation" state-qualifier="mt-suggestion">XIT をオフします。</target>
         </trans-unit>
         <trans-unit id="udRIT.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>76, 98</source>
+          <source>12, 96</source>
           <target state="needs-review-translation">76, 103</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20955,7 +20957,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnIFtoVFO.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>22, 51</source>
+          <source>18, 51</source>
           <target state="needs-review-translation">22, 53</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -20992,7 +20994,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="chkRIT.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>76, 78</source>
+          <source>12, 76</source>
           <target state="needs-review-translation">76, 83</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -21033,7 +21035,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnVFOSwap.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>73, 51</source>
+          <source>69, 51</source>
           <target state="needs-review-translation">73, 53</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -21070,7 +21072,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="chkXIT.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>20, 78</source>
+          <source>73, 76</source>
           <target state="needs-review-translation">20, 83</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -21111,7 +21113,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnVFOBtoA.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>73, 28</source>
+          <source>69, 28</source>
           <target state="needs-review-translation">73, 30</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -21132,7 +21134,7 @@
           <target state="needs-review-translation" state-qualifier="mt-suggestion">VFO B にコピーする VFO A</target>
         </trans-unit>
         <trans-unit id="udXIT.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>12, 98</source>
+          <source>73, 96</source>
           <target state="needs-review-translation">12, 103</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -21165,7 +21167,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="btnVFOAtoB.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>73, 5</source>
+          <source>69, 5</source>
           <target state="needs-review-translation">73, 7</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -25065,7 +25067,7 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="chkVAC2.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>73, 142</source>
+          <source>73, 141</source>
           <target state="needs-review-translation">73, 127</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
@@ -27276,8 +27278,9 @@
           <target state="needs-review-translation">504, 424</target>
         </trans-unit>
         <trans-unit id="panelModeSpecificCW.Size" translate="yes" extype="System.Drawing.Size, System.Drawing" xml:space="preserve">
-          <source>336, 160</source>
+          <source>338, 161</source>
           <target state="needs-review-translation">336, 160</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="panelModeSpecificCW.TabIndex" translate="yes" extype="System.Int32, mscorlib" xml:space="preserve">
           <source>124</source>
@@ -27408,8 +27411,8 @@
           <target state="needs-review-translation">77</target>
         </trans-unit>
         <trans-unit id="grpSemiBreakIn.Text" translate="yes" xml:space="preserve">
-          <source>Break In</source>
-          <target state="new">Break In</target>
+          <source>CW Break In</source>
+          <target state="new">CW Break In</target>
         </trans-unit>
         <trans-unit id="lblCWBreakInDelay.Image" translate="yes" extype="System.Resources.ResXNullRef, System.Windows.Forms" xml:space="preserve">
           <source></source>
@@ -27420,8 +27423,9 @@
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="lblCWBreakInDelay.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>83, 18</source>
+          <source>105, 16</source>
           <target state="needs-review-translation">83, 18</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="lblCWBreakInDelay.Size" translate="yes" extype="System.Drawing.Size, System.Drawing" xml:space="preserve">
           <source>64, 16</source>
@@ -31573,6 +31577,18 @@
         <trans-unit id="chkSyncIT.ToolTip" translate="yes" xml:space="preserve">
           <source>Synchronize RIT and XIT</source>
           <target state="new">Synchronize RIT and XIT</target>
+        </trans-unit>
+        <trans-unit id="panelModeSpecificCW.AutoSize" translate="yes" xml:space="preserve" extype="System.Boolean, mscorlib">
+          <source>True</source>
+          <target state="needs-review-translation">True</target>
+        </trans-unit>
+        <trans-unit id="lblCWBreakInDelay.TextAlign" translate="yes" xml:space="preserve" extype="System.Drawing.ContentAlignment, System.Drawing">
+          <source>MiddleLeft</source>
+          <target state="needs-review-translation">MiddleLeft</target>
+        </trans-unit>
+        <trans-unit id="grpSemiBreakIn.ToolTip" translate="yes" xml:space="preserve">
+          <source>Choose between Full or Semi Break-in</source>
+          <target state="new">Choose between Full or Semi Break-in</target>
         </trans-unit>
       </group>
     </body>

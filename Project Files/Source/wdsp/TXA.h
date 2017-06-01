@@ -55,6 +55,9 @@ enum txaMeterType
 	TXA_LVLR_PK,
 	TXA_LVLR_AV,
 	TXA_LVLR_GAIN,
+	TXA_CFC_PK,
+	TXA_CFC_AV,
+	TXA_CFC_GAIN,
 	TXA_COMP_PK,
 	TXA_COMP_AV,
 	TXA_ALC_PK,
@@ -78,7 +81,7 @@ struct _txa
 	struct
 	{
 		METER p;
-	} micmeter, eqmeter, lvlrmeter, compmeter, alcmeter, outmeter;
+	} micmeter, eqmeter, lvlrmeter, cfcmeter, compmeter, alcmeter, outmeter;
 	struct
 	{
 		RESAMPLE p;

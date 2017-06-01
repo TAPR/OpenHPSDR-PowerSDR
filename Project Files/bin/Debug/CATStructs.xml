@@ -749,6 +749,34 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+	<catstruct code="ZZAP">
+		<desc>Audio peak filter on off</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZAT">
+		<desc>APF tune</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
+	<catstruct code="ZZAB">
+		<desc>APF bandwidth</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
+	<catstruct code="ZZAA">
+		<desc>APF gain</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
 	<catstruct code="ZZMD">
 		<desc>extended modes</desc>
 		<active>true</active>

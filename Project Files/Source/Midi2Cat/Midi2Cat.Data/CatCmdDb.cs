@@ -203,7 +203,7 @@ namespace Midi2Cat.Data
         ESCFormOnOff = 74,
         [CatCommandAttribute("RX2 Mute On Off", ControlType.Button, true)]  
         MuteRX2OnOff = 75,
-        [CatCommandAttribute("Tuner State", ControlType.Button,true)]
+        [CatCommandAttribute("Tune On Off", ControlType.Button,true)] 
         TunOnOff = 76,
         [CatCommandAttribute("Tuner Bypass", ControlType.Button, true)]
         TunerBypassOnOff = 77,
@@ -377,7 +377,15 @@ namespace Midi2Cat.Data
         RX2AGCLevel_inc = 244,
         [CatCommandAttribute("CW Speed Incr", ControlType.Wheel)]
         CWSpeed_inc = 245,
-        [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel
+        [CatCommandAttribute("Audio Peak Filter On Off", ControlType.Button, true)]
+        APF_OnOff = 246,
+        [CatCommandAttribute("Audio Peak Filter Tune", ControlType.Knob_or_Slider)]
+        APFFreq = 247,
+        [CatCommandAttribute("Audio Peak Filter Bandwidth", ControlType.Knob_or_Slider)]
+        APFBandwidth = 248,
+        [CatCommandAttribute("Audio Peak Filter Gain", ControlType.Knob_or_Slider)]
+        APFGain = 249,
+        [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }
 }// namespace

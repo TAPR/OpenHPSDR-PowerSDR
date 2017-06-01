@@ -79,10 +79,14 @@ typedef struct _cfcomp
 	double prepeq;
 	double prepeqlin;
 	double winfudge;
+
+	double gain;
+	double mtau;
+	double mmult;
 }cfcomp, *CFCOMP;
 
 extern CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E);
+	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau);
 
 extern void destroy_cfcomp (CFCOMP a);
 

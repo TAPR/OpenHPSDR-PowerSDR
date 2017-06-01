@@ -8748,4 +8748,10 @@ PWR, EQ, микрофонный вход</value>
   <data name="chkSyncIT.TabIndex" type="System.Int32, mscorlib">
     <value>146</value>
   </data>
+  <data name="panelModeSpecificCW.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCWBreakInDelay.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
 </root>

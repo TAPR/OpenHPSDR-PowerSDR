@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013-2015 Warren Pratt, NR0V
+Copyright (C) 2013-2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -129,6 +129,9 @@ namespace PowerSDR
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXAALCDecay", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAALCDecay(int channel, int decay);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAALCMaxGain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAALCMaxGain(int channel, double maxgain);
 
         [DllImport("wdsp.dll", EntryPoint = "SetRXAAMDSBMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAAMDSBMode(int channel, int sbmode);
@@ -667,6 +670,8 @@ namespace PowerSDR
             LEVELER_PK,
             COMP_PK,
             CPDR_PK,
+            CFC_PK,
+            CFC_G
         }
 
         public enum rxaMeterType
@@ -690,6 +695,9 @@ namespace PowerSDR
             TXA_LVLR_PK,
             TXA_LVLR_AV,
             TXA_LVLR_GAIN,
+            TXA_CFC_PK,
+            TXA_CFC_AV,
+            TXA_CFC_GAIN,
             TXA_COMP_PK,
             TXA_COMP_AV,
             TXA_ALC_PK,
@@ -755,6 +763,16 @@ namespace PowerSDR
 	        return (float)val;
         }
 
+        private static double alcgain = 0.0;
+        public static double ALCGain
+        {
+            get { return alcgain; }
+            set
+            { 
+                alcgain = value;
+            }
+        }
+
         public static float CalculateTXMeter (uint thread, MeterType MT)
         {
 	        int channel = txachannel;
@@ -783,7 +801,7 @@ namespace PowerSDR
                 val = GetTXAMeter(channel, txaMeterType.TXA_COMP_AV);
 		        break;
 	        case MeterType.ALC_G:
-                val = GetTXAMeter(channel, txaMeterType.TXA_ALC_GAIN);
+                val = GetTXAMeter(channel, txaMeterType.TXA_ALC_GAIN) + alcgain;
 		        break;
 	        case MeterType.LVL_G:
                 val = GetTXAMeter(channel, txaMeterType.TXA_LVLR_GAIN);
@@ -806,6 +824,12 @@ namespace PowerSDR
 	        case MeterType.CPDR_PK:
                 val = GetTXAMeter(channel, txaMeterType.TXA_COMP_PK);
 		        break;
+            case MeterType.CFC_PK:
+                val = GetTXAMeter(channel, txaMeterType.TXA_CFC_PK);
+                break;
+            case MeterType.CFC_G:
+                val = GetTXAMeter(channel, txaMeterType.TXA_CFC_GAIN);
+                break;
 	        default:
 		        val = -400.0;
 		        break;

@@ -164,6 +164,7 @@
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
     </COMReference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmpView.cs">

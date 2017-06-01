@@ -2140,6 +2140,68 @@ namespace PowerSDR
             }
         }
 
+        //-W2PA Added knob/slider control of APF Tune
+        public void APFFreq(int msg, MidiDevice device)
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            try
+            {
+                double apffreq = ((msg * 3.937) - 250);
+
+                if (apffreq >= 0)
+                {
+                    commands.ZZAT(apffreq.ToString("000"));
+                }
+                if (apffreq < 0)
+                {
+                    commands.ZZAT(apffreq.ToString("000"));
+                }
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        //-W2PA Added knob/slider control of APF Bandwidth
+        public void APFBandwidth(int msg, MidiDevice device)
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            try
+            {
+                double apfbw = ((msg * 1.1023) + 10);
+                commands.ZZAB(apfbw.ToString("000"));                
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        //-W2PA Added knob/slider control of APF Bandwidth
+        public void APFGain(int msg, MidiDevice device)
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            try
+            {
+                double apfgain = ((msg * 0.7874) + 0);
+                commands.ZZAA("+" + apfgain.ToString("000"));                
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
+
         public void AGCLevel(int msg, MidiDevice device)
         {
             parser.nGet = 0;
@@ -4562,6 +4624,29 @@ namespace PowerSDR
                     return;
                 }
             }
+        }
+
+        public CmdState APF_OnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int APFState = Convert.ToInt16(commands.ZZAP(""));
+
+                if (APFState == 0)
+                {
+                    commands.ZZAP("1");
+                    return CmdState.On;
+                }
+                if (APFState == 1)
+                {
+                    commands.ZZAP("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
         }
 
         public void ToggleVFOWheel(int msg, MidiDevice device)  //-W2PA Switch main PL-1 wheel function from VFO A to B
