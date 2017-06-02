@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.3.17.0 May 16, 2017
+# PowerSDR_mRX_PS 3.4.1.0 June 01, 2017
 
 
 # 3.2.22 (2015-1-24) 
