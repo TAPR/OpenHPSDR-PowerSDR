@@ -28208,7 +28208,6 @@ namespace PowerSDR
                             case MeterTXMode.COMP:
                             case MeterTXMode.ALC:
                                 //num += 3.0;  // number no longer has fudge factor added in the dsp, must be remove
-                                num = 12.0;
                                 switch ((int)g.DpiX)
                                 {
                                     case 96:
