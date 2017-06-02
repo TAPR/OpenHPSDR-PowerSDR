@@ -172,6 +172,91 @@ The following list of values and states where added to the TX Profiles
 - Corrects a compatibility issue with DDUtil
 - Corrects the 10x watt meter reading for the Anan-10/10E transceivers
 
+# 3.4.1 (2017-4-1)
+Database Enhancements that you've ALL been waiting for!  (Courtesy of Chris, W2PA)
+To make it easier to retain settings from one release to the next, the Import Database function has been re-written.  You no longer have to re-create your settings, either in the main window or in the various Setup options, when you install a new version of OpenSDR-PowerSDR mRX PS. 
+
+When you start up a new release for the first time, the program will detect that your database file was created by a previous version and attempt to create a new database version from it. The first thing that happens is a database reset, so that you start with a fresh one that's completely valid for the current release, and then the program closes as always for a reset. When you re-start it, if the old database file is intact and was working with the previous release, it should import fine and a pop-up window will tell you it succeeded.  When you close this info window by clicking "OK" the program will start-up normally and have all your previous settings and options, looking just like it did before you upgraded to the new version.  The old version of your database file is saved unchanged in the DB_Archive folder, and a new database.xml file replaces it in same place it was before. There should no longer be any need for Setup window screen shots. 
+
+If desired, you can still open the Setup window, manually reset the database using the "Reset Database" button, and then import another valid database file by clicking the "Import Database" button, or start personalizing from scratch as before. 
+
+The new database importer also checks for badly corrupted database files and rejects them, directing the user to reset and start over, or try importing another database file that is known to have functioned in the past.  In most cases, even with a very old database file, at least some of the previous settings and options will be imported. 
+
+In addition to handling complete database files created in an old release, the new Import Database function in Setup lets you import *partial* databases, too.  This means if you have a database file that contains a subset of settings or options, the Import function will simply add them to what is already present in the running database (still requiring a re-start, as usual).  For example, if you have a database (XML) file containing a single Transmit Profile definition, you can send it to a friend and they can import it so they can use your customized profile too. 
+
+Therefore, to support this kind of TXProfile sharing, there is also a new button in the Setup - Transmit tab labeled "Export Current Profile." When clicked, it produces this kind of XML file containing only the currently selected Transmit Profile.  The file will be stored in the same directory where your database.xml file is located, and given a file name that's the same as the exported transmit profile's name.  You can then send it to another ham for import into their own database using the Import Profile button in Setup.
+
+To summarize, the following controls in the Setup - Transmit tab support working with transmit profiles and databases:
+1) The "Profiles" section at the upper left, where you can select which profile is the current one from your personal collection.  This is where you can also save a profile you've just set up, under a new name, or delete one you no longer need.
+2) The "More Profiles" section at the upper right.  When you check the "More Profiles" checkbox, you get a scrollable list of additional default profiles that come with the installation. You can then bring the one you highlight (click on) into your own group of profiles (see #1) by clicking the "Include" button just below this list.
+3) At the center extreme right side is a new button labeled "Export Current Profile" that you can use to export the currently active transmit profile (see #1) to send to someone or archive for yourself.
+4) At lower left are three Database buttons that operate as before, except the "Import Database" function can now be used to import transmit profiles that were produced by the Export button - either by you or someone else.  (These three buttons appear no matter what tab you've selected in setup.)
+
+In addition to using Setup, you can select which of your saved profiles is to be used as the current (operational) profile in the main window using the pull-down list at lower right near the other audio controls, which appears when a voice mode (e.g. SSB, DSB, AM, or FM) is selected.
+
+To export a transmit profile:
+1) Click the Setup menu item to bring up the Setup window, and select the Transmit tab.
+2) Select the profile you want to export using the "Profiles" pull-down list at upper left.
+3) Click the "Export Current Profile" button at center, extreme right.
+4) A file with the same name as the profile is written in your database directory
+
+To import a transmit profile:
+1) Click the Setup menu item to bring up the Setup window, and select the Transmit tab.
+2) Click the "Import Database" button at lower left.
+3) Select the database file containing the profile you want to import, and click OK
+4) If the import is successful, you will be notified that the program will shut down.
+5) Re-start OpenSDR-PowerSDR mRX PS. 
+6) The newly imported profile will appear as an additional choice in the Profiles pull-down list in Setup-Transmit.
+New Transmit Modes
+For some time, on the DSP => AM/SAM tab in Setup, you have been able to select to receive only one sideband when operating in SAM mode.  This is useful to eliminate interference from nearby stations on one side or the other of your QSO.  Now, you have a similar capability for transmit!  On this same tab, you can select to transmit both sidebands (normal AM/SAM transmission) or only one of the sidebands, Upper or Lower, when operating in AM and SAM modes.
+New Audio Tools
+Do you have a rack of expensive audio equipment that you use to process your MIC signal before feeding it into your radio?  Do you run the digital equivalent, a Digital Audio Workstation (DAW), on your computer?  Well, if so, you can certainly continue to do that.  However, included in this release, we are providing some important audio processing tools that enable you to IMPROVE YOUR TRANSMIT AUDIO and INCREASE THE "DENSITY" AND AVERAGE POWER of your signal without requiring these external options.  The new tools are primarily a Phase Rotator and a Continuous Frequency Compressor (CFC).  Accompanying these advances are additions to the TX Profiles and enhancements in the TX Equalizer and in ALC Compression control.
+Rob, W1AEX, has generously prepared a "CFC Quick Setup Guide" as well as two videos, one focusing on the CFC and another focusing on the Phase Rotator.  Thanks Rob!!
+The Guide and Videos can be found here:
+ Guide:  CFC Quick Setup Guide  
+CFC Video:  <https://www.youtube.com/watch?v=j84LuuI70O4 >  
+Phase Rotator Video:  <https://www.youtube.com/watch?v=NM2x2tk0UbY>  
+Also, Scott, WU2O, has developed an excellent block diagram of the TX Chain for reference during setup.  It can be found here:  TX Chain  
+* Enhanced TX Equalizer
+Equalizer frequencies are now operator-adjustable.  Also note, that as it has been since the installation of the WDSP library a few years ago, this is a Continuous Gain Equalizer, NOT a multi-band equalizer.  This provides smooth gain transitions across the spectrum as opposed to abrupt transitions at band edges.
+* Phase Rotator
+In some AM transmitters, it is possible to boost the peak output power by having an asymmetrical audio waveform (positive peaks greater than negative peaks) and modulating to greater than 100% on positive peaks while restricting to <=100% on negative peaks to avoid "pinch-off."
+
+In other AM transmitters and in the case of our digital-up-conversion (DUC) SDRs, this is not the correct approach.  We have hard-limits which cannot be exceeded, such as the dynamic range of the DAC.  The application of an asymmetrical audio waveform, with positive peaks greater than negative peaks, cannot further increase modulation in the positive direction; it instead REDUCES average power.  The correct approach in such cases is to make the audio waveform as symmetrical as possible, i.e., equal positive and negative peaks.
+
+The Phase Rotator makes the audio waveform more symmetrical.  It does so by shifting the phase of various audio frequencies by varying amounts, thereby changing the shape of the waveform away from the somewhat typical asymmetrical waveform of human speech.  Experimentation and analysis show that a wide range of phase shift versus frequency generally tends to improve symmetry.  This wide range leads to an implementation with multiple identical stages, where the total phase shift is the sum of the shifts obtained in each stage.  The stages have a specified "corner frequency" where the phase shift of the stage is equal to one-half of the total that the stage provides at the maximum frequency.
+
+While the above explanation focused on AM, note that this feature can be used to increase average power for any speech mode.  Note also, however, that it could be detrimental for any digital mode that requires coherent phase versus frequency. 
+
+Controls are found on the new DSP => CFC tab in Setup.
+* Continuous Frequency Compressor (CFC)
+Many audio racks and Digital Audio Workstations provide "Multiband Compressors" which allow specifying different amounts of compression for different audio frequency bands.  The CFC offers a superset of that concept where, instead of having multiple bands with constant compression in each band, the compression varies smoothly between frequency points at which it is specified.  This concept is similar to the operation of the WDSP Equalizer function; however, in this case, we are varying the compression level across frequencies rather than varying the gain.  A Post-CFC Equalizer is also provided as an integral part of this function  to provide a final tailoring of the desired audio frequency spectrum.
+
+Use of this function for speech modes can significantly increase the "density" and average power of the signal.  Note also that use for digital modes may be detrimental, depending upon the nature of the mode.
+
+Controls are found on the new DSP => CFC tab in Setup.
+* ALC Compression Control
+On the DSP => AGC/ALC tab, you'll now find an "ALC Max Gain" control.  Adjusting the gain above 0dB (the default) has a couple purposes:  (1) if NOT using COMP/CESSB, it allows you to set the CFC output to peak at ~0dB and still get some compression (which is often desirable) in the ALC stage, and (2) if USING COMP/CESSB, it allows you to get some ALC compression even though the output of those stages does not exceed ~0dB.
+* CESSB Reminder
+Just as a reminder, for quite some time we have had available a CESSB Overshoot Control function.  This is yet another feature to increase average transmitted power at the same peak power.  The CESSB algorithm was published by David Herschberger, W9GR, in the NOV/DEC 2014 issue of QEX.  Dave's focus was on SSB transmission.  However, in our implementation, we support its use in all voice modes.  NOTE THAT A "LINEAR PHASE" TRANSMIT FILTER MUST BE SELECTED FOR THIS FUNCTION TO OPERATE PROPERLY.
+
+This can be enabled on the Transmit tab in Setup.  Note that COMP must be enabled (even at 0dB compression if you prefer) for this feature to function.
+* New TX Profiles
+Need some help getting all these new audio controls set up?  Some TX Profiles are provided to give you some starting points.  Specifically, courtesy of Rob, W1AEX, four new TX Profiles are included with the PowerSDR mRX application.  These are:
+- SSB 2.8_CFC (2.8k wide - very helpful on 60 meters)
+- SSB 3.0_CFC (3.0k wide)
+- SSB 3.3_CFC (3.3k wide)
+- AM 10_CFC (5k + 5k for 10k total width)
+Other Fixes, Changes, and Enhancements
+* Four new CAT commands have been added to support the CW Audio Peaking Filter:
+-- ZZAP Audio Peaking Filter On/Off
+-- ZZAT APF Tune
+-- ZZAB APF Bandwidth
+-- ZZAA APF Gain
+* A change in the format of packets sent out by N1MM+ caused an incompatibility with the FocusMaster feature.  This has been fixed.
+* The locations of XIT and RIT have been interchanged on the console.
+* There is a change in labeling of the CW Break-in checkbox.  This change was made so that the label more accurately reflects the actual function of the box.  This should eliminate some questions and confusion.  The checkbox was previously labeled "Enabled" which would imply either ON or OFF for Break-in.  Instead, what this box actually does is to allow you to select either FULL Break-in or SEMI Break-in.
+
 
 
 

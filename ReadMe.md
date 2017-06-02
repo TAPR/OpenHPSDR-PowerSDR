@@ -1,6 +1,21 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.3.17 May 16, 2017
+Latest Release v3.4.1 June 1, 2017
+Read the RealeaseNotes.md for more information.
+
+# 3.4.1 (2017-6-1)
+- Swaped places with XIT and RIT controls on the console.
+- Added 4 CAT Commands
+ -- ZZAP Audio Peak Filter On/Off
+ -- ZZAT APF Tune
+ -- ZZAB APB Bandwidth
+ -- ZZAA APF Gain
+- Corrected capatability issue with N1MM+ and FocusMaster.
+- relabeled the 'CW Break-In' feature from 'Enabled' to 'Semi Break-In' to better describe the actual behavior. Toggles between Full Break-In and Semi Break-In.
+- Single side-band Full Carrier (SSBFC)
+- Continuous Frequency Compressor (CFC) audio tools
+- Database enhancements allowing importing old databases
+
 # 3.3.17 (2017-5-16)
 - Corrects a compatibility issue with DDUtil
 - Corrects the 10x watt meter reading for the Anan-10/10E transceivers
