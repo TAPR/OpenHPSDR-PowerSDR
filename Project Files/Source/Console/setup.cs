@@ -2780,7 +2780,7 @@ namespace PowerSDR
             udDSPLevelerThreshold_ValueChanged(this, e);
             udDSPLevelerDecay_ValueChanged(this, e);
             //ALC
-            udDSPALCThreshold_ValueChanged(this, e);
+            udDSPALCMaximumGain_ValueChanged(this, e);
             udDSPALCDecay_ValueChanged(this, e);
             // AM/SAM Tab
             chkLevelFades_CheckedChanged(this, e);
@@ -12169,12 +12169,6 @@ namespace PowerSDR
 
         #region ALC
 
-        private void udDSPALCThreshold_ValueChanged(object sender, System.EventArgs e)
-        {
-            wdsp.SetTXAALCMaxGain(wdsp.id(1, 0), (double)udDSPALCMaximumGain.Value);
-            wdsp.ALCGain = (double)udDSPALCMaximumGain.Value;
-        }
-
         private void udDSPALCMaximumGain_ValueChanged(object sender, System.EventArgs e)
         {
             wdsp.SetTXAALCMaxGain(wdsp.id(1, 0), (double)udDSPALCMaximumGain.Value);
@@ -16002,7 +15996,7 @@ namespace PowerSDR
 
             try
             {
-                exDS.WriteXml(fileName); //, XmlWriteMode.WriteSchema); // Writing with schema isn't necessary for import
+                exDS.WriteXml(fileName, XmlWriteMode.WriteSchema); // Writing with schema isn't necessary for import?
             }
             catch
             {

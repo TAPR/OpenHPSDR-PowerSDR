@@ -24129,7 +24129,7 @@
             0,
             0,
             0});
-            this.udDSPALCMaximumGain.ValueChanged += new System.EventHandler(this.udDSPALCThreshold_ValueChanged);
+            this.udDSPALCMaximumGain.ValueChanged += new System.EventHandler(this.udDSPALCMaximumGain_ValueChanged);
             this.udDSPALCMaximumGain.LostFocus += new System.EventHandler(this.udDSPALCThreshold_LostFocus);
             // 
             // udDSPALCSlope

@@ -7553,7 +7553,7 @@ namespace PowerSDR
                     {
                         System.Type oldType = OldRow[col.ColumnName].GetType();
                         System.Type newType = newRow[col.ColumnName].GetType();
-                        if (newType == oldType)  // Don't assign a value of a different type
+                        if (newType.FullName == oldType.FullName)  // Don't assign a value of a different type
                             newRow[col.ColumnName] = OldRow[col.ColumnName];
                     }                                
                 }
