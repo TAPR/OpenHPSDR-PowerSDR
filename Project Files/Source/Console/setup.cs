@@ -15794,7 +15794,7 @@ namespace PowerSDR
         private void btnResetDB_Click(object sender, System.EventArgs e)
         {
             DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n" +
-                "database to your desktop, and reset the active database\n" +
+                "database to the DB_Archive folder and reset the active database\n" +
                 "the next time PowerSDR is launched.\n\n" +
                 "Are you sure you want to reset the database?",
                 "Reset Database?",
@@ -15907,8 +15907,8 @@ namespace PowerSDR
         {
             if (lstTXProfileDef.SelectedIndex < 0) return;
 
-            DialogResult result = MessageBox.Show("Import profile from defaults?",
-                "Import?",
+            DialogResult result = MessageBox.Show("Include this Additional TX profile in your profiles list?",
+                "Include?",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -15971,7 +15971,23 @@ namespace PowerSDR
         //-W2PA Export a single TX Profile to send to someone else for importing.
         private void ExportCurrentTxProfile()
         {
-            string fileName = console.AppDataPath + current_profile + ".xml";
+            string fileName = current_profile;
+
+            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            foreach (char c in invalid)
+            {
+                fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
+            }
+
+            fileName = console.AppDataPath + fileName;
+
+            int i = 1;
+            string tempFN = fileName;
+            while (File.Exists(tempFN + ".xml")) {
+                tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
+                i++;           
+            }
+            fileName = tempFN + ".xml";
 
             DataRow[] rows = DB.ds.Tables["TxProfile"].Select(
                 "'" + current_profile + "' = Name");
@@ -15996,7 +16012,7 @@ namespace PowerSDR
 
             try
             {
-                exDS.WriteXml(fileName, XmlWriteMode.WriteSchema); // Writing with schema isn't necessary for import?
+                exDS.WriteXml(fileName, XmlWriteMode.WriteSchema); // Writing with schema is necessary for import
             }
             catch
             {

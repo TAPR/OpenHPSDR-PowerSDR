@@ -1761,6 +1761,7 @@ namespace PowerSDR
                                 resetForAutoMerge = true;  // a flag to main()
 
                                 MessageBox.Show("Your database file is from a previous version.\nMerging it into a new reset database will now be attempted.\n\n"
+                                    +"First your old database will be saved in DB_Archive folder,\nand a database reset will happen.\n\n"
                                     +"Please RE-START when the reset finishes.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             }                            
                             
@@ -8597,6 +8598,7 @@ namespace PowerSDR
             wdsp.CloseChannel(wdsp.id(2, 0));
             wdsp.CloseChannel(wdsp.id(0, 1));
             wdsp.CloseChannel(wdsp.id(0, 0));
+            Thread.Sleep(100);
         }
 
         public void SaveState()
@@ -24608,38 +24610,59 @@ namespace PowerSDR
                 int diff = cw_pitch - value;
                 cw_pitch = value;
 
+                if (cw_pitch <= 0) cw_pitch = 0;  //-W2PA
+
                 Audio.SineFreq1 = cw_pitch;
                 udCWPitch.Value = cw_pitch;
                 Display.CWPitch = cw_pitch;
                 JanusAudio.SetCWSidetoneFreq(cw_pitch);
 
+                //-W2PA June 2017
+                //      This centers the passband of the CW filters on the pitch frequency, but if CWPitch setter is called by mode buttons,  
+                //      it prevents filter setting from persisting when the mode changes or band changes, since band changes trigger mode changes.
+                //      This happened because of a line:  CWPitch = cw_pitch;  in SetRX1Mode and SetRX2Mode.  
+                //      Those are now commented out. This should only be called by the CW Pitch control in the UI and Setup, or by a CAT command.
                 for (Filter f = Filter.F1; f < Filter.LAST; f++)
                 {
+                    // Adjust CWL filters
                     int low = rx1_filters[(int)DSPMode.CWL].GetLow(f);
                     int high = rx1_filters[(int)DSPMode.CWL].GetHigh(f);
                     string name = rx1_filters[(int)DSPMode.CWL].GetName(f);
 
                     int bw = high - low;
 
-                    if (f != Filter.VAR1 && f != Filter.VAR2)
+                    if (true) //(f != Filter.VAR1 && f != Filter.VAR2)  //-W2PA Allowing same behavior for VAR1 and VAR2
                     {
                         low = -cw_pitch - bw / 2;
                         high = -cw_pitch + bw / 2;
                     }
 
+                    if (high > 0) // stop shifting the passband when it hits the image limit, while allowing pitch to continue to decrease
+                    {
+                        low = low - high;  // slide the passband down to put its edge at zero
+                        high = 0;
+                    }
+
                     rx1_filters[(int)DSPMode.CWL].SetFilter(f, low, high, name);
                     rx2_filters[(int)DSPMode.CWL].SetFilter(f, low, high, name); // n6vl
 
+                    // Adjust CWU filters
                     low = rx1_filters[(int)DSPMode.CWU].GetLow(f);
                     high = rx1_filters[(int)DSPMode.CWU].GetHigh(f);
                     name = rx1_filters[(int)DSPMode.CWU].GetName(f);
 
                     bw = high - low;
 
-                    if (f != Filter.VAR1 && f != Filter.VAR2)
+                    if (true) //(f != Filter.VAR1 && f != Filter.VAR2)
                     {
                         low = cw_pitch - bw / 2;
                         high = cw_pitch + bw / 2;
+                    }
+
+                    if (low < 0) // stop adjusting the passband when it hits the image limit, while allowing pitch to continue to decrease
+                    {
+                        high = high - low;  // slide the passband up to put its edge at zero
+                        low = 0;
                     }
 
                     rx1_filters[(int)DSPMode.CWU].SetFilter(f, low, high, name);
@@ -38102,15 +38125,32 @@ namespace PowerSDR
             {
                 double rx1_osc = Math.Round(-(VFOAFreq - center_frequency) * 1e6);
 
-                if (rx1_osc < -sample_rate1 / 2)
+                //if (rx1_osc < -sample_rate1 / 2)
+                //{
+                //    VFOAFreq = center_frequency + ((sample_rate1 / 2) - 1) * 0.0000010; 
+                //    return;
+                //}
+                //else if (rx1_osc > sample_rate1 / 2)
+                //{
+                //    VFOAFreq = center_frequency + ((-sample_rate1 / 2) + 1) * 0.0000010;
+                //    return;
+                //}
+
+                //-W2PA If we tune beyond the display limits, re-center and keep going.  Original code above just stops tuning at edges.
+                double Lmargin = Convert.ToDouble( -Display.RX1FilterLow );
+                double Hmargin = Convert.ToDouble( Display.RX1FilterHigh );
+                if (Lmargin < 0.0) Lmargin = 0.0;
+                if (Hmargin < 0.0) Hmargin = 0.0;
+                //double Lmargin = 50.0;
+                //double Hmargin = 50.0;
+                double Ldisp = Convert.ToDouble(Display.RXDisplayLow);
+                double Hdisp = Convert.ToDouble(Display.RXDisplayHigh);
+                if ( ( (-rx1_osc) - Lmargin) < Ldisp || ( (-rx1_osc) + Hmargin) > Hdisp)
                 {
-                    VFOAFreq = center_frequency + ((sample_rate1 / 2) - 1) * 0.0000010;
-                    return;
-                }
-                else if (rx1_osc > sample_rate1 / 2)
-                {
-                    VFOAFreq = center_frequency + ((-sample_rate1 / 2) + 1) * 0.0000010;
-                    return;
+                    center_frequency = freq;
+                    update_centerfreq = false;
+                    VFOAFreq = freq;
+                    rx1_osc = 0.0;
                 }
 
                 if (chkRIT.Checked)
@@ -38478,12 +38518,23 @@ namespace PowerSDR
                     if (!click_tune_display)
                         FWCDDSFreq = rx_freq; // update rx freq
 
-                    if (click_tune_display && rx1_spectrum_tune_drag)
+                    if (click_tune_display) //&& rx1_spectrum_tune_drag) //-W2PA This was preventing proper receiver adjustment
                     {
                         if (rx1_xvtr_index >= 0)
                             FWCDDSFreq = XVTRForm.TranslateFreq(center_frequency);
                         else
+                        {
                             FWCDDSFreq = center_frequency;
+                            switch (RX1DSPMode)  //-W2PA Account for offset when in CW modes.
+                            {
+                                case DSPMode.CWL:
+                                    FWCDDSFreq += CWPitch * 1.0e-6;
+                                    break;
+                                case DSPMode.CWU:
+                                    FWCDDSFreq -= CWPitch * 1.0e-6;
+                                    break;
+                            }
+                        }
                     }
 
                     if (chkEnableMultiRX.Checked)
@@ -38838,15 +38889,32 @@ namespace PowerSDR
             {
                 double rx2_osc = Math.Round(-(VFOBFreq - center_rx2_frequency) * 1e6);
 
-                if (rx2_osc < -sample_rate1 / 2)
+                //if (rx2_osc < -sample_rate1 / 2)
+                //{
+                //    VFOBFreq = center_rx2_frequency + ((sample_rate1 / 2) - 1) * 0.0000010;
+                //    return;
+                //}
+                //else if (rx2_osc > sample_rate1 / 2)
+                //{
+                //    VFOBFreq = center_rx2_frequency + ((-sample_rate1 / 2) + 1) * 0.0000010;
+                //    return;
+                //}
+
+                //-W2PA If we tune beyond the display limits, re-center and keep going.  Original code above just stops tuning at edges.
+                double Lmargin = Convert.ToDouble(-Display.RX2FilterLow);
+                double Hmargin = Convert.ToDouble(Display.RX2FilterHigh);
+                if (Lmargin < 0.0) Lmargin = 0.0;
+                if (Hmargin < 0.0) Hmargin = 0.0;
+                //double Lmargin = 50.0;
+                //double Hmargin = 50.0;
+                double Ldisp = Convert.ToDouble(Display.RX2DisplayLow);
+                double Hdisp = Convert.ToDouble(Display.RX2DisplayHigh);
+                if (((-rx2_osc) - Lmargin) < Ldisp || ((-rx2_osc) + Hmargin) > Hdisp)
                 {
-                    VFOBFreq = center_rx2_frequency + ((sample_rate1 / 2) - 1) * 0.0000010;
-                    return;
-                }
-                else if (rx2_osc > sample_rate1 / 2)
-                {
-                    VFOBFreq = center_rx2_frequency + ((-sample_rate1 / 2) + 1) * 0.0000010;
-                    return;
+                    center_rx2_frequency = freq;
+                    update_rx2_centerfreq = false;
+                    VFOBFreq = freq;
+                    rx2_osc = 0.0;
                 }
 
                 if (chkRIT.Checked && VFOSync)
@@ -39221,8 +39289,19 @@ namespace PowerSDR
                 if (!click_tune_rx2_display || set_rx2_freq)
                     RX2DDSFreq = freq;
 
-                if (click_tune_rx2_display && rx2_spectrum_tune_drag)
+                if (click_tune_rx2_display) //&& rx2_spectrum_tune_drag) //-W2PA This was preventing proper receiver adjustment
+                {
                     RX2DDSFreq = center_rx2_frequency;
+                    switch (RX2DSPMode)  //-W2PA Account for offset when in CW modes.
+                    {
+                        case DSPMode.CWL:
+                            RX2DDSFreq += CWPitch * 1.0e-6;
+                            break;
+                        case DSPMode.CWU:
+                            RX2DDSFreq -= CWPitch * 1.0e-6;
+                            break;
+                    }
+                }
             }
 
             set_rx2_freq = false;
@@ -41772,6 +41851,8 @@ namespace PowerSDR
             ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
         }
 
+        private double lastZoom = 1.0;
+
         private void ptbDisplayZoom_Scroll(object sender, System.EventArgs e)
         {
             specRX.GetSpecRX(0).ZoomSlider = ((double)ptbDisplayZoom.Value - 10.0) / 230.0;
@@ -41794,6 +41875,15 @@ namespace PowerSDR
 
             CalcDisplayFreq();
             CalcRX2DisplayFreq();
+
+            if (initializing) lastZoom = zoom_factor;
+            Boolean zoomingIn = (zoom_factor > lastZoom);
+            if (ClickTuneDisplay && zoomingIn)  //-W2PA Force centering display when zooming in with CTUN on, to keep the vfo within the display
+            {
+                center_frequency = VFOAFreq; 
+                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            }
+            lastZoom = zoom_factor; 
 
             //if (ptbDisplayZoom.Focused) btnHidden.Focus();
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -42672,7 +42762,7 @@ namespace PowerSDR
                     if (chkVFOATX.Checked || !rx2_enabled)
                     {
 
-                        CWPitch = cw_pitch;
+                        //CWPitch = cw_pitch;  //-W2PA Calling this re-centers the filter and erases previous settings. See CWPitch def for details.
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         if (!rx_only && chkPower.Checked)
                         {
@@ -42715,7 +42805,7 @@ namespace PowerSDR
                     //grpMode.Text = "Mode - CWU";
                     if (chkVFOATX.Checked || !rx2_enabled)
                     {
-                        CWPitch = cw_pitch;
+                        //CWPitch = cw_pitch;  //-W2PA Calling this re-centers the filter and erases previous settings.  See CWPitch def for details.
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         // RadioDSP.KeyerFreq = -cw_pitch;
                         if (!rx_only && chkPower.Checked)
@@ -43933,6 +44023,21 @@ namespace PowerSDR
             // ptbFilterWidth.Focus();
         }
 
+        //-W2PA Remember the width when the Width slider last hit the image limit.  Used by ptbFilterWidth_Scroll.
+        private int var1WdithAtLimit = 0;
+        private int Var1WidthAtLimit
+        {
+            get
+            {
+                return var1WdithAtLimit;
+            }            
+            set
+            {
+                var1WdithAtLimit = value;
+            }
+        }
+
+        private Boolean beyondLimit = false;
         private void ptbFilterWidth_Scroll(object sender, System.EventArgs e)
         {
             if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC)
@@ -43992,14 +44097,58 @@ namespace PowerSDR
                     break;
                 case DSPMode.CWL:
                 case DSPMode.DIGL:
-                    low = current_center - new_bw / 2;
-                    high = current_center + new_bw / 2;
+                    //low = current_center - new_bw / 2;
+                    //high = current_center + new_bw / 2;
                     /*if(high > -default_low_cut && (int)udFilterHigh.Value <= -default_low_cut)
                     {
                         high = -default_low_cut;
                         low = high - new_bw;
                     }
                     else*/
+
+                    if ((int)udFilterHigh.Value > 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
+                    {
+                        low = current_center - new_bw / 2;
+                        high = current_center + new_bw / 2;
+                        beyondLimit = true;
+                    }
+                    else
+                    {
+                        //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
+                        if (!beyondLimit)
+                        {
+                            if ((current_center + new_bw / 2) < 0) // new bw doesn't put us beyond limit
+                            {
+                                low = current_center - new_bw / 2;
+                                high = current_center + new_bw / 2;
+                            }
+                            else  // new bw puts us beyond limit
+                            {
+                                Var1WidthAtLimit = Math.Abs(-current_center) * 2;
+                                beyondLimit = true;
+                                high = 0;
+                                low = -new_bw;
+                            }
+                        }
+                        else  // currently beyond limit
+                        {
+                            if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
+                            {
+                                beyondLimit = false;
+                                low = current_center - new_bw / 2;
+                                high = current_center + new_bw / 2;
+                            }
+                            else  // new bw will still be above limit
+                            {
+                                high = 0;
+                                low = -new_bw;
+                            }
+                        }
+                    }
+
+                    
+
+
                     if (low < -9999)
                     {
                         low = -9999;
@@ -44012,14 +44161,55 @@ namespace PowerSDR
                     break;
                 case DSPMode.CWU:
                 case DSPMode.DIGU:
-                    low = current_center - new_bw / 2;
-                    high = current_center + new_bw / 2;
+                    //low = current_center - new_bw / 2;
+                    //high = current_center + new_bw / 2;
                     /*if(low < default_low_cut && (int)udFilterLow.Value >= default_low_cut)
                     {
                         low = default_low_cut;
                         high = low + new_bw;
                     }
                     else*/
+
+                    if ((int)udFilterLow.Value < 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
+                    {
+                        low = current_center - new_bw / 2;
+                        high = current_center + new_bw / 2;
+                        beyondLimit = true;
+                    }
+                    else
+                    {
+                        //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
+                        if (!beyondLimit)
+                        {
+                            if ((current_center - new_bw / 2) > 0) // new bw doesn't put us beyond limit
+                            {
+                                low = current_center - new_bw / 2;
+                                high = current_center + new_bw / 2;
+                            }
+                            else  // new bw puts us beyond limit
+                            {
+                                Var1WidthAtLimit = Math.Abs(current_center) * 2;
+                                beyondLimit = true;
+                                low = 0;
+                                high = new_bw;
+                            }
+                        }
+                        else  // currently beyond limit
+                        {
+                            if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
+                            {
+                                beyondLimit = false;
+                                low = current_center - new_bw / 2;
+                                high = current_center + new_bw / 2;
+                            }
+                            else  // new bw will still be above limit
+                            {
+                                low = 0;
+                                high = new_bw;
+                            }
+                        }
+                    }                    
+
                     if (high > 9999)
                     {
                         high = 9999;
@@ -46330,7 +46520,7 @@ namespace PowerSDR
                     {
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                        CWPitch = cw_pitch;
+                        //CWPitch = cw_pitch; //-W2PA Calling this re-centers the filter and erases previous settings. See CWPitch def for details.
                     }
 
                     if (!RX2IsOn60mChannel())
@@ -46360,7 +46550,7 @@ namespace PowerSDR
                     {
                         radio.GetDSPTX(0).TXOsc = 0.0;
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                        CWPitch = cw_pitch;
+                        //CWPitch = cw_pitch; //-W2PA Calling this re-centers the filter and erases previous settings. See CWPitch def for details.
                     }
 
                     if (!RX2IsOn60mChannel())
@@ -51390,14 +51580,14 @@ namespace PowerSDR
             // event handler for CTUN
 
             // if (SetupForm != null) SetupForm.X2TR = chkX2TR.Checked;
-            //  if (chkFWCATU.Checked)
+            if (chkFWCATU.Checked)  //-W2PA Was commented-out in 3.4.1 - don't know why
             {
                 bool rit_on = chkRIT.Checked;
                 chkRIT.Checked = false;
                 ClickTuneDisplay = chkFWCATU.Checked;
                 chkRIT.Checked = rit_on;
             }
-            //  else ClickTuneDisplay = false;
+            else ClickTuneDisplay = false;  //-W2PA Was commented-out in 3.4.1 - don't know why
 
             if (chkFWCATU.Checked && chkVFOSync.Checked)
             {
