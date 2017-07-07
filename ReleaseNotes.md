@@ -258,16 +258,16 @@ Other Fixes, Changes, and Enhancements
 * There is a change in labeling of the CW Break-in checkbox.  This change was made so that the label more accurately reflects the actual function of the box.  This should eliminate some questions and confusion.  The checkbox was previously labeled "Enabled" which would imply either ON or OFF for Break-in.  Instead, what this box actually does is to allow you to select either FULL Break-in or SEMI Break-in.
 
 # 3.4.2 (2017-7-5)
-#CTUN operation:
+# CTUN operation:
 CTUN has been modified to make mode changes behave in similar ways, whether CTUN is on or off, and are identical to the way they always worked with CTUN off in previous versions.  Behavior when tuning has also changed.  As the VFO approachs the edge of the display, instead of disappearing off the edge or stopping, the display re-centers itself so tuning is continuous, even in CTUN mode. The re-centering occurs as the edge of the passband hits the edge of the display, in order to keep any signals of interest visible even as it approaches the edge.  In addition, zooming in while in CTUN mode automatically centers the VFO in the spectrum display so that a signal of interest (i.e. the one you’re tuned to) gets zoomed in on, as is usually the intent.  When zooming out, re-centering doesn’t occur, since that wouldn’t cause the VFO to disappear off the edge of the display.
  
-#Band Stacks - import and size: 
+# Band Stacks - import and size: 
 This modification adds the capability to import BandStack information from an older database, especially useful on starting up a new version, or simply importing while already  running on a current version database.  In 3.4.1 this was not yet handled.  In addition, the bandstacks have been increased to be 5-deep instead of 3.
 
-#CW Filter controls and setup:
+# CW Filter controls and setup:
 This modification fixes the problem of CW filters not getting saved, and worse, being lost whenever band changes or mode changes are made. It also makes the actions of the width/shift/hi/lo/CWpitch controls all act more consistently and intuitively, specifically for CW operation.  See details section below.
 
-#CW FIilter operation details:
+# CW FIilter operation details:
 There are several adjustments that affect the receiver filter settings in CW modes.  They are: Filter buttons, Width, Shift, High, Low, and CWPitch, and they are somewhat interdependent.
 
 Filter Buttons
