@@ -267,7 +267,7 @@ This modification adds the capability to import BandStack information from an ol
 # CW Filter controls and setup:
 This modification fixes the problem of CW filters not getting saved, and worse, being lost whenever band changes or mode changes are made. It also makes the actions of the width/shift/hi/lo/CWpitch controls all act more consistently and intuitively, specifically for CW operation.  See details section below.
 
-# CW FIilter operation details:
+# CW Filter operation details:
 There are several adjustments that affect the receiver filter settings in CW modes.  They are: Filter buttons, Width, Shift, High, Low, and CWPitch, and they are somewhat interdependent.
 
 Filter Buttons
