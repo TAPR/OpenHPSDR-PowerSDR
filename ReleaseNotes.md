@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.1.0 June 01, 2017
+# PowerSDR_mRX_PS 3.4.2.0 July 05, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -256,6 +256,38 @@ Other Fixes, Changes, and Enhancements
 * A change in the format of packets sent out by N1MM+ caused an incompatibility with the FocusMaster feature.  This has been fixed.
 * The locations of XIT and RIT have been interchanged on the console.
 * There is a change in labeling of the CW Break-in checkbox.  This change was made so that the label more accurately reflects the actual function of the box.  This should eliminate some questions and confusion.  The checkbox was previously labeled "Enabled" which would imply either ON or OFF for Break-in.  Instead, what this box actually does is to allow you to select either FULL Break-in or SEMI Break-in.
+
+# 3.4.2 (2017-7-5)
+#CTUN operation:
+CTUN has been modified to make mode changes behave in similar ways, whether CTUN is on or off, and are identical to the way they always worked with CTUN off in previous versions.  Behavior when tuning has also changed.  As the VFO approachs the edge of the display, instead of disappearing off the edge or stopping, the display re-centers itself so tuning is continuous, even in CTUN mode. The re-centering occurs as the edge of the passband hits the edge of the display, in order to keep any signals of interest visible even as it approaches the edge.  In addition, zooming in while in CTUN mode automatically centers the VFO in the spectrum display so that a signal of interest (i.e. the one you’re tuned to) gets zoomed in on, as is usually the intent.  When zooming out, re-centering doesn’t occur, since that wouldn’t cause the VFO to disappear off the edge of the display.
+ 
+#Band Stacks - import and size: 
+This modification adds the capability to import BandStack information from an older database, especially useful on starting up a new version, or simply importing while already  running on a current version database.  In 3.4.1 this was not yet handled.  In addition, the bandstacks have been increased to be 5-deep instead of 3.
+
+#CW Filter controls and setup:
+This modification fixes the problem of CW filters not getting saved, and worse, being lost whenever band changes or mode changes are made. It also makes the actions of the width/shift/hi/lo/CWpitch controls all act more consistently and intuitively, specifically for CW operation.  See details section below.
+
+#CW FIilter operation details:
+There are several adjustments that affect the receiver filter settings in CW modes.  They are: Filter buttons, Width, Shift, High, Low, and CWPitch, and they are somewhat interdependent.
+
+Filter Buttons
+The filter selection buttons choose pre-defined receiver bandpass filters. They are customizable by right clicking on each button and then choosing its width, or low and high limits.  For CW it is recommended that you initially choose a passband centered on the CW Pitch frequency, since CW filters will automatically be centered whenever the CW Pitch is changed.
+
+Width
+Sliding the Width control automatically switches to the Var1 filter so that your pre-defined Filter buttons aren't changed from the width you set them up for and labeled them as.  Moving the slider left decreases the passband width while sliding right increases it.  As you increase width, one of the passband edges (the upper edge in the "Lower" modes such as CWL, or the lower edge in the "Upper" modes, like CWU) approaches the limit where opposite sideband images appear (i.e. a value of zero (0) in High or Low).  When this happens, the width continues to increase but only in one direction - downward in a "Lower" mode, and upward in an "Upper" mode - so as to keep from hearing these images.  If you subsequently move the passband across the sideband (image) boundary, enforcement of the boundary ceases and you can change the width centered on wherever you've moved the passband with Shift. When you move the passband back across this boundary, the width control again obeys this limit. Clicking on a filter button other than Var1 resets the receiver to the filter settings assigned to that button, but Var1 remains as you set it, until you change it again, either by clicking on Var1 or having it be automatically selected by using one of the adjustments.
+
+Shift
+Sliding the Shift control automatically switches to the Var1 filter so that your Filter buttons aren't changed from how you set them up.  Moving the slider left shifts the passband down in frequency while moving it right shifts the passband upward. The passband shift is not restricted the way the Width control is and can freely slide up and down from one sideband to the other (and affects how the Width control operates as described above).  The "Reset" button returns only the Shift slider to its original position.  Clicking on another filter button resets the receiver to the filter settings assigned to that button, but Var1 remains as you set it, until you change it again.
+
+High/Low
+The High control shifts only the high frequency edge of the passband.  It is inactive when a pre-defined Filter button is selected, but becomes active when Var1 or Var2 is selected.  It is also possible to control it using the CAT interface or a MIDI controller.  When you do that while a pre-set filter button is selected, Var1 is automatically selected, just as with the Width and Shift sliders.  The Low control works the same way, but affects the low frequency edge of the passband. Mapping a MIDI controller knob to these functions gives you a control that operates just like the Low Cut and High Cut adjustments some transceivers provide.
+
+CW Pitch
+The CW Pitch control determines how far (in Hz) a CW signal is offset so that it produces an audible tone when the VFO is tuned to indicate the signal's actual frequency.  Without this offset, tuning a CW signal to zero-beat would be at the actual zero-beat point where no audible tone would be present because its frequency is zero.  Thus, when you tune the VFO to a point where you hear a station's tone exactly match the CW Pitch setting, you are tuned to transmit at that station's exact frequency. 
+
+Changing the CW Pitch control has several effects, and its interaction with the filter buttons can get a little complicated.  First, this tone at "zero-beat" changes, and so does the sidetone as an aid to tuning in a station to match the CW Pitch (and offset).  Second, the CW filters are all adjusted to keep themselves at your originally set bandwidths and centered on the CW Pitch (offset) frequency. That way, whenever a CW signal is tuned to its exact frequency, it's positioned in the center of the passband.  
+
+The CW Pitch isn't usually adjusted as part of tuning in a station and tweaking filters to reduce interference. And normally, when you customize your CW Filter button settings, you configure all of them while keeping the CW Pitch setting constant, using the Width (or Low and High) setting for each button, centered around the CW Pitch frequency.  Once set that way, they will always return to these settings whenever you choose that particular CW Pitch.  When you vary the pitch from that value, the CW filters change themselves to track the CW Pitch as described above (but, of course, they retain their width as originally set to match their button's label).  Note, however, if you customize a CW filter button in a way that is not centered on the CW Pitch frequency, the next time you change CW Pitch that filter will center itself.  Bandwidth takes priority over Low/High setting values for the filter selection buttons, so that their labels always match their bandwidths.  There is one exception: If you lower the CW Pitch below the point where the passband edge hits the sideband (image) limit, the passband stops moving while you can continue to lower the pitch - but it will no longer be centered in the passband.
 
 
 
