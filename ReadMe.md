@@ -1,8 +1,13 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.4.1 June 1, 2017
+Latest Release v3.4.2 July 5, 2017
 
 Read the RealeaseNotes.md for more information.
+
+# 3.4.2 (2017-7-5)
+- CTUN has had several modifications and bug fixes.
+- Band Stacks have been increased to 5 deep for each band.
+- CW Filters are now being saved correctly.
 
 # 3.4.1 (2017-6-1)
 - Swapped places with XIT and RIT controls on the console.
