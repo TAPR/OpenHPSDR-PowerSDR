@@ -87,7 +87,7 @@ Several changes to the RAForm were made to this release.
 - increased the maximum number of data points limit to 2,000,000 for each of the time, RX1, and RX2 data arrays
 - increased the maximum selectable value for x-axis display range to 100,000 seconds
 - the above two new limits permit more than 27 hours of continuous data recording                         
-- added control value updates on file read/write for the "numericUpDown_mSec_between_measurements" control and the "numericUpDown_measurements_per_point” control
+- added control value updates on file read/write for the "numericUpDown_mSec_between_measurements" control and the "numericUpDown_measurements_per_point" control
 - added display of Date/Time and Comment information on file READ
 
 Other additions and fix that were added are:
