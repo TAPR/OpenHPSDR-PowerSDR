@@ -134,6 +134,7 @@ namespace PowerSDR
         private RadioButtonTS radGenModelANAN100B;
         private RadioButtonTS radGenModelANAN10E;
         private RadioButtonTS radGenModelANAN8000D;
+        private RadioButtonTS radGenModelANAN7000D;
         private System.ComponentModel.Container components = null;
 
 		#endregion
@@ -209,6 +210,9 @@ namespace PowerSDR
                 case Model.ANAN200D:
                     radGenModelOrion.Checked = true;
                     break;
+                case Model.ANAN7000D:
+                    radGenModelANAN7000D.Checked = true;
+                    break;
                 case Model.ANAN8000D:
                     radGenModelANAN8000D.Checked = true;
                     break;
@@ -248,6 +252,8 @@ namespace PowerSDR
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.grpModel = new System.Windows.Forms.GroupBoxTS();
+            this.radGenModelANAN7000D = new System.Windows.Forms.RadioButtonTS();
+            this.radGenModelANAN8000D = new System.Windows.Forms.RadioButtonTS();
             this.radGenModelANAN10E = new System.Windows.Forms.RadioButtonTS();
             this.radGenModelANAN100B = new System.Windows.Forms.RadioButtonTS();
             this.radGenModelOrion = new System.Windows.Forms.RadioButtonTS();
@@ -302,7 +308,6 @@ namespace PowerSDR
             this.comboBox10 = new System.Windows.Forms.ComboBoxTS();
             this.lblMessage1 = new System.Windows.Forms.LabelTS();
             this.lblCombo = new System.Windows.Forms.LabelTS();
-            this.radGenModelANAN8000D = new System.Windows.Forms.RadioButtonTS();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpModel.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -334,6 +339,7 @@ namespace PowerSDR
             // 
             // grpModel
             // 
+            this.grpModel.Controls.Add(this.radGenModelANAN7000D);
             this.grpModel.Controls.Add(this.radGenModelANAN8000D);
             this.grpModel.Controls.Add(this.radGenModelANAN10E);
             this.grpModel.Controls.Add(this.radGenModelANAN100B);
@@ -354,6 +360,28 @@ namespace PowerSDR
             this.grpModel.TabStop = false;
             this.grpModel.Text = "Model";
             this.grpModel.Visible = false;
+            // 
+            // radGenModelANAN7000D
+            // 
+            this.radGenModelANAN7000D.Image = null;
+            this.radGenModelANAN7000D.Location = new System.Drawing.Point(19, 156);
+            this.radGenModelANAN7000D.Name = "radGenModelANAN7000D";
+            this.radGenModelANAN7000D.Size = new System.Drawing.Size(110, 17);
+            this.radGenModelANAN7000D.TabIndex = 16;
+            this.radGenModelANAN7000D.Text = "ANAN-7000DLE";
+            this.radGenModelANAN7000D.UseVisualStyleBackColor = true;
+            this.radGenModelANAN7000D.CheckedChanged += new System.EventHandler(this.radGenModelANAN7000D_CheckedChanged);
+            // 
+            // radGenModelANAN8000D
+            // 
+            this.radGenModelANAN8000D.Image = null;
+            this.radGenModelANAN8000D.Location = new System.Drawing.Point(19, 173);
+            this.radGenModelANAN8000D.Name = "radGenModelANAN8000D";
+            this.radGenModelANAN8000D.Size = new System.Drawing.Size(110, 17);
+            this.radGenModelANAN8000D.TabIndex = 15;
+            this.radGenModelANAN8000D.Text = "ANAN-8000DLE";
+            this.radGenModelANAN8000D.UseVisualStyleBackColor = true;
+            this.radGenModelANAN8000D.CheckedChanged += new System.EventHandler(this.radGenModelANAN8000D_CheckedChanged);
             // 
             // radGenModelANAN10E
             // 
@@ -454,9 +482,9 @@ namespace PowerSDR
             // 
             this.radGenModelFLEX5000.Checked = true;
             this.radGenModelFLEX5000.Image = null;
-            this.radGenModelFLEX5000.Location = new System.Drawing.Point(18, 186);
+            this.radGenModelFLEX5000.Location = new System.Drawing.Point(18, 190);
             this.radGenModelFLEX5000.Name = "radGenModelFLEX5000";
-            this.radGenModelFLEX5000.Size = new System.Drawing.Size(88, 24);
+            this.radGenModelFLEX5000.Size = new System.Drawing.Size(88, 17);
             this.radGenModelFLEX5000.TabIndex = 6;
             this.radGenModelFLEX5000.TabStop = true;
             this.radGenModelFLEX5000.Text = "FLEX-5000";
@@ -1155,17 +1183,6 @@ namespace PowerSDR
             this.lblCombo.TabIndex = 9;
             this.lblCombo.Text = "lblCombo";
             // 
-            // radGenModelANAN8000D
-            // 
-            this.radGenModelANAN8000D.Image = null;
-            this.radGenModelANAN8000D.Location = new System.Drawing.Point(19, 156);
-            this.radGenModelANAN8000D.Name = "radGenModelANAN8000D";
-            this.radGenModelANAN8000D.Size = new System.Drawing.Size(110, 24);
-            this.radGenModelANAN8000D.TabIndex = 15;
-            this.radGenModelANAN8000D.Text = "ANAN-8000DLE";
-            this.radGenModelANAN8000D.UseVisualStyleBackColor = true;
-            this.radGenModelANAN8000D.CheckedChanged += new System.EventHandler(this.radGenModelANAN8000D_CheckedChanged);
-            // 
             // SetupWizard
             // 
             this.ClientSize = new System.Drawing.Size(488, 286);
@@ -1568,6 +1585,7 @@ namespace PowerSDR
                         case Model.ANAN100:
                         case Model.ANAN100D:
                         case Model.ANAN200D:
+                        case Model.ANAN7000D:
                         case Model.ANAN8000D:
                             CurPage = Page.HPSDR_HARDWARE_SELECT;
                             btnNext.Focus();
@@ -1829,6 +1847,12 @@ namespace PowerSDR
                     console.SetupForm.forceAudioSampleRate1("192000");
                     break;
                 case Model.ANAN200D:
+                    console.SetupForm.PennyLanePresent = pennylane_present;
+                    console.SetupForm.MercuryPresent = mercury_present;
+                    console.SetupForm.AlexPresent = alex_present;
+                    console.SetupForm.forceAudioSampleRate1("192000");
+                    break;
+                case Model.ANAN7000D:
                     console.SetupForm.PennyLanePresent = pennylane_present;
                     console.SetupForm.MercuryPresent = mercury_present;
                     console.SetupForm.AlexPresent = alex_present;
@@ -2400,6 +2424,34 @@ namespace PowerSDR
             }
 
         }
+
+        private void radGenModelANAN7000D_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radGenModelANAN7000D.Checked)
+            {
+                model = Model.ANAN7000D;
+                //if (grpModel.Visible)
+                pictureBox1.Image = null;
+                pictureBox1.Visible = false;
+                //pictureBox1.Image = new Bitmap(GetResource("PowerSDR.images.hpsdr.jpg"));
+                chkMercury.Checked = radGenModelANAN7000D.Checked;
+                chkPennyLane.Checked = radGenModelANAN7000D.Checked;
+                chkMercury.Enabled = false;
+                chkPennyLane.Enabled = false;
+                chkPenny.Enabled = false;
+                chkPenny.Checked = false;
+                chkExcalibur.Enabled = false;
+                chkExcalibur.Checked = false;
+                chkAlex.Checked = true;
+                chkAlex.Enabled = true;
+                radMetis.Checked = true;
+                radMetis.Enabled = false;
+                radMetis.Text = "ANAN";
+                radOzy.Enabled = false;
+            }
+
+        }
+
 
     }
 }

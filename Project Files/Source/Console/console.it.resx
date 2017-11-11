@@ -4482,9 +4482,6 @@
   <data name="btnTNFAdd.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value></value>
   </data>
-  <data name="btnTNFAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
   <data name="btnTNFAdd.Location" type="System.Drawing.Point, System.Drawing">
     <value>60, 69</value>
   </data>
@@ -4496,9 +4493,6 @@
   </data>
   <data name="btnTNFAdd.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>TopCenter</value>
-  </data>
-  <data name="btnTNFAdd.ToolTip" xml:space="preserve">
-    <value>Aggiungere un manuale di rilevamento filtro elimina banda</value>
   </data>
   <data name="ptbRX2AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -6377,30 +6371,6 @@
   </data>
   <data name="panelVFO.TabIndex" type="System.Int32, mscorlib">
     <value>120</value>
-  </data>
-  <data name="lblCPUMeter.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="lblCPUMeter.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value></value>
-  </data>
-  <data name="lblCPUMeter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="lblCPUMeter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 133</value>
-  </data>
-  <data name="lblCPUMeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 16</value>
-  </data>
-  <data name="lblCPUMeter.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
-  </data>
-  <data name="lblCPUMeter.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="lblCPUMeter.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="txtCPUMeter.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
@@ -8593,9 +8563,6 @@
   <data name="SNBtoolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>99, 22</value>
   </data>
-  <data name="btnTNFAdd.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="txtDisplayOrionMKIIPAVolts.Font" type="System.Drawing.Font, System.Drawing">
     <value>Arial, 9.75pt</value>
   </data>
@@ -8641,9 +8608,6 @@
   <data name="txtDisplayOrionMKIIBlank.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Center</value>
   </data>
-  <data name="chkSyncIT.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="chkSyncIT.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>
   </data>
@@ -8661,5 +8625,56 @@
   </data>
   <data name="lblCWBreakInDelay.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
+  </data>
+  <data name="btnMemoryQuickRestore.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopCenter</value>
+  </data>
+  <data name="btnTNFAddOld.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnTNFAddOld.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="btnTNFAddOld.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value></value>
+  </data>
+  <data name="btnTNFAddOld.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="btnTNFAddOld.Location" type="System.Drawing.Point, System.Drawing">
+    <value>59, 70</value>
+  </data>
+  <data name="btnTNFAddOld.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="btnTNFAddOld.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 20</value>
+  </data>
+  <data name="btnTNFAddOld.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="btnTNFAddOld.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopCenter</value>
+  </data>
+  <data name="btnTNFAddOld.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="btnTNFAdd.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
+    <value>Button</value>
+  </data>
+  <data name="btnTNFAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="comboAMTXProfile.ItemHeight" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="comboAMTXProfile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>217, 26</value>
+  </data>
+  <data name="comboAMTXProfile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>96, 21</value>
+  </data>
+  <data name="comboAMTXProfile.TabIndex" type="System.Int32, mscorlib">
+    <value>115</value>
   </data>
 </root>

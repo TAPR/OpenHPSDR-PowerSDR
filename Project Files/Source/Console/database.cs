@@ -7418,6 +7418,7 @@ namespace PowerSDR
             foreach (string s in list)
             {
                 string[] vals = s.Split('/');
+
                 if (vals.Length > 2)
                 {
                     for (int i = 2; i < vals.Length; i++)
@@ -7427,7 +7428,10 @@ namespace PowerSDR
                 if (vals.Length <= 1) // skip it as no data was provided
                     continue;
 
-                DataRow[] rows = ds.Tables[tableName].Select("Key = '" + vals[0] + "'");
+                string selector = "Key = '" + vals[0] + "'";
+
+                DataRow[] rows = ds.Tables[tableName].Select(selector);
+
                 if (rows.Length == 0)	// name is not in list
                 {
                     DataRow newRow = ds.Tables[tableName].NewRow();

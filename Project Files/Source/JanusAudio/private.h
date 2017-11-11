@@ -70,6 +70,11 @@ extern DttSP_EXP void destroy_resampleFV (/*ResSt*/ void * resst);
 
 extern const int numInputBuffs;
 
+
+#include "pro.h"
+PRO prop;
+extern int LPacks;
+
 // PowerSDR interface routines
 // extern KD5TFDVK6APHAUDIO_API int StartAudio(int block_size);
 extern KD5TFDVK6APHAUDIO_API int StartAudioNative(int sample_rate, int samples_per_block, int (__stdcall *callback)(void *inp, void *outp, int framcount, void *timeinfop, int flags, void *userdata), int sample_bits, int no_send);

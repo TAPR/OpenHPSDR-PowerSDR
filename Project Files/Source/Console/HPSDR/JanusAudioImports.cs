@@ -388,5 +388,8 @@ namespace PowerSDR
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void isOrionMKII(int v);
 
+        [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetProLpacks(int lpacks);
+        
     }
 }

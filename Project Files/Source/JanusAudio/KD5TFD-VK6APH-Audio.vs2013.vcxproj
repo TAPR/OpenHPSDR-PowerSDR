@@ -123,6 +123,7 @@
     <ClCompile Include="OzyIO.c" />
     <ClCompile Include="Ozyutils.c" />
     <ClCompile Include="PowerSDR-Interface.c" />
+    <ClCompile Include="pro.c" />
     <ClCompile Include="ringbuf.c" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -138,6 +139,7 @@
     <ClInclude Include="Ozydefs.h" />
     <ClInclude Include="Ozyutils.h" />
     <ClInclude Include="private.h" />
+    <ClInclude Include="pro.h" />
     <ClInclude Include="pthread.h" />
     <ClInclude Include="sched.h" />
     <ClInclude Include="semaphore.h" />

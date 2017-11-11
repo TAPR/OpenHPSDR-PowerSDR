@@ -7064,6 +7064,128 @@ namespace PowerSDR
                 f_diff = freq_diff;
             }
 
+            //-W2PA Correct for transmit scale shifts in split and CTUN modes
+            double diff;
+            diff = 1.0e6 * (console.CenterFrequency - console.VFOAFreq);  // Correction for CTUN: DispCenter - VFOA
+            int ctunDiff = Convert.ToInt32(diff);
+
+            diff = 1.0e6 * (console.VFOBFreq - console.VFOAFreq);  // Correction for split: VFOB - VFOA
+            int splitDiff = Convert.ToInt32(diff);
+
+            if (SplitEnabled && RX2Enabled)
+            {
+                diff = 1.0e6 * (console.VFOASubFreq - console.VFOAFreq);  // Correction for split with RX2 on: VFOASub - VFOA
+                splitDiff = Convert.ToInt32(diff);
+            }
+
+            //-W2PA Correct the display for various transmit mode combinations
+            if (local_mox && rx == 1)
+            {
+                if (SplitEnabled) // Split with either VFOB or VFOAsub on TX, VFOA on RX
+                {
+                    if (!display_duplex) //DUP off
+                    {
+                        if (console.VFOBTX)  // Tx on VFOB
+                        {
+                            Low -= splitDiff;
+                            High -= splitDiff;
+
+                            if (console.CTuneDisplay)
+                            {
+                                Low += ctunDiff;
+                                High += ctunDiff;
+                                f_diff -= ctunDiff;                                
+                            }
+
+                            if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                            {
+                                if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                                {
+                                    Low -= CWPitch;  // Lower<whatever> mode
+                                    High -= CWPitch;
+                                    f_diff += CWPitch;
+                                }
+                                else
+                                {
+                                    Low += CWPitch;  // All others
+                                    High += CWPitch;
+                                    f_diff -= CWPitch;
+                                }
+                            }
+
+                            if (RX2Enabled)
+                            {
+                                ; // No corrections necessary
+                            }
+                        }
+                        else //Tx on VFOAsub  DUP off
+                        {
+                            ; // no correction necessary here
+                        }
+                    }
+                    else //DUP on and Split 
+                    {
+                        if (console.CTuneDisplay)
+                        {
+                            Low += ctunDiff;
+                            High += ctunDiff;
+                            f_diff -= ctunDiff;
+                        }
+
+                        if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                        {
+                            if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                            {
+                                Low -= CWPitch;  // Lower<whatever> mode
+                                High -= CWPitch;
+                                f_diff += CWPitch;
+                            }
+                            else
+                            {
+                                Low += CWPitch;  // All others
+                                High += CWPitch;
+                                f_diff -= CWPitch;
+                            }
+                        }
+
+                        if (console.VFOBTX)  //Tx on VFOB
+                        {
+                            ; // no correction necessary                                                  
+                        }
+                        else //Tx on VFOAsub
+                        {
+                            Low -= splitDiff;
+                            High -= splitDiff;
+                            f_diff += splitDiff;                    
+                        }
+                    }
+                }
+                else // Simplex operation, i.e. VFO controls RX and TX  
+                {
+                    if (console.CTuneDisplay)
+                    {
+                        ; // no correction necessary here
+                    }                   
+                  
+                    if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                    {
+                        if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                        {
+                            Low -= CWPitch;  // Lower<whatever> mode
+                            High -= CWPitch;
+                            f_diff += CWPitch;
+                        }                        
+                        else
+                        {
+                            Low += CWPitch;  // All others
+                            High += CWPitch;
+                            f_diff -= CWPitch;
+                        }
+                    }                    
+                }
+            }  // end display corrections for transmit mode combinations
+
+
             int y_range = grid_max - grid_min;
             if (split_display) grid_step *= 2;
 
@@ -8589,6 +8711,207 @@ namespace PowerSDR
 
             int center_line_x;// = (int)(-(double)low / (high - low) * W);
             int y_range = grid_max - grid_min;
+
+
+            //-W2PA Correct for transmit scale shifts in split and CTUN modes
+            double diff;
+            diff = 1.0e6 * (console.CenterFrequency - console.VFOAFreq);  // Correction for CTUN: DispCenter - VFOA
+            int ctunDiff = Convert.ToInt32(diff);
+
+            diff = 1.0e6 * (console.VFOBFreq - console.VFOAFreq);  // Correction for split: VFOB - VFOA
+            int splitDiff = Convert.ToInt32(diff);
+
+            if (SplitEnabled && RX2Enabled)
+            {
+                diff = 1.0e6 * (console.VFOASubFreq - console.VFOAFreq);  // Correction for split with RX2 on: VFOASub - VFOA
+                splitDiff = Convert.ToInt32(diff);
+            }
+
+            //-W2PA Correct the display for various mode combinations
+
+            if (!local_mox && rx == 1)  //Receive
+            {
+                if (rx1_dsp_mode == DSPMode.CWU)
+                {
+                    low -= CWPitch;
+                    high -= CWPitch;
+                    f_diff += CWPitch;
+                }
+                else if (rx1_dsp_mode == DSPMode.CWL)
+                {
+                    low += CWPitch;
+                    high += CWPitch;
+                    f_diff -= CWPitch;
+                }
+            }
+
+            if (local_mox && rx == 1)  //Transmit
+            {
+                if (SplitEnabled) // Split with either VFOB or VFOAsub on TX, VFOA on RX
+                {
+                    if (!display_duplex) //DUP off
+                    {
+                        if (console.VFOBTX)  // Tx on VFOB
+                        {
+                            low -= splitDiff;
+                            high -= splitDiff;
+
+                            if (console.CTuneDisplay)
+                            {
+                                low += ctunDiff / 2;
+                                high += ctunDiff / 2;
+                                f_diff -= ctunDiff;
+                            }
+
+                            if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                            {
+                                if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                                {
+                                    low -= CWPitch;  // Lower<whatever> mode
+                                    high -= CWPitch;
+                                    f_diff += CWPitch;
+                                }
+                                else
+                                {
+                                    low += CWPitch;  // All others
+                                    high += CWPitch;
+                                    f_diff -= CWPitch;
+                                }
+                            }
+
+                            if (rx1_dsp_mode == DSPMode.CWL)
+                            {
+                                low += CWPitch / 2;  
+                                high += CWPitch / 2;
+                                f_diff -= CWPitch / 2;
+                            }
+                            else if (rx1_dsp_mode == DSPMode.CWU)
+                            {
+                                low -= CWPitch / 2;  
+                                high -= CWPitch / 2;
+                                f_diff += CWPitch / 2;
+                            }
+                            else //if (rx1_dsp_mode == DSPMode.USB || rx1_dsp_mode == DSPMode.LSB)
+                            {
+                                //low -= CWPitch;
+                                //high -= CWPitch;
+                                //f_diff += CWPitch;
+                            }
+                        }
+                        else //Tx on VFOAsub  DUP off 
+                        {
+                            ; // no correction necessary here as waterfall not visible
+                            // This case seems to be off by +CWPitch on all modes - i.e. transmit sig is CWPitch higher than VFOSub reads.
+                            // Not display related.
+                        }
+                    }
+                    else //DUP on and Split 
+                    {
+                        if (console.CTuneDisplay)
+                        {
+                            low += ctunDiff;
+                            high += ctunDiff;
+                            f_diff -= ctunDiff;
+                        }
+
+                        if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                        {
+                            if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                            {
+                                low -= CWPitch;  // Lower<whatever> mode
+                                high -= CWPitch;
+                                f_diff += CWPitch;
+                            }
+                            else
+                            {
+                                low += CWPitch;  // All others
+                                high += CWPitch;
+                                f_diff -= CWPitch;
+                            }
+                        }
+
+                        if (console.VFOBTX)  //Tx on VFOB
+                        {                            
+                            if (rx1_dsp_mode == DSPMode.CWU)
+                            {
+                                low -= CWPitch;
+                                high -= CWPitch;
+                                f_diff += CWPitch;
+                            }
+                            else if (rx1_dsp_mode == DSPMode.CWL) // All other modes - no correction necessary for CWL
+                            {
+                                low += CWPitch;
+                                high += CWPitch;
+                                f_diff -= CWPitch;
+                            }
+                        }
+                        else //Tx on VFOAsub
+                        {
+                            // This case seems to be off by +CWPitch on all modes - i.e. transmit sig is CWPitch higher than VFOSub reads.
+                            // Not display related.
+                        }
+                    }
+                }
+                else // Simplex operation, i.e. VFO controls RX and TX  
+                {
+                    if (console.TUN)  // Adjust display scale and cursor for CW offset in TUN mode
+                    {
+                        if (rx1_dsp_mode == DSPMode.LSB || rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.DIGL)
+                        {
+                            low -= CWPitch;  // Lower<whatever> mode
+                            high -= CWPitch;
+                            f_diff += CWPitch;
+                        }
+                        else
+                        {
+                            low += CWPitch;  // All others
+                            high += CWPitch;
+                            f_diff -= CWPitch;
+                        }
+                    }
+
+                    if (!display_duplex)  // DUP off
+                    {
+                        if (console.CTuneDisplay)
+                        {
+                            low -= ctunDiff / 2;
+                            high -= ctunDiff / 2;
+                            //f_diff += ctunDiff / 2;
+                        }
+
+                        if (rx1_dsp_mode == DSPMode.CWL)
+                        {
+                            low += CWPitch / 2;
+                            high += CWPitch / 2;
+                            f_diff -= CWPitch / 2;
+                        }
+                        else if (rx1_dsp_mode == DSPMode.CWU)
+                        {
+                            low -= CWPitch / 2;
+                            high -= CWPitch / 2;
+                            f_diff += CWPitch / 2;
+                        }
+                    }
+                    else // DUP on
+                    {
+                        if (rx1_dsp_mode == DSPMode.CWL)
+                        {
+                            low += CWPitch;
+                            high += CWPitch;
+                            f_diff -= CWPitch;
+                        }
+                        else if (rx1_dsp_mode == DSPMode.CWU)  
+                        {
+                            low -= CWPitch;
+                            high -= CWPitch;
+                            f_diff += CWPitch;
+                        } // All other modes need no correction
+                    }
+                }
+            }  // end display corrections for transmit mode combinations
+
+
+
 
             //if (mox) // get filter limits
             //{

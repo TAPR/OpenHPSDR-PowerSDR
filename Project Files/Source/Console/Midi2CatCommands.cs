@@ -39,7 +39,7 @@ namespace PowerSDR
     {
         private CATParser parser;
         private CATCommands commands;
-        private MidiMessageManager midiManager = null;
+        private MidiMessageManager midiManager = null; 
 
 
         public Midi2CatCommands(Console c)
@@ -169,11 +169,14 @@ namespace PowerSDR
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqA = commands.ZZFA("");
-                commands.ZZFB(FreqA);
+                //string FreqA = commands.ZZFA("");
+                //commands.ZZFB(FreqA);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOAtoB();
             }
         }
 
@@ -182,11 +185,14 @@ namespace PowerSDR
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                commands.ZZFA(FreqB);
+                //string FreqB = commands.ZZFB("");
+                //commands.ZZFA(FreqB);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOBtoA();
             }
         }
 
@@ -194,13 +200,16 @@ namespace PowerSDR
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                string FreqA = commands.ZZFA("");
-                commands.ZZFA(FreqB);
-                commands.ZZFB(FreqA);
+                //string FreqB = commands.ZZFB("");
+                //string FreqA = commands.ZZFA("");
+                //commands.ZZFA(FreqB);
+                //commands.ZZFB(FreqA);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOABSwap();
             }
         }
 
@@ -241,13 +250,20 @@ namespace PowerSDR
             return;
         }
 
+        bool IsBehringerCMD(MidiDevice device)
+        {
+            string deviceName = device.GetDeviceName();
+            if (deviceName.Contains("CMD")) return true;
+            else return false;
+        }
+
         public void RIT_inc(int msg, MidiDevice device)
         {
             parser.nSet = 2;
             parser.nGet = 0;
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 if (msg == 127 || msg <= 1) //-W2PA for Behringer PL-1 type knob/wheel push button, to zero the setting
                 {
@@ -287,7 +303,7 @@ namespace PowerSDR
             int mode = Convert.ToInt16(commands.ZZMD(""));
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 if ((msg == 127 || msg <= 1))  //-W2PA for Behringer PL-1 type knob/wheel push button, to zero the setting
                 {
@@ -872,13 +888,83 @@ namespace PowerSDR
         }
 
 
+        //-W2PA This increments or decrements the number of MIDI messages that cause a single tune step increment
+        // It is useful when using coarse increments, such as 100kHz, and wanting more wheel rotation for each one
+        // so that tuning isn't so critical.
+        public void MidiMessagesPerTuneStepUp(int msg, MidiDevice device)
+        {
+            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepUp();
+        }
+        public void MidiMessagesPerTuneStepDown(int msg, MidiDevice device) 
+        {
+            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepDown();
+        }
+        public CmdState MidiMessagesPerTuneStepToggle(int msg, MidiDevice device) 
+        {
+            if (msg >= 126)
+            {
+                CmdState retState = CmdState.Off;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
 
+                if (mpts == Console.getConsole().MinMIDIMessagesPerTuneStep) retState = CmdState.On;  // switching to max
+                else if (mpts == Console.getConsole().MaxMIDIMessagesPerTuneStep) retState = CmdState.Off; // switching to min
+                else
+                {   // on the off chance the user has set the value to some intermediate value, force reset to min
+                    Console.getConsole().MidiMessagesPerTuneStep = Console.getConsole().MinMIDIMessagesPerTuneStep;
+                    return CmdState.Off;
+                }
+                // Do the toggle
+                Console.getConsole().CATMidiMessagesPerTuneStepToggle();
+                return retState;
+            }
+            else
+            {
+                return CmdState.NoChange;
+            }   
+        }
+
+        private int msgs_since_reversal = 0;  //-W2PA Used to keep track of rotation and apply MidiMessagesPerTuneStep from console
+        private int current_tuning_direction = 0;  // -1 = CCW, 1 = CW -- 0 is uninitialized value
 
         //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
         private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
         {
             int ico;
             if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
+
+            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
+            // For testing:
+            // Console.getConsole().MidiMessagesPerTuneStep = 16;
+
+            if (current_tuning_direction == 0) // First time tuning
+            {
+                msgs_since_reversal = 0;
+                if (direction > 125) current_tuning_direction = 1;
+                else current_tuning_direction = -1;
+            }
+
+            if ((direction > 125 && current_tuning_direction == 1) ||
+                (direction < 3 && current_tuning_direction == -1))
+            {  // continuing in same direction
+                msgs_since_reversal++;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)
+                    return; // Not enough rotation to act
+                else
+                {   // ok to tune, reset the counter then go tune
+                    msgs_since_reversal = 0;
+                }
+            }
+            else // direction has reversed 
+            {
+                msgs_since_reversal = 1;
+                current_tuning_direction = -current_tuning_direction;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
+                    return;
+            }
+
+
             switch (mode)
             {
                 case 7: //DIGU
@@ -887,13 +973,13 @@ namespace PowerSDR
                         {
                             int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
 
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 freq -= offsetDIGU;
                                 long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
                                 if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 freq -= offsetDIGU;
                                 long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
@@ -903,12 +989,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -922,13 +1008,13 @@ namespace PowerSDR
                         {
                             int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
 
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 freq += offsetDIGL;
                                 long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
                                 if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 freq += offsetDIGL;
                                 long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
@@ -938,12 +1024,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -954,12 +1040,12 @@ namespace PowerSDR
                 default: //for all other modes
                     {
 
-                        if (direction == 127)
+                        if (direction == 127 || direction == 126)
                         {
                             if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                         }
-                        if (direction == 1)
+                        if (direction == 1 || direction == 2)
                         {
                             if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                             else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -975,8 +1061,41 @@ namespace PowerSDR
         {
             int stepMult = 1;
 
-            // Handle the PL-1 and Micro slightly different due to the different behavior of their large wheels
-            if (deviceName == "CMD PL-1")
+            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
+            // For testing:
+            // Console.getConsole().MidiMessagesPerTuneStep = 16;
+
+            if (current_tuning_direction == 0) // First time tuning
+            {
+                msgs_since_reversal = 0;
+                if (direction > 64) current_tuning_direction = 1;
+                else current_tuning_direction = -1;
+            }
+            
+            if ((direction > 64 && current_tuning_direction == 1) ||
+                (direction < 64 && current_tuning_direction == -1)) 
+            {  // continuing in same direction
+                msgs_since_reversal++;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)
+                    return; // Not enough rotation to act
+                else
+                {   // ok to tune, reset the counter then go tune
+                    msgs_since_reversal = 0;
+                }
+            }
+            else // direction has reversed 
+            {
+                msgs_since_reversal = 1;
+                current_tuning_direction = -current_tuning_direction;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
+                    return;                    
+            }
+
+
+                // Handle the PL-1 and Micro slightly different due to the different behavior of their large wheels
+                if (deviceName == "CMD PL-1")
             {
                 if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
                 {
@@ -995,7 +1114,26 @@ namespace PowerSDR
                     stepMult = 200;
                 }
             }
-            else if (deviceName == "CMD Micro")  // The Micro's large week needs more spinning to get to higher numbers than the PL-1, so start increasing earlier.
+            else if (deviceName == "CMD Micro")  // These wheels need more spinning to get to higher numbers than the PL-1, so start increasing earlier.
+            {
+                if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 3;
+                }
+                if ((direction <= 61 && direction >= 10) || (direction >= 67 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 7;
+                }
+                if ((direction <= 60 && direction >= 10) || (direction >= 68 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 11;
+                }
+                if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fastest spin of Behringer PL-1 wheel, multiply steps more
+                {
+                    stepMult = 200;
+                }
+            }
+            else if (deviceName.Contains("CMD"))  // Try handling all other Behringer controllers
             {
                 if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
                 {
@@ -1244,6 +1382,10 @@ namespace PowerSDR
             {
                 ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD Micro");
             }
+            else if (devName.Contains("CMD"))
+            {
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD");
+            }
             else
             {
                 ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a");  // Original handler
@@ -1417,6 +1559,10 @@ namespace PowerSDR
             {
                 ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD Micro");
             }
+            else if (devName.Contains("CMD"))
+            {
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD");
+            }
             else
             {
                 ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b");
@@ -1519,7 +1665,7 @@ namespace PowerSDR
             return CmdState.NoChange;
         }
 
-        public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)
+        public CmdState NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
         {
             if (msg == 127)
             {
@@ -1536,6 +1682,52 @@ namespace PowerSDR
                 if (NRState == 1)
                 {
                     commands.ZZNS("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)  //-W2PA Corrected to calling ZZNV instead of ZZNS as above
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNS(""));
+
+                if (NRState == 0)
+                {
+                    commands.ZZNV("1");
+                    return CmdState.On;
+                }
+                if (NRState == 1)
+                {
+                    commands.ZZNV("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState Rx2NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Added function to call ZZNW
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNS(""));
+
+                if (NRState == 0)
+                {
+                    commands.ZZNW("1");
+                    return CmdState.On;
+                }
+                if (NRState == 1)
+                {
+                    commands.ZZNW("0");
                     return CmdState.Off;
                 }
             }
@@ -2211,7 +2403,7 @@ namespace PowerSDR
             {
                 double agclevel;
                 string devName = device.GetDeviceName();
-                if (devName == "CMD PL-1" || devName == "CMD Micro")  //W2PA- Special handling for Behringer sliders
+                if (IsBehringerCMD(device))  //W2PA- Special handling for Behringer sliders
                 {
                     agclevel = (( (127 - msg) * 1.099) - 20);
                 }
@@ -2278,7 +2470,7 @@ namespace PowerSDR
             {
                 double agclevel;
                 string devName = device.GetDeviceName();
-                if (devName == "CMD PL-1" || devName == "CMD Micro")  //W2PA- Special handling for Behringer sliders
+                if (IsBehringerCMD(device))  //W2PA- Special handling for Behringer sliders
                 {
                     agclevel = (( (127 - msg) * 1.099) - 20);
                 }
@@ -3449,7 +3641,7 @@ namespace PowerSDR
             int tuningstep = 20;
 
             string devName = device.GetDeviceName();
-            if (devName == "CMD PL-1" || devName == "CMD Micro") //W2PA- Special handling for Behringer
+            if (IsBehringerCMD(device)) //W2PA- Special handling for Behringer
             {
                 //-W2PA Map to what it expects for the Hercules, as originally written
                 if (msg == 63) msg = 127;
@@ -3547,7 +3739,7 @@ namespace PowerSDR
             int tuningstep = 20;
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 //-W2PA Map to what it expects for the Hercules, as originally written
                 if (msg == 63) msg = 127;

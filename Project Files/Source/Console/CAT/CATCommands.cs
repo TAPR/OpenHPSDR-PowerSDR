@@ -62,6 +62,10 @@ namespace PowerSDR
             set { verbose = value; }
         }
 
+        private int NCATInit = 500;
+        private int NCATs = 0;
+        private int NCATtime = 50;
+        public bool firstTimeCAT = true;
 
 		#endregion Variable Definitions
 
@@ -322,6 +326,12 @@ namespace PowerSDR
 		// needs work in the split area
 		public string IF()
 		{
+            if (NCATs < NCATInit)
+            {
+                Thread.Sleep(NCATtime);
+                NCATs++;
+            }
+
 			string rtn = "";
 			string rit = "0";
 			string xit = "0";
@@ -579,6 +589,12 @@ namespace PowerSDR
 		// Sets or reads the transceiver mode
 		public string MD(string s)
 		{
+            if (NCATs < NCATInit)
+            {
+                Thread.Sleep(NCATtime);
+                NCATs++;
+            }
+
 			if(s.Length == parser.nSet)
 			{
 				if(Convert.ToInt32(s) > 0 && Convert.ToInt32(s) <= 9)

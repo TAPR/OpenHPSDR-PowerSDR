@@ -31,6 +31,7 @@
 #include "Ozyutils.h"
 
 const int numInputBuffs = 12;
+LPacks = 0;
 
 //
 // StartAudio -- called when we need to start reading audio and passing it to PowerSDR via the callback.
@@ -65,6 +66,8 @@ KD5TFDVK6APHAUDIO_API int StartAudioNative(int sample_rate, int samples_per_bloc
        // float *bufp = NULL;
 	    //float *INbufp = NULL;
 	    //float *OUTbufp = NULL;
+
+		prop = create_pro (1, 1024, 16, LPacks);
 
         //
         // DttSP runs at a single sampling rate - the IQ in sampling rate.  The Janus hardware supports selection of (192,96,48)
@@ -356,6 +359,8 @@ KD5TFDVK6APHAUDIO_API void StopAudio() {
         }
 
 		DotDashBits = 0;
+
+		destroy_pro (prop);
 
         return;
 }
@@ -1654,6 +1659,18 @@ KD5TFDVK6APHAUDIO_API void SetAmpProtectRun(int run)
 KD5TFDVK6APHAUDIO_API void SetAIN4Voltage(int v)
 {
 	ain4_voltage = v;
+}
+
+KD5TFDVK6APHAUDIO_API void SetProLpacks(int lpacks)
+{
+	LPacks = lpacks;
+	if (prop == NULL) return;
+	EnterCriticalSection(&prop->cspro);
+	prop->lpacks = lpacks;
+	prop->base_set = 0;
+	prop->in_order_count = 0;
+	prop->lastseqnum = 0;
+	LeaveCriticalSection(&prop->cspro);
 }
 
 KD5TFDVK6APHAUDIO_API void isOrionMKII(int v)

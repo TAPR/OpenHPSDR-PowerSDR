@@ -262,8 +262,8 @@ int MetisReadDirect(char *bufp, int buflen) {
 
 	fromlen = sizeof(fromaddr);
 
-	rc = recvfrom_withtimeout(listenSock, (char *)&inpacket, sizeof(inpacket), 0, (struct sockaddr *)&fromaddr, &fromlen, 0, 500000);
-	/* rc = recvfrom(listenSock, readbuf, sizeof(readbuf), 0, (struct sockaddr *)&fromaddr, &fromlen);  */
+	//rc = recvfrom_withtimeout(listenSock, (char *)&inpacket, sizeof(inpacket), 0, (struct sockaddr *)&fromaddr, &fromlen, 0, 500000);
+	rc = recvfrom(listenSock, (char *)&inpacket, sizeof(inpacket), 0, (struct sockaddr *)&fromaddr, &fromlen);
 	if (rc < 0) {  /* failed */
 		printf("MRD: recvfrom on listSock failed w/ rc=%d!\n", rc);  fflush(stdout);
 		return rc;
@@ -278,6 +278,7 @@ int MetisReadDirect(char *bufp, int buflen) {
 			seqbytep[0] = inpacket.readbuf[7];
 			if (seqnum != (1 + MetisLastRecvSeq))  {
 				printf("MRD: seq error this: %d last: %d\n", seqnum, MetisLastRecvSeq);
+				fflush(stdout);
 			}
 			MetisLastRecvSeq = seqnum;
 
@@ -291,6 +292,7 @@ int MetisReadDirect(char *bufp, int buflen) {
 					// return 0;
 				}
 				memcpy(bufp, inpacket.readbuf + 8, 1024);
+				xpro (prop, seqnum, bufp); // resequence out of order packets
 				return 1024;
 			}
 			else {
