@@ -290,5 +290,45 @@ Changing the CW Pitch control has several effects, and its interaction with the 
 The CW Pitch isn't usually adjusted as part of tuning in a station and tweaking filters to reduce interference. And normally, when you customize your CW Filter button settings, you configure all of them while keeping the CW Pitch setting constant, using the Width (or Low and High) setting for each button, centered around the CW Pitch frequency.  Once set that way, they will always return to these settings whenever you choose that particular CW Pitch.  When you vary the pitch from that value, the CW filters change themselves to track the CW Pitch as described above (but, of course, they retain their width as originally set to match their button's label).  Note, however, if you customize a CW filter button in a way that is not centered on the CW Pitch frequency, the next time you change CW Pitch that filter will center itself.  Bandwidth takes priority over Low/High setting values for the filter selection buttons, so that their labels always match their bandwidths.  There is one exception: If you lower the CW Pitch below the point where the passband edge hits the sideband (image) limit, the passband stops moving while you can continue to lower the pitch - but it will no longer be centered in the passband.
 
 # 3.4.3 (2017-11-11)
+# Improved CTUN mode operation:
+A "CTUN Scroll" check box has been added to the Setup-General-Options tab.
+When this box is checked:
+- The display scrolls when the VFO gets near the display edges allowing tuning to continue. The VFO cursor stays near the scrolling edge.
+- Frequency changes greater than 500kHz cause a re-centering (e.g. when recalling a memory from a far removed frequency)
+When this box is unchecked:
+- CTUN behaves as before these CTUN enhancements - VFO tuning stops at the receiver bandwidth edges (e.g. 192kHz edges)
+
+Forcing CTUN to turn OFF when selecting Split or MultiRX has been eliminated.
+
+# MIDI controller support 
+MIDI controller mapping now supports the Behringer CMD Studio 2a.  In fact, it may work with all the Behringer controllers now, barring unforseen additional behavior of specific controllers that differs from the currently supported ones (the CMD PL-1, CMD Micro, and now CMD Studio 2a).
+
+Fixed MIDI/CAT VFO manipulations (A>B, B>A, A<>B) so they behave exactly like the corresponding buttons on the console. Previously the CAT versions of these commands only changed frequency and nothing else associated with the VFO (e.g. mode).
+
+Added handling of variable codes coming from wheels in the Hercules Compact controller; it was resulting in digital "backlash."
+
+# MIDI VFO sensitivity control:
+VFO knob sensitivity (speed) can now be adjusted. In the past, as you turned a MIDI knob (usually one of the big jog wheels), you got one tune step per MIDI wheel or knob MIDI message output. Now you can change the wheel sensitivity by specifying the number of MIDI updates required to produce one frequency step.  
+
+Two new up/down controls have been added to the Setup/CAT Control tab next to the "Configure MIDI" button, labeled as ""MIDI Wheel updates/step.  These controls set the minimum and maximum number of MIDI wheel updates per frequency step (i.e. maximum and minimum wheel sensitivity, respectively).  These two values can then be alternated between using a new MIDI command and mapping as below.
+
+# The following three functions and mappings are new:
+1) "Increase wheel rotation per VFO tune step" - increments the number of wheel updates per tuning step, mappable to a button, staring at 1 and increasing by factors of 2 up to a maximum of 32.
+2) "Decrease wheel rotation per VFO tune step" - decreases the number of wheel updates per tuning step, mappable to a button, starting at the current setting and decreasing by a factor of 2 down to a minimum of 1.
+3) "VFO Wheel Sensitivity High/Low Toggle" - toggles between the high and low values set in MIDI setup, mappable to a button
+
+The typical use for "Toggle" would be as a high/low tuning sensitivity (speed) control. You can zip across a band at high speed, then switch to low speed as you get close to a signal of interest. 
+
+All of these settings, combined with the existing Tune Step MIDI settings, should allow a much greater range of tuning "feel" and control than before.  Note that the Behringer controllers' jog wheels that enable variable tuning rates continue to work as before and now can be further tailored using these settings.
+ 
+Disabled audio processing in digital modes
+CFC is now disabled automatically when switching to DIGL or DIGU.  This operates in the same way the disabling of other processing functions, such as TX EQ, operates now, in that it simply disables the function in the currently selected transmit profile to ensure that CFC isn't used in digital modes.  Note: A better way to handle this, as some are already doing, is to create a transmit profile for digital modes and switch to it before selecting a digital mode. 
+
+# Miscellaneous
+Modified VHF band stacks to be 5-deep like the others.
+Eliminated most display scale shifting when going between transmit and receive.
+Fixed a bug causing a crash when zoomed in past the point where the passband fits in the display. 
+Fixed bugs in split VFO operation when RX2 is on.
+Fixed a bug resulting in incorrect vertical display scale in transmit under certain circumstances.
 
 
