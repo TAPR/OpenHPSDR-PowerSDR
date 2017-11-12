@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.2.0 July 05, 2017
+# PowerSDR_mRX_PS 3.4.3.0 November 11, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -289,6 +289,6 @@ Changing the CW Pitch control has several effects, and its interaction with the 
 
 The CW Pitch isn't usually adjusted as part of tuning in a station and tweaking filters to reduce interference. And normally, when you customize your CW Filter button settings, you configure all of them while keeping the CW Pitch setting constant, using the Width (or Low and High) setting for each button, centered around the CW Pitch frequency.  Once set that way, they will always return to these settings whenever you choose that particular CW Pitch.  When you vary the pitch from that value, the CW filters change themselves to track the CW Pitch as described above (but, of course, they retain their width as originally set to match their button's label).  Note, however, if you customize a CW filter button in a way that is not centered on the CW Pitch frequency, the next time you change CW Pitch that filter will center itself.  Bandwidth takes priority over Low/High setting values for the filter selection buttons, so that their labels always match their bandwidths.  There is one exception: If you lower the CW Pitch below the point where the passband edge hits the sideband (image) limit, the passband stops moving while you can continue to lower the pitch - but it will no longer be centered in the passband.
 
-
+# 3.4.3 (2017-11-11)
 
 

@@ -1,8 +1,10 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.4.2 July 5, 2017
+Latest Release v3.4.3 November 11, 2017
 
 Read the RealeaseNotes.md for more information.
+
+# 3.4.3 (2017-11-11)
 
 # 3.4.2 (2017-7-5)
 - CTUN has had several modifications and bug fixes.
