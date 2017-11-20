@@ -1,8 +1,11 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.4.4 November 19, 2017
+Latest Release v3.4.5 November 20, 2017
 
 Read the RealeaseNotes.md for more information.
+
+# 3.4.5 (2017-11-20)
+- Bug fix for .NET unhandled exception error when starting without radio online.
 
 # 3.4.4 (2017-11-19)
 - Added MIDI CAT support for the Behringer CMD Studio 2a

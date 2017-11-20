@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.4.0 November 19, 2017
+# PowerSDR_mRX_PS 3.4.5.0 November 20, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -336,4 +336,6 @@ Fixed a bug causing a crash when zoomed in past the point where the passband fit
 Fixed bugs in split VFO operation when RX2 is on.
 Fixed a bug resulting in incorrect vertical display scale in transmit under certain circumstances.
 
+# 3.4.5 (2017-11-20)
+- Bug fix for .NET unhandled exception error when starting without radio online.
 
