@@ -31382,7 +31382,7 @@ namespace PowerSDR
                         {
                             case DisplayMode.WATERFALL:
                             case DisplayMode.PANAFALL:
-                                if (mox && !display_duplex && (NReceivers <= 2))
+                                if (mox && !display_duplex && (NReceivers <= 2) || mox && !SetupForm.DisablePureSignal && !display_duplex)
                                 {
                                     if (chkVFOATX.Checked || !chkRX2.Checked)
                                     {

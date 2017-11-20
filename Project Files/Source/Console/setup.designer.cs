@@ -41333,7 +41333,7 @@
             // btnResetWattMeterValues
             // 
             this.btnResetWattMeterValues.Image = null;
-            this.btnResetWattMeterValues.Location = new System.Drawing.Point(107, 217);
+            this.btnResetWattMeterValues.Location = new System.Drawing.Point(100, 210);
             this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
             this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
             this.btnResetWattMeterValues.TabIndex = 6;
@@ -41344,12 +41344,12 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(3, 244);
+            this.richTextBox1.Location = new System.Drawing.Point(3, 235);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(567, 90);
+            this.richTextBox1.Size = new System.Drawing.Size(567, 101);
             this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
             // grp10WattMeterTrim
             // 
@@ -43153,7 +43153,7 @@
             this.panelPAValues.Controls.Add(this.labelTS270);
             this.panelPAValues.Location = new System.Drawing.Point(261, 6);
             this.panelPAValues.Name = "panelPAValues";
-            this.panelPAValues.Size = new System.Drawing.Size(309, 203);
+            this.panelPAValues.Size = new System.Drawing.Size(309, 200);
             this.panelPAValues.TabIndex = 2;
             this.panelPAValues.Visible = false;
             // 
@@ -43418,7 +43418,7 @@
             this.chkPAValues.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkPAValues.AutoSize = true;
             this.chkPAValues.Image = null;
-            this.chkPAValues.Location = new System.Drawing.Point(269, 215);
+            this.chkPAValues.Location = new System.Drawing.Point(269, 210);
             this.chkPAValues.Name = "chkPAValues";
             this.chkPAValues.Size = new System.Drawing.Size(66, 23);
             this.chkPAValues.TabIndex = 1;

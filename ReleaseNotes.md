@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.3.0 November 11, 2017
+# PowerSDR_mRX_PS 3.4.4.0 November 19, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -289,7 +289,7 @@ Changing the CW Pitch control has several effects, and its interaction with the 
 
 The CW Pitch isn't usually adjusted as part of tuning in a station and tweaking filters to reduce interference. And normally, when you customize your CW Filter button settings, you configure all of them while keeping the CW Pitch setting constant, using the Width (or Low and High) setting for each button, centered around the CW Pitch frequency.  Once set that way, they will always return to these settings whenever you choose that particular CW Pitch.  When you vary the pitch from that value, the CW filters change themselves to track the CW Pitch as described above (but, of course, they retain their width as originally set to match their button's label).  Note, however, if you customize a CW filter button in a way that is not centered on the CW Pitch frequency, the next time you change CW Pitch that filter will center itself.  Bandwidth takes priority over Low/High setting values for the filter selection buttons, so that their labels always match their bandwidths.  There is one exception: If you lower the CW Pitch below the point where the passband edge hits the sideband (image) limit, the passband stops moving while you can continue to lower the pitch - but it will no longer be centered in the passband.
 
-# 3.4.3 (2017-11-11)
+# 3.4.4 (2017-11-19)
 # Improved CTUN mode operation:
 A "CTUN Scroll" check box has been added to the Setup-General-Options tab.
 When this box is checked:
@@ -325,6 +325,11 @@ Disabled audio processing in digital modes
 CFC is now disabled automatically when switching to DIGL or DIGU.  This operates in the same way the disabling of other processing functions, such as TX EQ, operates now, in that it simply disables the function in the currently selected transmit profile to ensure that CFC isn't used in digital modes.  Note: A better way to handle this, as some are already doing, is to create a transmit profile for digital modes and switch to it before selecting a digital mode. 
 
 # Miscellaneous
+Support added for the ANAN-7000DLE transceiver.
+Packet ReOrdering (PRO Latency) feature to resequence out of order packets.
+Added feature to choose between receive antenna and transmit antenna.
+Added the ability to block a receive antenna from being used as a tansmit antenna for antenna ports 2 and 3.
+Fixed bug that caused PowerSDR to crash if console closed after Setup form was closed.
 Modified VHF band stacks to be 5-deep like the others.
 Eliminated most display scale shifting when going between transmit and receive.
 Fixed a bug causing a crash when zoomed in past the point where the passband fits in the display. 

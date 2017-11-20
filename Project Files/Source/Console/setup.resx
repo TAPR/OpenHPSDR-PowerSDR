@@ -126,6 +126,16 @@
   <metadata name="grpKBCW.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Begin with all spinners set equal to their labelled value.
+For each spinner, from minimum to maximum, adjust the output power
+such that your CALIBRATED EXTERNAL METER is equal to the spinner
+value.  Record the values appearing in the Thetis 'Fwd Pwr' meter.
+After completing measurements for all spinners, enter your
+recorded values into the respective spinners.  DO NOT USE
+POWER EXCEEDING THE RATING OF YOUR RADIO!
+</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>270, 17</value>
   </metadata>

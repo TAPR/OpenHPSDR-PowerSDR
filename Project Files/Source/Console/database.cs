@@ -5148,7 +5148,7 @@ namespace PowerSDR
 
             #endregion
 
-            #region DX / Constest
+            #region DX / Contest
 
             dr = t.NewRow();
             dr["Name"] = "DX / Contest";
