@@ -8,12 +8,13 @@ Read the RealeaseNotes.md for more information.
 - Added MIDI CAT support for the Behringer CMD Studio 2a
 - Added support for the ANAN-7000DLE transceiver
 - Added feature to select between receive or transmit antenna for receiving
-- Seperated TX Profiles for various modes. 
-  -- LSB, USB, DSB, CWL, CWU, SPEC, & DRM 
-  -- FM
-  -- AM & SAM 
-  -- DIGL & DIGU
-  
+- Use of seperate TX Profiles for various modes. 
+  - LSB, USB, DSB, CWL, CWU, SPEC, & DRM 
+  - FM
+  - AM & SAM 
+  - DIGL & DIGU
+- PRO Latency feature added.
+
 # 3.4.2 (2017-7-5)
 - CTUN has had several modifications and bug fixes.
 - Band Stacks have been increased to 5 deep for each band.

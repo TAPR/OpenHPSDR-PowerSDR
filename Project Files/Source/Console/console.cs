@@ -22925,15 +22925,15 @@ namespace PowerSDR
         //   i.e. not just copy frequency alone
         public void CATVFOAtoB()
         {
-            btnVFOAtoB.PerformClick();
+            btnVFOAtoB_Click(this, EventArgs.Empty);
         }
         public void CATVFOBtoA()
         {
-            btnVFOBtoA.PerformClick();
+            btnVFOBtoA_Click(this, EventArgs.Empty);
         }
         public void CATVFOABSwap()
         {
-            btnVFOSwap.PerformClick();
+            btnVFOSwap_Click(this, EventArgs.Empty);
         }
 
 
