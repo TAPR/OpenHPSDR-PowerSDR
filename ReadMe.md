@@ -1,8 +1,11 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.4.5 November 20, 2017
+Latest Release v3.4.6 November 20, 2017
 
 Read the RealeaseNotes.md for more information.
+
+# 3.4.6 (2017-11-20)
+- Corrected problem with blank waterfall display in Panafall mode.
 
 # 3.4.5 (2017-11-20)
 - Bug fix for .NET unhandled exception error when starting without radio online.

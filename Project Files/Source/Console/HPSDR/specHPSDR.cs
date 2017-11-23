@@ -549,22 +549,22 @@ namespace PowerSDR
                 case 0:
                     Display.RXDisplayLow = low;
                     Display.RXDisplayHigh = high;
-                   if (Display.CurrentDisplayMode == DisplayMode.WATERFALL ||
-                       Display.CurrentDisplayMode == DisplayMode.PANAFALL)
-                    {
-                        Display.TXDisplayLow = low_tx;
-                        Display.TXDisplayHigh = high_tx;
-                    }
+                   //if (Display.CurrentDisplayMode == DisplayMode.WATERFALL ||
+                   //    Display.CurrentDisplayMode == DisplayMode.PANAFALL)
+                   // {
+                   //     Display.TXDisplayLow = low_tx;
+                   //     Display.TXDisplayHigh = high_tx;
+                   // }
                     break;
                 case 1:
                     Display.RX2DisplayLow = low;
                     Display.RX2DisplayHigh = high;
-                    if (!(Display.CurrentDisplayMode == DisplayMode.WATERFALL ||
-                        Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                    {
+                    //if (!(Display.CurrentDisplayMode == DisplayMode.WATERFALL ||
+                    //    Display.CurrentDisplayMode == DisplayMode.PANAFALL))
+                   // {
                         Display.TXDisplayLow = low_tx;
                         Display.TXDisplayHigh = high_tx;
-                    }
+                   // }
                     break;
             }
 

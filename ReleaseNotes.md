@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.5.0 November 20, 2017
+# PowerSDR_mRX_PS 3.4.6.0 November 20, 2017
 
 
 # 3.2.22 (2015-1-24) 
@@ -339,3 +339,5 @@ Fixed a bug resulting in incorrect vertical display scale in transmit under cert
 # 3.4.5 (2017-11-20)
 - Bug fix for .NET unhandled exception error when starting without radio online.
 
+# 3.4.6 (2017-11-20)
+- Corrected problem with blank waterfall display in Panafall mode.

@@ -7018,8 +7018,8 @@ namespace PowerSDR
             int grid_step = 0; // spectrum_grid_step;
             int f_diff = 0;
 
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (console.NReceivers <= 2 && display_duplex)) ||
-                (CurrentDisplayMode == DisplayMode.PANAFALL && console.NReceivers > 2) ||
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (/*console.NReceivers <= 2 && */ display_duplex)) ||
+               // (CurrentDisplayMode == DisplayMode.PANAFALL && console.StitchedReceivers == 3) ||
                (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
 
             if (local_mox && !displayduplex)// || (mox && tx_on_vfob))
@@ -8657,9 +8657,15 @@ namespace PowerSDR
             int grid_max = 0;
             int grid_min = 0;
             int f_diff = 0;
+            bool displayduplex = false;
 
             if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
+
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (/*console.NReceivers <= 2 && */display_duplex)) ||
+               // (CurrentDisplayMode == DisplayMode.PANAFALL && console.StitchedReceivers == 3) ||
+                (CurrentDisplayMode == DisplayMode.WATERFALL && display_duplex)) displayduplex = true;
+
 
             if (rx == 2)
             {
@@ -8685,7 +8691,7 @@ namespace PowerSDR
             {
                 if (local_mox) // && !tx_on_vfob)
                 {
-                    if (!display_duplex)
+                    if (!displayduplex)
                     {
                         low = tx_display_low;
                         high = tx_display_high;
@@ -10193,8 +10199,8 @@ namespace PowerSDR
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
             if (rx == 1 && tx_on_vfob && mox && !console.RX2Enabled) local_mox = true;
 
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (console.NReceivers <= 2 && display_duplex)) ||
-                (CurrentDisplayMode == DisplayMode.PANAFALL && console.NReceivers > 2) ||
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (/*console.NReceivers <= 2 && */display_duplex)) ||
+               // (CurrentDisplayMode == DisplayMode.PANAFALL && console.StitchedReceivers == 3) ||
                (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
 
             if (rx == 2)
@@ -10218,7 +10224,7 @@ namespace PowerSDR
             {
                 if (local_mox)  // && !tx_on_vfob)
                 {
-                    if (!display_duplex)
+                    if (!displayduplex)
                     {
                         Low = tx_display_low;
                         High = tx_display_high;
@@ -10773,9 +10779,8 @@ namespace PowerSDR
             Color mid_color = Color.Red;
             Color high_color = Color.Blue;
 
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (console.NReceivers <= 2 && display_duplex)) ||
-                (CurrentDisplayMode == DisplayMode.PANAFALL && console.NReceivers > 2) ||
-               (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex) ||
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (/*console.NReceivers <= 2 && */display_duplex)) ||
+                // (CurrentDisplayMode == DisplayMode.PANAFALL && console.StitchedReceivers == 3) ||
                 (CurrentDisplayMode == DisplayMode.WATERFALL && display_duplex)) displayduplex = true;
 
             if (rx == 2)
