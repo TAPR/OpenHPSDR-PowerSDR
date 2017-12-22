@@ -1915,7 +1915,8 @@ namespace PowerSDR
             udTXGridMax.Value = Display.TXSpectrumGridMax;
             udTXGridMin.Value = Display.TXSpectrumGridMin;
             udTXGridStep.Value = Display.TXSpectrumGridStep;
-
+            udTXWFAmpMax.Value = Display.TXWFAmpMax;
+            udTXWFAmpMin.Value = Display.TXWFAmpMin;
         }
 
         private void InitDSPTab()
@@ -11972,6 +11973,20 @@ namespace PowerSDR
             Display.TXSpectrumGridMin = (int)udTXGridMin.Value;
         }
 
+        private void udTXWFAmpMax_ValueChanged(object sender, EventArgs e)
+        {
+            if (udTXWFAmpMax.Value <= udTXWFAmpMin.Value)
+                udTXWFAmpMax.Value = udTXWFAmpMin.Value + 10;
+            Display.TXWFAmpMax = (int)udTXWFAmpMax.Value;
+        }
+
+        private void udTXWFAmpMin_ValueChanged(object sender, EventArgs e)
+        {
+            if (udTXWFAmpMin.Value >= udTXWFAmpMax.Value)
+                udTXWFAmpMin.Value = udTXWFAmpMax.Value - 10;
+            Display.TXWFAmpMin = (int)udTXWFAmpMin.Value;
+        }
+
         private void udTXGridStep_ValueChanged(object sender, System.EventArgs e)
         {
             Display.TXSpectrumGridStep = (int)udTXGridStep.Value;
@@ -21527,6 +21542,11 @@ namespace PowerSDR
         private void radPROLatency4_CheckedChanged(object sender, EventArgs e)
         {
             if (radPROLatency4.Checked) JanusAudio.SetProLpacks(4);
+        }
+
+        private void chkLPFBypass_CheckedChanged(object sender, EventArgs e)
+        {
+           // console.LPFBypass = chkLPFBypass.Checked;
         }
 
         //private void chkCTUNScroll_CheckedChanged(object sender, EventArgs e)

@@ -1261,6 +1261,26 @@ namespace PowerSDR
             }
         }
 
+        private static int tx_wf_amp_max = 30;
+        public static int TXWFAmpMax
+        {
+            get { return tx_wf_amp_max; }
+            set
+            {
+                tx_wf_amp_max = value;
+            }
+        }
+
+        private static int tx_wf_amp_min = -70;
+        public static int TXWFAmpMin
+        {
+            get { return tx_wf_amp_min; }
+            set
+            {
+                tx_wf_amp_min = value;
+            }
+        }
+
         private static Color band_edge_color = Color.Red;
         private static Pen band_edge_pen = new Pen(band_edge_color);
         public static Color BandEdgeColor
@@ -6998,7 +7018,7 @@ namespace PowerSDR
         unsafe private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
         {
             // draw background
-            // g.FillRectangle(display_background_brush, 0, bottom ? H : 0, W, H);
+            g.FillRectangle(display_background_brush, 0, bottom ? H : 0, W, H);
 
             bool local_mox = false;
             bool displayduplex = false;
@@ -10847,9 +10867,18 @@ namespace PowerSDR
                     low_color = waterfall_low_color;
                     mid_color = waterfall_mid_color;
                     high_color = waterfall_high_color;
+
+                if (local_mox)
+                    high_threshold = (float)TXWFAmpMax;
+                else
                     high_threshold = waterfall_high_threshold;
 
-                    if (rx1_waterfall_agc)
+                if (local_mox)
+                {
+                    low_threshold = (float)TXWFAmpMin;
+                    waterfall_minimum = rx1_waterfall_minimum;
+                }
+                else if (rx1_waterfall_agc)
                     {
                         waterfall_minimum = rx1_waterfall_minimum;
                         low_threshold = RX1waterfallPreviousMinValue;

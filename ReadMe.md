@@ -1,8 +1,13 @@
 # OpenHPSDR-PowerSDR
 
-Latest Release v3.4.6 November 20, 2017
+Latest Release v3.4.7 December 22, 2017
 
 Read the RealeaseNotes.md for more information.
+
+# 3.4.7 (2017-12-22)
+- Control added to force the LPF to the 6m/ByPass posistion during receive. Filters must be under manual control to use. (Setup=>General=>Ant/Filters=>LPF, HPF/LPF, BPF1)
+- VFO Lock correctly locks VFOA and VFOB.
+- TX Amplitude scaling adder to waterfall display. (Setup=>Display=>TX)
 
 # 3.4.6 (2017-11-20)
 - Corrected problem with blank waterfall display in Panafall mode.

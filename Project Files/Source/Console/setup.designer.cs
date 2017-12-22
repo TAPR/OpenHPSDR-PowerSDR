@@ -845,6 +845,7 @@
             this.tpAlexControl = new System.Windows.Forms.TabPage();
             this.tcAlexControl = new System.Windows.Forms.TabControl();
             this.tpAlexFilterControl = new System.Windows.Forms.TabPage();
+            this.chkLPFBypass = new System.Windows.Forms.CheckBoxTS();
             this.labelAlexFilterActive = new System.Windows.Forms.LabelTS();
             this.panelTS6 = new System.Windows.Forms.PanelTS();
             this.rad6LPFled = new System.Windows.Forms.RadioButtonTS();
@@ -1347,6 +1348,11 @@
             this.labelTS141 = new System.Windows.Forms.LabelTS();
             this.tbRX2DisplayFFTSize = new System.Windows.Forms.TrackBarTS();
             this.tpDisplayTransmit = new System.Windows.Forms.TabPage();
+            this.grpTXWFAmpScale = new System.Windows.Forms.GroupBox();
+            this.udTXWFAmpMin = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXWFAmpMax = new System.Windows.Forms.NumericUpDownTS();
+            this.lblTXWFAmpMin = new System.Windows.Forms.LabelTS();
+            this.lblTXWFAmpMax = new System.Windows.Forms.LabelTS();
             this.grpTXSpectrumGrid = new System.Windows.Forms.GroupBoxTS();
             this.chkTXGridControl = new System.Windows.Forms.CheckBoxTS();
             this.chkTXPanFill = new System.Windows.Forms.CheckBoxTS();
@@ -3231,6 +3237,9 @@
             this.grpDisplayRX2Pan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX2DisplayFFTSize)).BeginInit();
             this.tpDisplayTransmit.SuspendLayout();
+            this.grpTXWFAmpScale.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXWFAmpMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXWFAmpMax)).BeginInit();
             this.grpTXSpectrumGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXGridStep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXGridMin)).BeginInit();
@@ -14703,6 +14712,7 @@
             // tpAlexFilterControl
             // 
             this.tpAlexFilterControl.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAlexFilterControl.Controls.Add(this.chkLPFBypass);
             this.tpAlexFilterControl.Controls.Add(this.labelAlexFilterActive);
             this.tpAlexFilterControl.Controls.Add(this.panelTS6);
             this.tpAlexFilterControl.Controls.Add(this.labelTS126);
@@ -14736,6 +14746,19 @@
             this.tpAlexFilterControl.Size = new System.Drawing.Size(575, 313);
             this.tpAlexFilterControl.TabIndex = 1;
             this.tpAlexFilterControl.Text = "Alex-1 Filters";
+            // 
+            // chkLPFBypass
+            // 
+            this.chkLPFBypass.AutoSize = true;
+            this.chkLPFBypass.Image = null;
+            this.chkLPFBypass.Location = new System.Drawing.Point(353, 216);
+            this.chkLPFBypass.Name = "chkLPFBypass";
+            this.chkLPFBypass.Size = new System.Drawing.Size(113, 17);
+            this.chkLPFBypass.TabIndex = 111;
+            this.chkLPFBypass.Text = "6m/ByPass on RX";
+            this.toolTip1.SetToolTip(this.chkLPFBypass, "Selects the 6m LPF during receive reguardless of frequency.");
+            this.chkLPFBypass.UseVisualStyleBackColor = true;
+            this.chkLPFBypass.CheckedChanged += new System.EventHandler(this.chkLPFBypass_CheckedChanged);
             // 
             // labelAlexFilterActive
             // 
@@ -15352,7 +15375,7 @@
             this.panelTS1.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelTS1.Controls.Add(this.radAlexManualCntl);
             this.panelTS1.Controls.Add(this.radAlexAutoCntl);
-            this.panelTS1.Location = new System.Drawing.Point(371, 229);
+            this.panelTS1.Location = new System.Drawing.Point(350, 247);
             this.panelTS1.Name = "panelTS1";
             this.panelTS1.Size = new System.Drawing.Size(148, 25);
             this.panelTS1.TabIndex = 0;
@@ -22639,12 +22662,106 @@
             // tpDisplayTransmit
             // 
             this.tpDisplayTransmit.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayTransmit.Controls.Add(this.grpTXWFAmpScale);
             this.tpDisplayTransmit.Controls.Add(this.grpTXSpectrumGrid);
             this.tpDisplayTransmit.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayTransmit.Name = "tpDisplayTransmit";
             this.tpDisplayTransmit.Size = new System.Drawing.Size(576, 338);
             this.tpDisplayTransmit.TabIndex = 3;
             this.tpDisplayTransmit.Text = "  TX";
+            // 
+            // grpTXWFAmpScale
+            // 
+            this.grpTXWFAmpScale.Controls.Add(this.udTXWFAmpMin);
+            this.grpTXWFAmpScale.Controls.Add(this.udTXWFAmpMax);
+            this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMin);
+            this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMax);
+            this.grpTXWFAmpScale.Location = new System.Drawing.Point(124, 6);
+            this.grpTXWFAmpScale.Name = "grpTXWFAmpScale";
+            this.grpTXWFAmpScale.Size = new System.Drawing.Size(129, 92);
+            this.grpTXWFAmpScale.TabIndex = 82;
+            this.grpTXWFAmpScale.TabStop = false;
+            this.grpTXWFAmpScale.Text = "Waterfall";
+            // 
+            // udTXWFAmpMin
+            // 
+            this.udTXWFAmpMin.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udTXWFAmpMin.Location = new System.Drawing.Point(70, 26);
+            this.udTXWFAmpMin.Margin = new System.Windows.Forms.Padding(7);
+            this.udTXWFAmpMin.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udTXWFAmpMin.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udTXWFAmpMin.Name = "udTXWFAmpMin";
+            this.udTXWFAmpMin.Size = new System.Drawing.Size(45, 20);
+            this.udTXWFAmpMin.TabIndex = 29;
+            this.toolTip1.SetToolTip(this.udTXWFAmpMin, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
+            this.udTXWFAmpMin.Value = new decimal(new int[] {
+            70,
+            0,
+            0,
+            -2147483648});
+            this.udTXWFAmpMin.ValueChanged += new System.EventHandler(this.udTXWFAmpMin_ValueChanged);
+            // 
+            // udTXWFAmpMax
+            // 
+            this.udTXWFAmpMax.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udTXWFAmpMax.Location = new System.Drawing.Point(70, 53);
+            this.udTXWFAmpMax.Margin = new System.Windows.Forms.Padding(7);
+            this.udTXWFAmpMax.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udTXWFAmpMax.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udTXWFAmpMax.Name = "udTXWFAmpMax";
+            this.udTXWFAmpMax.Size = new System.Drawing.Size(44, 20);
+            this.udTXWFAmpMax.TabIndex = 28;
+            this.toolTip1.SetToolTip(this.udTXWFAmpMax, "Waterfall High Signal - Show High Color above this value (gradient in between).");
+            this.udTXWFAmpMax.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.udTXWFAmpMax.ValueChanged += new System.EventHandler(this.udTXWFAmpMax_ValueChanged);
+            // 
+            // lblTXWFAmpMin
+            // 
+            this.lblTXWFAmpMin.Image = null;
+            this.lblTXWFAmpMin.Location = new System.Drawing.Point(4, 26);
+            this.lblTXWFAmpMin.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblTXWFAmpMin.Name = "lblTXWFAmpMin";
+            this.lblTXWFAmpMin.Size = new System.Drawing.Size(61, 18);
+            this.lblTXWFAmpMin.TabIndex = 31;
+            this.lblTXWFAmpMin.Text = "Low Level:";
+            // 
+            // lblTXWFAmpMax
+            // 
+            this.lblTXWFAmpMax.Image = null;
+            this.lblTXWFAmpMax.Location = new System.Drawing.Point(4, 53);
+            this.lblTXWFAmpMax.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblTXWFAmpMax.Name = "lblTXWFAmpMax";
+            this.lblTXWFAmpMax.Size = new System.Drawing.Size(61, 19);
+            this.lblTXWFAmpMax.TabIndex = 30;
+            this.lblTXWFAmpMax.Text = "High Level:";
             // 
             // grpTXSpectrumGrid
             // 
@@ -49472,6 +49589,7 @@
             this.tpAlexControl.ResumeLayout(false);
             this.tcAlexControl.ResumeLayout(false);
             this.tpAlexFilterControl.ResumeLayout(false);
+            this.tpAlexFilterControl.PerformLayout();
             this.panelTS6.ResumeLayout(false);
             this.panelTS6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFEnd)).EndInit();
@@ -49683,6 +49801,9 @@
             this.grpDisplayRX2Pan.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX2DisplayFFTSize)).EndInit();
             this.tpDisplayTransmit.ResumeLayout(false);
+            this.grpTXWFAmpScale.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udTXWFAmpMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXWFAmpMax)).EndInit();
             this.grpTXSpectrumGrid.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTXGridStep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXGridMin)).EndInit();
@@ -51888,6 +52009,12 @@
         private System.Windows.Forms.RadioButtonTS radPROLatency4;
         private System.Windows.Forms.RadioButtonTS radPROLatency2;
         private System.Windows.Forms.RadioButtonTS radPROLatency1;
+        private System.Windows.Forms.CheckBoxTS chkLPFBypass;
+        private System.Windows.Forms.GroupBox grpTXWFAmpScale;
+        public System.Windows.Forms.NumericUpDownTS udTXWFAmpMin;
+        public System.Windows.Forms.NumericUpDownTS udTXWFAmpMax;
+        private System.Windows.Forms.LabelTS lblTXWFAmpMin;
+        private System.Windows.Forms.LabelTS lblTXWFAmpMax;
 
     }
 }
