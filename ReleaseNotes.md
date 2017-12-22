@@ -345,4 +345,4 @@ Fixed a bug resulting in incorrect vertical display scale in transmit under cert
 # 3.4.7 (2017-12-22)
 - Control added to force the LPF to the 6m/ByPass posistion during receive. Filters must be under manual control to use. (Setup=>General=>Ant/Filters=>LPF, HPF/LPF, BPF1)
 - VFO Lock correctly locks VFOA and VFOB.
-- TX Amplitude scaling adder to waterfall display. (Setup=>Display=>TX)
+- TX Amplitude scaling added to waterfall display. (Setup=>Display=>TX)

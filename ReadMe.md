@@ -7,7 +7,7 @@ Read the RealeaseNotes.md for more information.
 # 3.4.7 (2017-12-22)
 - Control added to force the LPF to the 6m/ByPass posistion during receive. Filters must be under manual control to use. (Setup=>General=>Ant/Filters=>LPF, HPF/LPF, BPF1)
 - VFO Lock correctly locks VFOA and VFOB.
-- TX Amplitude scaling adder to waterfall display. (Setup=>Display=>TX)
+- TX Amplitude scaling added to waterfall display. (Setup=>Display=>TX)
 
 # 3.4.6 (2017-11-20)
 - Corrected problem with blank waterfall display in Panafall mode.
