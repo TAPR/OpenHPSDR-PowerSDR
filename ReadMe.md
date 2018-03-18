@@ -19,6 +19,7 @@ Read the RealeaseNotes.md for more information.
 - Added several CAT Commands. (see ReleaseNotes for details)
 - Added a dropped packet ("OOOPs") counter that measures the number of dropped receive packets from radio to PC. This may be useful in identifying problems with network setup.
 - fixed bug in CAT Command ZZPT## to change TXProfiles in different modes
+- Updated CAT Commands documentation. Found in the Documentation/Radio folder
 
 # 3.4.7 (2017-12-22)
 - Control added to force the LPF to the 6m/ByPass position during receive. Filters must be under manual control to use. (Setup=>General=>Ant/Filters=>LPF, HPF/LPF, BPF1)

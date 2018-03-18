@@ -362,6 +362,7 @@ Fixed a bug resulting in incorrect vertical display scale in transmit under cert
 - Added separate VFO Lock controls for VFOA and VFOB. New VFO Lock button will require additional skin files to operate correctly. Skins packaged with OpenHPSDR/PowerSDR will contain the required files. You may need to create them for other skin packages.
 - Added a dropped packet ("OOOPs") counter that measures the number of dropped receive packets from radio to PC. This may be useful in identifying problems with network setup.
 - fixed bug in CAT Command ZZPT## to change TXProfiles in different modes
+- Updated CAT Commands documentation. Found in the Documentation/Radio folder
 
 MIDI interface:
 Bug fix for Behringer mini-wheels when mapping to AGC gain.
