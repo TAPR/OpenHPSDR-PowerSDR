@@ -387,3 +387,28 @@ Added the following new functions:
 - ZZXN gets combined RX1 status
 - ZZXO gets combined RX2 status
 - ZZXV gets combined VFO status
+
+# Adaptive Vaiable Resampler:
+
+This release of PowerSDR mRX introduces an optional Adaptive Variable Resampler option for VAC audio. The implementation is a true resampler and not just a data "smoother".
+
+Since both the radio and the PC use different clocks to obtain their nominal 48KHz audio sampling rate, the rate in the radio will not exactly match the rate in the PC. This sample rate mismatch leads inevitably to audio buffer under- and over-runs that often result in audible glitches in the VAC audio streams, both transmit and receive. The resampler acts to transform audio data across the radio clock domain and the PC clock domain, thereby substantially eliminating these glitches. The resampler also works for those who are using the VAC IQ data output at all IQ sample rates, and spur levels will be extremely low even at 192KHz.
+ 
+To use the resampler, first be sure to have achieved a reasonably stable and well performing VAC configuration without the resampler active. Then check the "Resampler" checkbox in Setup > Audio > VAC1 (and/or VAC2 if using VAC2). You will probably see the under- and -over-flow counters start counting. It then takes a few seconds for the resampler algorithm to begin making estimates of the sample rate mismatch. Once the initial estimate of sample rate mismatch is obtained, the Var Ratio display will begin to show the measured ratio between the PC and radio audio sample rates. This will update in a continuous fashion and usually does not remain static, as the sample clocks do drift over time, over temperature, etc.
+ 
+At this point you should use the mouse to hover over the various displays and controls, read the tool-tips that pop up over each one, and thereby become more familiar with them. The "Force" controls can be left alone, they are only there for diagnostic purposes..
+ 
+After the resampler has become stable, which should occur in about ten seconds or so, you can click on the various counters to reset them to zero. This will allow you to more easily monitor resampler performance. Resampler performance depends quite heavily on the performance of your particular PC and your particular VAC configuration. Some people obtain zero under- and over-runs in both the transmit and receive directions for many hours, others see a steady but slow trickle that racks up to a few tens of them per hour.
+ 
+A measure of latency can also be obtained by noting the size of the ringbuffer shown in the diagnostic display. Smaller buffer size equates to less latency. The size of the ringbuffer is determined by an algorithm that considers primary buffer size, VAC buffer size, VAC sample rate, and VAC Buffer Latency settings. The smallest possible ringbuffer on the receive side is 512, the smallest on the transmit side is 1024.
+ 
+By using the monitoring features in the resampler you can work to optimize your primary and VAC buffer settings to achieve the fewest under- and over-runs, as well as the lowest latency. A general procedure is suggested as follows, although this is by no means the only method. This is also a useful procedure if you are having problems getting the resampler to converge, i.e. you are experiencing out of control under- and over-runs.
+ 
+1. Start with a large primary buffer size.
+2. Start with Buffer Latency set to 0mS & "Manual".
+3. Start with VAC buffer size set to match your audio interface buffer size (if you know it, otherwise start with a large value).
+ 
+If you get poor audio quality, try un-checking and checking the Buffer Latency Manual button a few times.
+ 
+4. If you absolutely can't get it to run, let Buffer Latency go back to automatic. If that works, you can then try various values for manual buffer latency until you find the smallest one that works for you.
+5. Once things seem stable, you can experiment with reducing the primary buffer size in order to obtain smaller ringbuffer sizes while still maintaining good audio quality.
