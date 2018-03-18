@@ -344,6 +344,13 @@ namespace PowerSDR
             // if (!console.initializing) console.PSAutoCal = autoON;
         }
 
+        //-W2PA Adds capability for CAT control via console
+        public void SingleCalrun()
+        {
+            btnPSCalibrate.PerformClick();
+        }
+
+
         private void btnPSReset_Click(object sender, EventArgs e)
         {
             ResetPureSignal();

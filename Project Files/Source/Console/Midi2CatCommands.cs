@@ -739,6 +739,52 @@ namespace PowerSDR
             return CmdState.NoChange;
         }
 
+        public CmdState LockVFOAOnOff(int msg, MidiDevice device) 
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int VfoLockState = Convert.ToInt16(commands.ZZUX(""));
+
+                if (VfoLockState == 0)
+                {
+                    commands.ZZUX("1");
+                    return CmdState.On;
+                }
+                if (VfoLockState == 1)
+                {
+                    commands.ZZUX("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState LockVFOBOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int VfoLockState = Convert.ToInt16(commands.ZZUY(""));
+
+                if (VfoLockState == 0)
+                {
+                    commands.ZZUY("1");
+                    return CmdState.On;
+                }
+                if (VfoLockState == 1)
+                {
+                    commands.ZZUY("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
         public CmdState RitOnOff(int msg, MidiDevice device)
         {
             if (msg == 127)
@@ -2362,7 +2408,7 @@ namespace PowerSDR
         public void APFBandwidth(int msg, MidiDevice device)
         {
             parser.nGet = 0;
-            parser.nSet = 1;
+            parser.nSet = 3;
 
             try
             {
@@ -2376,11 +2422,11 @@ namespace PowerSDR
             }
         }
 
-        //-W2PA Added knob/slider control of APF Bandwidth
+        //-W2PA Added knob/slider control of APF Gain
         public void APFGain(int msg, MidiDevice device)
         {
             parser.nGet = 0;
-            parser.nSet = 1;
+            parser.nSet = 4;
 
             try
             {
@@ -2428,7 +2474,8 @@ namespace PowerSDR
         public void AGCLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 style wheel/knobs
         {
             parser.nGet = 0;
-            parser.nSet = 1;  //-W2PA changed to allow for 2, 3, 4 digits
+            parser.nSet = 4; 
+            parser.nAns = 4;
 
             try
             {
@@ -2446,7 +2493,7 @@ namespace PowerSDR
                 {
                     if (currAGC < agcMax) currAGC++;
                 }
-                commands.ZZAR(Convert.ToString(currAGC));
+                commands.ZZAR("+" + currAGC.ToString("000"));
 
                 double setAGC = Convert.ToDouble(currAGC);
 
@@ -2495,7 +2542,8 @@ namespace PowerSDR
         public void RX2AGCLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 wheel/knobs
         {
             parser.nGet = 0;
-            parser.nSet = 1;  //-W2PA changed to allow for 2, 3, 4 digits
+            parser.nSet = 4;  
+            parser.nAns = 4;
 
             try
             {
@@ -2513,7 +2561,7 @@ namespace PowerSDR
                 {
                     if (currAGC < agcMax) currAGC++;
                 }
-                commands.ZZAS(Convert.ToString(currAGC));
+                commands.ZZAS("+" + currAGC.ToString("000"));
 
                 double setAGC = Convert.ToDouble(currAGC);
 
@@ -2673,6 +2721,62 @@ namespace PowerSDR
                 return;
             }
         }
+
+        public void DriveLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 style wheel/knobs
+        {
+            parser.nGet = 0;
+            parser.nSet = 3; 
+            parser.nAns = 4;
+
+            try
+            {
+                double drvMax = 100;
+                double drvMin = 0;
+                int currDrive = Convert.ToInt32(commands.ZZPC(""));
+
+                if (msg == 127 || msg == 0) return; //-W2PA Ignore knob click presses
+
+                if (msg < 64)
+                {
+                    if (currDrive > drvMin) currDrive--;
+                }
+                else if (msg > 64)
+                {
+                    if (currDrive < drvMax) currDrive++;
+                }
+                commands.ZZPC(currDrive.ToString("000"));
+
+                double setDrive = Convert.ToDouble(currDrive);
+
+                int nLED = Convert.ToInt32(15.0 * (setDrive - drvMin) / (drvMax - drvMin));
+                if (nLED < 1) nLED = 1;  //-W2PA Keep the last LED from going out.
+                if (nLED > 15) nLED = 15;
+
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+
+        //public void DriveLevel_incr(int msg, MidiDevice device)
+        //{
+        //    parser.nSet = 3;
+        //    parser.nGet = 0;
+        //    parser.nAns = 4;
+
+        //    try
+        //    {
+        //        double drive = msg * 0.787;
+        //        commands.ZZPC(drive.ToString("000"));
+        //        return;
+        //    }
+        //    catch
+        //    {
+        //        return;
+        //    }
+        //}
 
         public CmdState RXEQOnOff(int msg, MidiDevice device)
         {

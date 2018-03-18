@@ -536,6 +536,32 @@ namespace PowerSDR
 
         #region VAC Variables
 
+        // buffers for adaptive variable resamplers
+        private static double[] resampBufVac1InWrite;
+        private static double[] resampBufVac1InRead;
+        private static double[] resampBufVac1OutWrite;
+        private static double[] resampBufVac1OutRead;
+
+        // adaptive resamplers for TX(In) and RX(Out)
+        unsafe private static void* rmatchVac1In;
+        unsafe public static void* RmatchVac1In
+        {
+            get { return rmatchVac1In; }
+        }
+        unsafe private static void* rmatchVac1Out;
+        unsafe public static void* RmatchVac1Out
+        {
+            get { return rmatchVac1Out; }
+        }
+
+        private static bool varsampEnabledVAC1 = false;
+        public static bool VarsampEnabledVAC1
+        {
+            set { varsampEnabledVAC1 = value; }
+        }
+
+        // W4WMT these are no longer used by anything but the deprecated callbacks
+        // please remove when the old callbacks are factored out
         private static RingBufferFloat rb_vacIN_l;
         private static RingBufferFloat rb_vacIN_r;
         private static RingBufferFloat rb_vacOUT_l;
@@ -550,6 +576,7 @@ namespace PowerSDR
         unsafe private static void* resampPtrIn_r;
         unsafe private static void* resampPtrOut_l;
         unsafe private static void* resampPtrOut_r;
+        // end deprecated items to be removed
 
         private static bool vac_resample = false;
         private static bool vac_combine_input = false;
@@ -563,6 +590,32 @@ namespace PowerSDR
 
         #region VAC2 Variables
 
+        // buffers for adaptive variable resamplers
+        private static double[] resampBufVac2InWrite;
+        private static double[] resampBufVac2InRead;
+        private static double[] resampBufVac2OutWrite;
+        private static double[] resampBufVac2OutRead;
+
+        // adaptive resamplers for TX(In) and RX(Out)
+        unsafe private static void* rmatchVac2In;
+        unsafe public static void* RmatchVac2In
+        {
+            get { return rmatchVac2In; }
+        }
+        unsafe private static void* rmatchVac2Out;
+        unsafe public static void* RmatchVac2Out
+        {
+            get { return rmatchVac2Out; }
+        }
+
+        private static bool varsampEnabledVAC2 = false;
+        public static bool VarsampEnabledVAC2
+        {
+            set { varsampEnabledVAC2 = value; }
+        }
+
+        // W4WMT these are no longer used by anything but the deprecated callbacks
+        // please remove when the old callbacks are factored out
         private static RingBufferFloat rb_vac2IN_l;
         private static RingBufferFloat rb_vac2IN_r;
         private static RingBufferFloat rb_vac2OUT_l;
@@ -577,6 +630,7 @@ namespace PowerSDR
         unsafe private static void* resampVAC2PtrIn_r;
         unsafe private static void* resampVAC2PtrOut_l;
         unsafe private static void* resampVAC2PtrOut_r;
+        // end deprecated items to be removed
 
         private static bool vac2_resample = false;
         private static bool vac2_combine_input = false;
@@ -1784,94 +1838,241 @@ namespace PowerSDR
                 //phase_mutex.ReleaseMutex();
             }
 
-            // handle VAC Input - data from VAC goes to xmtr input
-            if (vac_enabled &&
-                rb_vacOUT_l != null && rb_vacOUT_r != null)
+            if (varsampEnabledVAC1)
             {
-                if (vac_bypass || !localmox) // drain VAC TX Input ring buffer
+                // handle VAC Input - data from VAC goes to xmtr input
+                if (vac_enabled)
                 {
-                    if (vox_enabled)
+                    fixed (double* resampBufPtr = &(resampBufVac1InRead[0]))
                     {
-                        if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
-                            (rb_vacIN_r.ReadSpace() >= frameCount))
+                        wdsp.xrmatchOUT(rmatchVac1In, resampBufPtr);
+                        if (vac_bypass || !localmox)
                         {
-                            Win32.EnterCriticalSection(cs_vacw);
-                            rb_vacIN_l.ReadPtr(in_l_ptr3, frameCount);  // TX in L - VOX can see the data here.
-                            rb_vacIN_r.ReadPtr(in_r_ptr3, frameCount);  // TX in R
-                            Win32.LeaveCriticalSection(cs_vacw);
+                            if (vox_enabled)
+                            {
+                                Deswizzle(in_l_ptr3, in_r_ptr3, resampBufPtr, frameCount);
+                            }
+                            else
+                            {
+                                Deswizzle(out_l_ptr2, out_r_ptr2, resampBufPtr, frameCount);
+                            }
                         }
-                    }
-                    else
-                    {
-                        if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
-                            (rb_vacIN_r.ReadSpace() >= frameCount))
+                        else
                         {
-                            Win32.EnterCriticalSection(cs_vacw);
-                            rb_vacIN_l.ReadPtr(out_l_ptr2, frameCount); // TX out L - Dumping data?
-                            rb_vacIN_r.ReadPtr(out_r_ptr2, frameCount); // TX out R
-                            Win32.LeaveCriticalSection(cs_vacw);
+                            Deswizzle(tx_in_l, tx_in_r, resampBufPtr, frameCount);
+                            if (vac_combine_input) AddBuffer(tx_in_l, tx_in_r, frameCount);
+
+                            ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
+                            ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
                         }
-                    }
-                }
-                else    // if VAC is !bypassed && localmox
-                {
-                    if (rb_vacIN_l.ReadSpace() >= frameCount)
-                    {
-                        Win32.EnterCriticalSection(cs_vacw);
-                        rb_vacIN_l.ReadPtr(tx_in_l, frameCount);    // TX in L
-                        rb_vacIN_r.ReadPtr(tx_in_r, frameCount);    // TX in R
-                        Win32.LeaveCriticalSection(cs_vacw);
-                        if (vac_combine_input)
-                            AddBuffer(tx_in_l, tx_in_r, frameCount);
-                    }
-                    else    // error - not enough samples
-                    {
-                        ClearBuffer(tx_in_l, frameCount);
-                        ClearBuffer(tx_in_r, frameCount);
-                        VACDebug("rb_vacIN underflow 4inTX");
-                    }
-
-                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
-                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
-                }
-            }
-
-            // handle VAC2 Input
-            if (vac2_enabled &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
-            {
-                if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
-                {
-                    if ((rb_vac2IN_l.ReadSpace() >= frameCount) && (rb_vac2IN_r.ReadSpace() >= frameCount))
-                    {
-                        Win32.EnterCriticalSection(cs_vac2w);
-                        rb_vac2IN_l.ReadPtr(out_l_ptr2, frameCount);    // TX out L - Dumping data?
-                        rb_vac2IN_r.ReadPtr(out_r_ptr2, frameCount);    // TX out R
-                        Win32.LeaveCriticalSection(cs_vac2w);
-                    }
-                }
-                else    // !vac_bypass && localmox && vfob_tx
-                {
-                    if (rb_vac2IN_l.ReadSpace() >= frameCount)
-                    {
-                        Win32.EnterCriticalSection(cs_vac2w);
-                        rb_vac2IN_l.ReadPtr(tx_in_l, frameCount);       // TX in L
-                        rb_vac2IN_r.ReadPtr(tx_in_r, frameCount);       // TX in R
-                        Win32.LeaveCriticalSection(cs_vac2w);
-                        if (vac2_combine_input)
-                            AddBuffer(tx_in_l, tx_in_r, frameCount);
-
-                        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac2_tx_scale);
-                        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac2_tx_scale);
-                    }
-                    else    // error - not enough samples
-                    {
-                        ClearBuffer(tx_in_l, frameCount);
-                        ClearBuffer(tx_in_r, frameCount);
-                        VACDebug("rb_vac2IN underflow 4inTX");
                     }
                 }
             }
+            else
+            {
+                // handle VAC Input - data from VAC goes to xmtr input
+                if (vac_enabled &&
+                    rb_vacOUT_l != null && rb_vacOUT_r != null)
+                {
+                    if (vac_bypass || !localmox) // drain VAC TX Input ring buffer
+                    {
+                        if (vox_enabled)
+                        {
+                            if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
+                                (rb_vacIN_r.ReadSpace() >= frameCount))
+                            {
+                                Win32.EnterCriticalSection(cs_vacw);
+                                rb_vacIN_l.ReadPtr(in_l_ptr3, frameCount);  // TX in L - VOX can see the data here.
+                                rb_vacIN_r.ReadPtr(in_r_ptr3, frameCount);  // TX in R
+                                Win32.LeaveCriticalSection(cs_vacw);
+                            }
+                        }
+                        else
+                        {
+                            if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
+                                (rb_vacIN_r.ReadSpace() >= frameCount))
+                            {
+                                Win32.EnterCriticalSection(cs_vacw);
+                                rb_vacIN_l.ReadPtr(out_l_ptr2, frameCount); // TX out L - Dumping data?
+                                rb_vacIN_r.ReadPtr(out_r_ptr2, frameCount); // TX out R
+                                Win32.LeaveCriticalSection(cs_vacw);
+                            }
+                        }
+                    }
+                    else    // if VAC is !bypassed && localmox
+                    {
+                        if (rb_vacIN_l.ReadSpace() >= frameCount)
+                        {
+                            Win32.EnterCriticalSection(cs_vacw);
+                            rb_vacIN_l.ReadPtr(tx_in_l, frameCount);    // TX in L
+                            rb_vacIN_r.ReadPtr(tx_in_r, frameCount);    // TX in R
+                            Win32.LeaveCriticalSection(cs_vacw);
+                            if (vac_combine_input)
+                                AddBuffer(tx_in_l, tx_in_r, frameCount);
+                        }
+                        else    // error - not enough samples
+                        {
+                            ClearBuffer(tx_in_l, frameCount);
+                            ClearBuffer(tx_in_r, frameCount);
+                            VACDebug("rb_vacIN underflow 4inTX");
+                        }
+
+                        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
+                        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
+                    }
+                }
+            }
+
+            //// handle VAC Input - data from VAC goes to xmtr input
+            //if (vac_enabled &&
+            //    rb_vacOUT_l != null && rb_vacOUT_r != null)
+            //{
+            //    if (vac_bypass || !localmox) // drain VAC TX Input ring buffer
+            //    {
+            //        if (vox_enabled)
+            //        {
+            //            if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
+            //                (rb_vacIN_r.ReadSpace() >= frameCount))
+            //            {
+            //                Win32.EnterCriticalSection(cs_vacw);
+            //                rb_vacIN_l.ReadPtr(in_l_ptr3, frameCount);  // TX in L - VOX can see the data here.
+            //                rb_vacIN_r.ReadPtr(in_r_ptr3, frameCount);  // TX in R
+            //                Win32.LeaveCriticalSection(cs_vacw);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if ((rb_vacIN_l.ReadSpace() >= frameCount) &&
+            //                (rb_vacIN_r.ReadSpace() >= frameCount))
+            //            {
+            //                Win32.EnterCriticalSection(cs_vacw);
+            //                rb_vacIN_l.ReadPtr(out_l_ptr2, frameCount); // TX out L - Dumping data?
+            //                rb_vacIN_r.ReadPtr(out_r_ptr2, frameCount); // TX out R
+            //                Win32.LeaveCriticalSection(cs_vacw);
+            //            }
+            //        }
+            //    }
+            //    else    // if VAC is !bypassed && localmox
+            //    {
+            //        if (rb_vacIN_l.ReadSpace() >= frameCount)
+            //        {
+            //            Win32.EnterCriticalSection(cs_vacw);
+            //            rb_vacIN_l.ReadPtr(tx_in_l, frameCount);    // TX in L
+            //            rb_vacIN_r.ReadPtr(tx_in_r, frameCount);    // TX in R
+            //            Win32.LeaveCriticalSection(cs_vacw);
+            //            if (vac_combine_input)
+            //                AddBuffer(tx_in_l, tx_in_r, frameCount);
+            //        }
+            //        else    // error - not enough samples
+            //        {
+            //            ClearBuffer(tx_in_l, frameCount);
+            //            ClearBuffer(tx_in_r, frameCount);
+            //            VACDebug("rb_vacIN underflow 4inTX");
+            //        }
+
+            //        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
+            //        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
+            //    }
+            //}
+
+            if (varsampEnabledVAC2)
+            {
+                // handle VAC2 Input
+                if (vac2_enabled)
+                {
+                    fixed (double* resampBufPtr = &(resampBufVac2InRead[0]))
+                    {
+                        wdsp.xrmatchOUT(rmatchVac2In, resampBufPtr);
+                        if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
+                        {
+                            Deswizzle(out_l_ptr2, out_r_ptr2, resampBufPtr, frameCount);
+                        }
+                        else    // !vac_bypass && localmox && vfob_tx
+                        {
+                            Deswizzle(tx_in_l, tx_in_r, resampBufPtr, frameCount);
+                            if (vac2_combine_input) AddBuffer(tx_in_l, tx_in_r, frameCount);
+                            ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac2_tx_scale);
+                            ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac2_tx_scale);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // handle VAC2 Input
+                if (vac2_enabled &&
+                    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+                {
+                    if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
+                    {
+                        if ((rb_vac2IN_l.ReadSpace() >= frameCount) && (rb_vac2IN_r.ReadSpace() >= frameCount))
+                        {
+                            Win32.EnterCriticalSection(cs_vac2w);
+                            rb_vac2IN_l.ReadPtr(out_l_ptr2, frameCount);    // TX out L - Dumping data?
+                            rb_vac2IN_r.ReadPtr(out_r_ptr2, frameCount);    // TX out R
+                            Win32.LeaveCriticalSection(cs_vac2w);
+                        }
+                    }
+                    else    // !vac_bypass && localmox && vfob_tx
+                    {
+                        if (rb_vac2IN_l.ReadSpace() >= frameCount)
+                        {
+                            Win32.EnterCriticalSection(cs_vac2w);
+                            rb_vac2IN_l.ReadPtr(tx_in_l, frameCount);       // TX in L
+                            rb_vac2IN_r.ReadPtr(tx_in_r, frameCount);       // TX in R
+                            Win32.LeaveCriticalSection(cs_vac2w);
+                            if (vac2_combine_input)
+                                AddBuffer(tx_in_l, tx_in_r, frameCount);
+
+                            ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac2_tx_scale);
+                            ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac2_tx_scale);
+                        }
+                        else    // error - not enough samples
+                        {
+                            ClearBuffer(tx_in_l, frameCount);
+                            ClearBuffer(tx_in_r, frameCount);
+                            VACDebug("rb_vac2IN underflow 4inTX");
+                        }
+                    }
+                }
+            }
+
+            //// handle VAC2 Input
+            //if (vac2_enabled &&
+            //    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            //{
+            //    if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
+            //    {
+            //        if ((rb_vac2IN_l.ReadSpace() >= frameCount) && (rb_vac2IN_r.ReadSpace() >= frameCount))
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac2w);
+            //            rb_vac2IN_l.ReadPtr(out_l_ptr2, frameCount);    // TX out L - Dumping data?
+            //            rb_vac2IN_r.ReadPtr(out_r_ptr2, frameCount);    // TX out R
+            //            Win32.LeaveCriticalSection(cs_vac2w);
+            //        }
+            //    }
+            //    else    // !vac_bypass && localmox && vfob_tx
+            //    {
+            //        if (rb_vac2IN_l.ReadSpace() >= frameCount)
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac2w);
+            //            rb_vac2IN_l.ReadPtr(tx_in_l, frameCount);       // TX in L
+            //            rb_vac2IN_r.ReadPtr(tx_in_r, frameCount);       // TX in R
+            //            Win32.LeaveCriticalSection(cs_vac2w);
+            //            if (vac2_combine_input)
+            //                AddBuffer(tx_in_l, tx_in_r, frameCount);
+
+            //            ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac2_tx_scale);
+            //            ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac2_tx_scale);
+            //        }
+            //        else    // error - not enough samples
+            //        {
+            //            ClearBuffer(tx_in_l, frameCount);
+            //            ClearBuffer(tx_in_r, frameCount);
+            //            VACDebug("rb_vac2IN underflow 4inTX");
+            //        }
+            //    }
+            //}
 
             #region VOX
 
@@ -1942,94 +2143,225 @@ namespace PowerSDR
 #endif
 
 
-            // handle Direct IQ for VAC - receive I/Q data is sent to VAC
-            if (vac_enabled && vac_output_iq &&
-                rb_vacOUT_l != null && rb_vacOUT_r != null &&
-                rx1_in_l != null && rx1_in_r != null)
+            if (varsampEnabledVAC1)
             {
-                if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
+                // handle Direct IQ for VAC - receive I/Q data is sent to VAC
+                if (vac_enabled && vac_output_iq)
                 {
-                    if (vac_correct_iq)
-                        fixed (float* res_outl_ptr = &(res_outl[0]))    // use these buffers for corrected data
-                        fixed (float* res_outr_ptr = &(res_outr[0]))
+                    if (vac_output_rx2)
+                    {
+                        fixed (double* resampBufPtr = &(resampBufVac1OutWrite[0]))
                         {
-                            if (vac_output_rx2)
-                                CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
-                            else
-                                CorrectIQBuffer(rx1_in_l, rx1_in_r,
-                                res_outl_ptr, res_outr_ptr, frameCount);
+                            Swizzle(resampBufPtr, rx2_in_r, rx2_in_l, frameCount);
+                            wdsp.xrmatchIN(rmatchVac1Out, resampBufPtr);
+                        }
+                    }
+                    else
+                    {
+                        fixed (double* resampBufPtr = &(resampBufVac1OutWrite[0]))
+                        {
+                            Swizzle(resampBufPtr, rx1_in_r, rx1_in_l, frameCount);
+                            wdsp.xrmatchIN(rmatchVac1Out, resampBufPtr);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // handle Direct IQ for VAC - receive I/Q data is sent to VAC
+                if (vac_enabled && vac_output_iq &&
+                    rb_vacOUT_l != null && rb_vacOUT_r != null &&
+                    rx1_in_l != null && rx1_in_r != null)
+                {
+                    if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
+                    {
+                        if (vac_correct_iq)
+                            fixed (float* res_outl_ptr = &(res_outl[0]))    // use these buffers for corrected data
+                            fixed (float* res_outr_ptr = &(res_outr[0]))
+                            {
+                                if (vac_output_rx2)
+                                    CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+                                else
+                                    CorrectIQBuffer(rx1_in_l, rx1_in_r,
+                                    res_outl_ptr, res_outr_ptr, frameCount);
+                                Win32.EnterCriticalSection(cs_vac);
+                                rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // write the output
+                                rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount); // why are these reversed??
+                                Win32.LeaveCriticalSection(cs_vac);
+
+                            }
+                        else
+                        {
                             Win32.EnterCriticalSection(cs_vac);
-                            rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // write the output
-                            rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount); // why are these reversed??
-                            Win32.LeaveCriticalSection(cs_vac);
-
-                        }
-                    else
-                    {
-                        Win32.EnterCriticalSection(cs_vac);
-                        if (vac_output_rx2)
-                        {
-                            rb_vacOUT_l.WritePtr(rx2_in_r, frameCount);     // write the output
-                            rb_vacOUT_r.WritePtr(rx2_in_l, frameCount);
-                        }
-                        else
-                        {
-                            rb_vacOUT_l.WritePtr(rx1_in_r, frameCount);     // write the output
-                            rb_vacOUT_r.WritePtr(rx1_in_l, frameCount);
-                        }
-                        Win32.LeaveCriticalSection(cs_vac);
-                    }
-                }
-                else    // error - not enough write space
-                {
-                    VACDebug("rb_vacOUT_l I/Q overflow ");
-                    vac_rb_reset = true;
-                }
-            }
-
-            // handle Direct IQ for VAC2
-            if (vac2_enabled && vac2_output_iq &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
-            {
-                if ((rb_vac2OUT_l.WriteSpace() >= frameCount) && (rb_vac2OUT_r.WriteSpace() >= frameCount))
-                {
-                    if (vac_correct_iq)
-                        fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
-                        fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
-                        {
-                            if (vac2_rx2)
-                                CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+                            if (vac_output_rx2)
+                            {
+                                rb_vacOUT_l.WritePtr(rx2_in_r, frameCount);     // write the output
+                                rb_vacOUT_r.WritePtr(rx2_in_l, frameCount);
+                            }
                             else
-                                CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
-
-                            Win32.EnterCriticalSection(cs_vac2);
-                            rb_vac2OUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
-                            rb_vac2OUT_r.WritePtr(res_outl_ptr, frameCount);
-                            Win32.LeaveCriticalSection(cs_vac2);
-
+                            {
+                                rb_vacOUT_l.WritePtr(rx1_in_r, frameCount);     // write the output
+                                rb_vacOUT_r.WritePtr(rx1_in_l, frameCount);
+                            }
+                            Win32.LeaveCriticalSection(cs_vac);
                         }
-                    else
+                    }
+                    else    // error - not enough write space
                     {
-                        Win32.EnterCriticalSection(cs_vac2);
-                        if (vac2_rx2)
-                        {
-                            rb_vac2OUT_l.WritePtr(rx2_in_r, frameCount);
-                            rb_vac2OUT_r.WritePtr(rx2_in_l, frameCount);
-                        }
-                        else
-                        {
-                            rb_vac2OUT_l.WritePtr(rx1_in_r, frameCount);
-                            rb_vac2OUT_r.WritePtr(rx1_in_l, frameCount);
-                        }
-                        Win32.LeaveCriticalSection(cs_vac2);
+                        VACDebug("rb_vacOUT_l I/Q overflow ");
+                        vac_rb_reset = true;
                     }
                 }
-                else
+            }
+
+            //// handle Direct IQ for VAC - receive I/Q data is sent to VAC
+            //if (vac_enabled && vac_output_iq &&
+            //    rb_vacOUT_l != null && rb_vacOUT_r != null &&
+            //    rx1_in_l != null && rx1_in_r != null)
+            //{
+            //    if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
+            //    {
+            //        if (vac_correct_iq)
+            //            fixed (float* res_outl_ptr = &(res_outl[0]))    // use these buffers for corrected data
+            //            fixed (float* res_outr_ptr = &(res_outr[0]))
+            //            {
+            //                if (vac_output_rx2)
+            //                    CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+            //                else
+            //                    CorrectIQBuffer(rx1_in_l, rx1_in_r,
+            //                    res_outl_ptr, res_outr_ptr, frameCount);
+            //                Win32.EnterCriticalSection(cs_vac);
+            //                rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // write the output
+            //                rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount); // why are these reversed??
+            //                Win32.LeaveCriticalSection(cs_vac);
+
+            //            }
+            //        else
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac);
+            //            if (vac_output_rx2)
+            //            {
+            //                rb_vacOUT_l.WritePtr(rx2_in_r, frameCount);     // write the output
+            //                rb_vacOUT_r.WritePtr(rx2_in_l, frameCount);
+            //            }
+            //            else
+            //            {
+            //                rb_vacOUT_l.WritePtr(rx1_in_r, frameCount);     // write the output
+            //                rb_vacOUT_r.WritePtr(rx1_in_l, frameCount);
+            //            }
+            //            Win32.LeaveCriticalSection(cs_vac);
+            //        }
+            //    }
+            //    else    // error - not enough write space
+            //    {
+            //        VACDebug("rb_vacOUT_l I/Q overflow ");
+            //        vac_rb_reset = true;
+            //    }
+            //}
+
+            if (varsampEnabledVAC2)
+            {
+                // handle Direct IQ for VAC2
+                if (vac2_enabled && vac2_output_iq)
                 {
-                    VACDebug("rb_vac2OUT_l I/Q overflow ");
-                    vac2_rb_reset = true;
+                    fixed (double* resampBufPtr = &(resampBufVac2OutWrite[0]))
+                    {
+                        Swizzle(resampBufPtr, rx1_in_r, rx1_in_l, frameCount);
+                        wdsp.xrmatchIN(rmatchVac2Out, resampBufPtr);
+                    }
                 }
             }
+            else
+            {
+                // handle Direct IQ for VAC2
+                if (vac2_enabled && vac2_output_iq &&
+                    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+                {
+                    if ((rb_vac2OUT_l.WriteSpace() >= frameCount) && (rb_vac2OUT_r.WriteSpace() >= frameCount))
+                    {
+                        if (vac_correct_iq)
+                            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+                            fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
+                            {
+                                if (vac2_rx2)
+                                    CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+                                else
+                                    CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+
+                                Win32.EnterCriticalSection(cs_vac2);
+                                rb_vac2OUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
+                                rb_vac2OUT_r.WritePtr(res_outl_ptr, frameCount);
+                                Win32.LeaveCriticalSection(cs_vac2);
+
+                            }
+                        else
+                        {
+                            Win32.EnterCriticalSection(cs_vac2);
+                            if (vac2_rx2)
+                            {
+                                rb_vac2OUT_l.WritePtr(rx2_in_r, frameCount);
+                                rb_vac2OUT_r.WritePtr(rx2_in_l, frameCount);
+                            }
+                            else
+                            {
+                                rb_vac2OUT_l.WritePtr(rx1_in_r, frameCount);
+                                rb_vac2OUT_r.WritePtr(rx1_in_l, frameCount);
+                            }
+                            Win32.LeaveCriticalSection(cs_vac2);
+                        }
+                    }
+                    else
+                    {
+                        VACDebug("rb_vac2OUT_l I/Q overflow ");
+                        vac2_rb_reset = true;
+                    }
+                }
+            }
+
+            //// handle Direct IQ for VAC2
+            //if (vac2_enabled && vac2_output_iq &&
+            //    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            //{
+            //    if ((rb_vac2OUT_l.WriteSpace() >= frameCount) && (rb_vac2OUT_r.WriteSpace() >= frameCount))
+            //    {
+            //        if (vac_correct_iq)
+            //            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+            //            fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
+            //            {
+            //                if (vac2_rx2)
+            //                    CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+            //                else
+            //                    CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+
+            //                Win32.EnterCriticalSection(cs_vac2);
+            //                rb_vac2OUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
+            //                rb_vac2OUT_r.WritePtr(res_outl_ptr, frameCount);
+            //                Win32.LeaveCriticalSection(cs_vac2);
+
+            //            }
+            //        else
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac2);
+            //            if (vac2_rx2)
+            //            {
+            //                rb_vac2OUT_l.WritePtr(rx2_in_r, frameCount);
+            //                rb_vac2OUT_r.WritePtr(rx2_in_l, frameCount);
+            //            }
+            //            else
+            //            {
+            //                rb_vac2OUT_l.WritePtr(rx1_in_r, frameCount);
+            //                rb_vac2OUT_r.WritePtr(rx1_in_l, frameCount);
+            //            }
+            //            Win32.LeaveCriticalSection(cs_vac2);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        VACDebug("rb_vac2OUT_l I/Q overflow ");
+            //        vac2_rb_reset = true;
+            //    }
+            //}
+
            // bool enable_bottom_pan;
             float* bottom_pan_l;
             float* bottom_pan_r;
@@ -2271,179 +2603,416 @@ namespace PowerSDR
             out_l4 = out_l_ptr4; // 6 CallbackOutL3bufp VAC/RX1 L 
             out_r4 = out_r_ptr4; // 7 CallbackOutR3bufp VAC/RX1 R
 
-            // scale output for VAC -- use chan 4 as spare buffer
-            if (vac_enabled && !vac_output_iq &&
-                rb_vacIN_l != null && rb_vacIN_r != null &&
-                rb_vacOUT_l != null && rb_vacOUT_r != null)
+            if (varsampEnabledVAC1)
             {
-                if (!localmox)
+                // scale output for VAC -- use chan 4 as spare buffer
+                if (vac_enabled && !vac_output_iq)
                 {
-                    ScaleBuffer(out_l1, out_l4, out_count, (float)vac_rx_scale);
-                    ScaleBuffer(out_r1, out_r4, out_count, (float)vac_rx_scale);
-                }
-                else if (mon)
-                {
-                    ScaleBuffer(out_l2, out_l4, out_count, (float)vac_rx_scale);
-                    ScaleBuffer(out_r2, out_r4, out_count, (float)vac_rx_scale);
-                }
-                else // zero samples going back to VAC since TX monitor is off
-                {
-                    ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
-                    ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
-                }
-                // receiver output or monitor(transmitter) output goes to VAC
-                if (sample_rate2 == out_rate)
-                {
-                    if ((rb_vacOUT_l.WriteSpace() >= out_count) && (rb_vacOUT_r.WriteSpace() >= out_count))
+                    if (!localmox)
                     {
-                        Win32.EnterCriticalSection(cs_vac);
-                        rb_vacOUT_l.WritePtr(out_l4, out_count);
-                        rb_vacOUT_r.WritePtr(out_r4, out_count);
-                        Win32.LeaveCriticalSection(cs_vac);
+                        ScaleBuffer(out_l1, out_l4, out_count, (float)vac_rx_scale);
+                        ScaleBuffer(out_r1, out_r4, out_count, (float)vac_rx_scale);
                     }
-                    else
+                    else if (mon)
                     {
-                        VACDebug("rb_vacOUT_l overflow ");
-                        vac_rb_reset = true;
+                        ScaleBuffer(out_l2, out_l4, out_count, (float)vac_rx_scale);
+                        ScaleBuffer(out_r2, out_r4, out_count, (float)vac_rx_scale);
+                    }
+                    else // zero samples going back to VAC since TX monitor is off
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+                        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+                    }
+
+                    // receiver output or monitor(transmitter) output goes to VAC
+                    fixed (double* resampBufPtr = &(resampBufVac1OutWrite[0]))
+                    {
+                        Swizzle(resampBufPtr, out_l4, out_r4, out_count);
+                        wdsp.xrmatchIN(rmatchVac1Out, resampBufPtr);
                     }
                 }
-                else
+            }
+            else
+            {
+                // scale output for VAC -- use chan 4 as spare buffer
+                if (vac_enabled && !vac_output_iq &&
+                    rb_vacIN_l != null && rb_vacIN_r != null &&
+                    rb_vacOUT_l != null && rb_vacOUT_r != null)
                 {
-                    if (vac_stereo)
+                    if (!localmox)
                     {
-                        fixed (float* res_outl_ptr = &(res_outl[0]))
-                        fixed (float* res_outr_ptr = &(res_outr[0]))
+                        ScaleBuffer(out_l1, out_l4, out_count, (float)vac_rx_scale);
+                        ScaleBuffer(out_r1, out_r4, out_count, (float)vac_rx_scale);
+                    }
+                    else if (mon)
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, (float)vac_rx_scale);
+                        ScaleBuffer(out_r2, out_r4, out_count, (float)vac_rx_scale);
+                    }
+                    else // zero samples going back to VAC since TX monitor is off
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+                        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+                    }
+                    // receiver output or monitor(transmitter) output goes to VAC
+                    if (sample_rate2 == out_rate)
+                    {
+                        if ((rb_vacOUT_l.WriteSpace() >= out_count) && (rb_vacOUT_r.WriteSpace() >= out_count))
                         {
-                            int outsamps = 0;
-                            wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
-                            wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampPtrOut_r);
-                            if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
-                            {
-                                Win32.EnterCriticalSection(cs_vac);
-                                rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
-                                rb_vacOUT_r.WritePtr(res_outr_ptr, outsamps);
-                                Win32.LeaveCriticalSection(cs_vac);
-                            }
-                            else
-                            {
-                                vac_rb_reset = true;
-                                VACDebug("rb_vacOUT_l overflow");
-                            }
+                            Win32.EnterCriticalSection(cs_vac);
+                            rb_vacOUT_l.WritePtr(out_l4, out_count);
+                            rb_vacOUT_r.WritePtr(out_r4, out_count);
+                            Win32.LeaveCriticalSection(cs_vac);
+                        }
+                        else
+                        {
+                            VACDebug("rb_vacOUT_l overflow ");
+                            vac_rb_reset = true;
                         }
                     }
                     else
                     {
-                        fixed (float* res_outl_ptr = &(res_outl[0]))
+                        if (vac_stereo)
                         {
-                            int outsamps = 0;
-                            wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
-                            if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
+                            fixed (float* res_outl_ptr = &(res_outl[0]))
+                            fixed (float* res_outr_ptr = &(res_outr[0]))
                             {
-                                Win32.EnterCriticalSection(cs_vac);
-                                rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
-                                rb_vacOUT_r.WritePtr(res_outl_ptr, outsamps);
-                                Win32.LeaveCriticalSection(cs_vac);
+                                int outsamps = 0;
+                                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
+                                wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampPtrOut_r);
+                                if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
+                                {
+                                    Win32.EnterCriticalSection(cs_vac);
+                                    rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
+                                    rb_vacOUT_r.WritePtr(res_outr_ptr, outsamps);
+                                    Win32.LeaveCriticalSection(cs_vac);
+                                }
+                                else
+                                {
+                                    vac_rb_reset = true;
+                                    VACDebug("rb_vacOUT_l overflow");
+                                }
                             }
-                            else
+                        }
+                        else
+                        {
+                            fixed (float* res_outl_ptr = &(res_outl[0]))
                             {
-                                vac_rb_reset = true;
-                                VACDebug("rb_vacOUT_l overflow");
+                                int outsamps = 0;
+                                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
+                                if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
+                                {
+                                    Win32.EnterCriticalSection(cs_vac);
+                                    rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
+                                    rb_vacOUT_r.WritePtr(res_outl_ptr, outsamps);
+                                    Win32.LeaveCriticalSection(cs_vac);
+                                }
+                                else
+                                {
+                                    vac_rb_reset = true;
+                                    VACDebug("rb_vacOUT_l overflow");
+                                }
                             }
                         }
                     }
                 }
             }
 
-            // scale output for VAC2 -- use chan 4 as spare buffer
-            if (vac2_enabled && !vac2_output_iq &&
-                rb_vac2IN_l != null && rb_vac2IN_r != null &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            //// scale output for VAC -- use chan 4 as spare buffer
+            //if (vac_enabled && !vac_output_iq &&
+            //    rb_vacIN_l != null && rb_vacIN_r != null &&
+            //    rb_vacOUT_l != null && rb_vacOUT_r != null)
+            //{
+            //    if (!localmox)
+            //    {
+            //        ScaleBuffer(out_l1, out_l4, out_count, (float)vac_rx_scale);
+            //        ScaleBuffer(out_r1, out_r4, out_count, (float)vac_rx_scale);
+            //    }
+            //    else if (mon)
+            //    {
+            //        ScaleBuffer(out_l2, out_l4, out_count, (float)vac_rx_scale);
+            //        ScaleBuffer(out_r2, out_r4, out_count, (float)vac_rx_scale);
+            //    }
+            //    else // zero samples going back to VAC since TX monitor is off
+            //    {
+            //        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+            //        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+            //    }
+            //    // receiver output or monitor(transmitter) output goes to VAC
+            //    if (sample_rate2 == out_rate)
+            //    {
+            //        if ((rb_vacOUT_l.WriteSpace() >= out_count) && (rb_vacOUT_r.WriteSpace() >= out_count))
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac);
+            //            rb_vacOUT_l.WritePtr(out_l4, out_count);
+            //            rb_vacOUT_r.WritePtr(out_r4, out_count);
+            //            Win32.LeaveCriticalSection(cs_vac);
+            //        }
+            //        else
+            //        {
+            //            VACDebug("rb_vacOUT_l overflow ");
+            //            vac_rb_reset = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (vac_stereo)
+            //        {
+            //            fixed (float* res_outl_ptr = &(res_outl[0]))
+            //            fixed (float* res_outr_ptr = &(res_outr[0]))
+            //            {
+            //                int outsamps = 0;
+            //                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
+            //                wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampPtrOut_r);
+            //                if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
+            //                {
+            //                    Win32.EnterCriticalSection(cs_vac);
+            //                    rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
+            //                    rb_vacOUT_r.WritePtr(res_outr_ptr, outsamps);
+            //                    Win32.LeaveCriticalSection(cs_vac);
+            //                }
+            //                else
+            //                {
+            //                    vac_rb_reset = true;
+            //                    VACDebug("rb_vacOUT_l overflow");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            fixed (float* res_outl_ptr = &(res_outl[0]))
+            //            {
+            //                int outsamps = 0;
+            //                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampPtrOut_l);
+            //                if ((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
+            //                {
+            //                    Win32.EnterCriticalSection(cs_vac);
+            //                    rb_vacOUT_l.WritePtr(res_outl_ptr, outsamps);
+            //                    rb_vacOUT_r.WritePtr(res_outl_ptr, outsamps);
+            //                    Win32.LeaveCriticalSection(cs_vac);
+            //                }
+            //                else
+            //                {
+            //                    vac_rb_reset = true;
+            //                    VACDebug("rb_vacOUT_l overflow");
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (varsampEnabledVAC2)
             {
-                if (!localmox || (localmox && !vfob_tx))
+                // scale output for VAC2 -- use chan 4 as spare buffer
+                if (vac2_enabled && !vac2_output_iq)
                 {
-                    if (!vac2_rx2)
-                    {
-                        ScaleBuffer(out_l1, out_l4, out_count, (float)vac2_rx_scale);
-                        ScaleBuffer(out_r1, out_r4, out_count, (float)vac2_rx_scale);
-                    }
-                    else
+                    if (!localmox || (localmox && !vfob_tx))
                     {
                         ScaleBuffer(out_l3, out_l4, out_count, (float)vac2_rx_scale);
                         ScaleBuffer(out_r3, out_r4, out_count, (float)vac2_rx_scale);
                     }
-                }
-                else if (mon)
-                {
-                    ScaleBuffer(out_l2, out_l4, out_count, (float)vac2_rx_scale);
-                    ScaleBuffer(out_r2, out_r4, out_count, (float)vac2_rx_scale);
-                }
-                else // zero samples going back to VAC since TX monitor is off
-                {
-                    ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
-                    ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
-                }
+                    else if (mon)
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, (float)vac2_rx_scale);
+                        ScaleBuffer(out_r2, out_r4, out_count, (float)vac2_rx_scale);
+                    }
+                    else // zero samples going back to VAC since TX monitor is off
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+                        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+                    }
 
-                if (sample_rate3 == out_rate)
-                {
-                    if ((rb_vac2OUT_l.WriteSpace() >= out_count) && (rb_vac2OUT_r.WriteSpace() >= out_count))
+                    fixed (double* resampBufPtr = &(resampBufVac2OutWrite[0]))
                     {
-                        Win32.EnterCriticalSection(cs_vac2);
-                        rb_vac2OUT_l.WritePtr(out_l4, out_count);
-                        rb_vac2OUT_r.WritePtr(out_r4, out_count);
-                        Win32.LeaveCriticalSection(cs_vac2);
-                    }
-                    else
-                    {
-                        VACDebug("rb_vac2OUT_l overflow ");
-                        vac2_rb_reset = true;
+                        Swizzle(resampBufPtr, out_l4, out_r4, out_count);
+                        wdsp.xrmatchIN(rmatchVac2Out, resampBufPtr);
                     }
                 }
-                else
+            }
+            else
+            {
+                // scale output for VAC2 -- use chan 4 as spare buffer
+                if (vac2_enabled && !vac2_output_iq &&
+                    rb_vac2IN_l != null && rb_vac2IN_r != null &&
+                    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
                 {
-                    if (vac2_stereo)
+                    if (!localmox || (localmox && !vfob_tx))
                     {
-                        fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
-                        fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
+                        if (!vac2_rx2)
                         {
-                            int outsamps = 0;
-                            wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
-                            wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampVAC2PtrOut_r);
-                            if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
-                            {
-                                Win32.EnterCriticalSection(cs_vac2);
-                                rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
-                                rb_vac2OUT_r.WritePtr(res_outr_ptr, outsamps);
-                                Win32.LeaveCriticalSection(cs_vac2);
-                            }
-                            else
-                            {
-                                vac2_rb_reset = true;
-                                VACDebug("rb_vac2OUT_l overflow");
-                            }
+                            ScaleBuffer(out_l1, out_l4, out_count, (float)vac2_rx_scale);
+                            ScaleBuffer(out_r1, out_r4, out_count, (float)vac2_rx_scale);
+                        }
+                        else
+                        {
+                            ScaleBuffer(out_l3, out_l4, out_count, (float)vac2_rx_scale);
+                            ScaleBuffer(out_r3, out_r4, out_count, (float)vac2_rx_scale);
+                        }
+                    }
+                    else if (mon)
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, (float)vac2_rx_scale);
+                        ScaleBuffer(out_r2, out_r4, out_count, (float)vac2_rx_scale);
+                    }
+                    else // zero samples going back to VAC since TX monitor is off
+                    {
+                        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+                        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+                    }
+
+                    if (sample_rate3 == out_rate)
+                    {
+                        if ((rb_vac2OUT_l.WriteSpace() >= out_count) && (rb_vac2OUT_r.WriteSpace() >= out_count))
+                        {
+                            Win32.EnterCriticalSection(cs_vac2);
+                            rb_vac2OUT_l.WritePtr(out_l4, out_count);
+                            rb_vac2OUT_r.WritePtr(out_r4, out_count);
+                            Win32.LeaveCriticalSection(cs_vac2);
+                        }
+                        else
+                        {
+                            VACDebug("rb_vac2OUT_l overflow ");
+                            vac2_rb_reset = true;
                         }
                     }
                     else
                     {
-                        fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+                        if (vac2_stereo)
                         {
-                            int outsamps = 0;
-                            wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
-                            if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
+                            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+                            fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
                             {
-                                Win32.EnterCriticalSection(cs_vac2);
-                                rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
-                                rb_vac2OUT_r.WritePtr(res_outl_ptr, outsamps);
-                                Win32.LeaveCriticalSection(cs_vac2);
+                                int outsamps = 0;
+                                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
+                                wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampVAC2PtrOut_r);
+                                if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
+                                {
+                                    Win32.EnterCriticalSection(cs_vac2);
+                                    rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
+                                    rb_vac2OUT_r.WritePtr(res_outr_ptr, outsamps);
+                                    Win32.LeaveCriticalSection(cs_vac2);
+                                }
+                                else
+                                {
+                                    vac2_rb_reset = true;
+                                    VACDebug("rb_vac2OUT_l overflow");
+                                }
                             }
-                            else
+                        }
+                        else
+                        {
+                            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
                             {
-                                vac2_rb_reset = true;
-                                VACDebug("rb_vac2OUT_l overflow");
+                                int outsamps = 0;
+                                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
+                                if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
+                                {
+                                    Win32.EnterCriticalSection(cs_vac2);
+                                    rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
+                                    rb_vac2OUT_r.WritePtr(res_outl_ptr, outsamps);
+                                    Win32.LeaveCriticalSection(cs_vac2);
+                                }
+                                else
+                                {
+                                    vac2_rb_reset = true;
+                                    VACDebug("rb_vac2OUT_l overflow");
+                                }
                             }
                         }
                     }
                 }
             }
+
+            //// scale output for VAC2 -- use chan 4 as spare buffer
+            //if (vac2_enabled && !vac2_output_iq &&
+            //    rb_vac2IN_l != null && rb_vac2IN_r != null &&
+            //    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            //{
+            //    if (!localmox || (localmox && !vfob_tx))
+            //    {
+            //        if (!vac2_rx2)
+            //        {
+            //            ScaleBuffer(out_l1, out_l4, out_count, (float)vac2_rx_scale);
+            //            ScaleBuffer(out_r1, out_r4, out_count, (float)vac2_rx_scale);
+            //        }
+            //        else
+            //        {
+            //            ScaleBuffer(out_l3, out_l4, out_count, (float)vac2_rx_scale);
+            //            ScaleBuffer(out_r3, out_r4, out_count, (float)vac2_rx_scale);
+            //        }
+            //    }
+            //    else if (mon)
+            //    {
+            //        ScaleBuffer(out_l2, out_l4, out_count, (float)vac2_rx_scale);
+            //        ScaleBuffer(out_r2, out_r4, out_count, (float)vac2_rx_scale);
+            //    }
+            //    else // zero samples going back to VAC since TX monitor is off
+            //    {
+            //        ScaleBuffer(out_l2, out_l4, out_count, 0.0f);
+            //        ScaleBuffer(out_r2, out_r4, out_count, 0.0f);
+            //    }
+
+            //    if (sample_rate3 == out_rate)
+            //    {
+            //        if ((rb_vac2OUT_l.WriteSpace() >= out_count) && (rb_vac2OUT_r.WriteSpace() >= out_count))
+            //        {
+            //            Win32.EnterCriticalSection(cs_vac2);
+            //            rb_vac2OUT_l.WritePtr(out_l4, out_count);
+            //            rb_vac2OUT_r.WritePtr(out_r4, out_count);
+            //            Win32.LeaveCriticalSection(cs_vac2);
+            //        }
+            //        else
+            //        {
+            //            VACDebug("rb_vac2OUT_l overflow ");
+            //            vac2_rb_reset = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (vac2_stereo)
+            //        {
+            //            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+            //            fixed (float* res_outr_ptr = &(res_vac2_outr[0]))
+            //            {
+            //                int outsamps = 0;
+            //                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
+            //                wdsp.xresampleFV(out_r4, res_outr_ptr, out_count, &outsamps, resampVAC2PtrOut_r);
+            //                if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
+            //                {
+            //                    Win32.EnterCriticalSection(cs_vac2);
+            //                    rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
+            //                    rb_vac2OUT_r.WritePtr(res_outr_ptr, outsamps);
+            //                    Win32.LeaveCriticalSection(cs_vac2);
+            //                }
+            //                else
+            //                {
+            //                    vac2_rb_reset = true;
+            //                    VACDebug("rb_vac2OUT_l overflow");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            fixed (float* res_outl_ptr = &(res_vac2_outl[0]))
+            //            {
+            //                int outsamps = 0;
+            //                wdsp.xresampleFV(out_l4, res_outl_ptr, out_count, &outsamps, resampVAC2PtrOut_l);
+            //                if ((rb_vac2OUT_l.WriteSpace() >= outsamps) && (rb_vac2OUT_r.WriteSpace() >= outsamps))
+            //                {
+            //                    Win32.EnterCriticalSection(cs_vac2);
+            //                    rb_vac2OUT_l.WritePtr(res_outl_ptr, outsamps);
+            //                    rb_vac2OUT_r.WritePtr(res_outl_ptr, outsamps);
+            //                    Win32.LeaveCriticalSection(cs_vac2);
+            //                }
+            //                else
+            //                {
+            //                    vac2_rb_reset = true;
+            //                    VACDebug("rb_vac2OUT_l overflow");
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             // output from DSP is organized as follows
             //=========================================================
@@ -4611,7 +5180,7 @@ namespace PowerSDR
             return callback_return;
         }
 
-        // The VAC callback from 1.8.0 untouched in any way.
+        // The VAC callback from 1.8.0 patched for rmatch/varsamp
         unsafe public static int CallbackVAC(void* input, void* output, int frameCount,
             PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
         {
@@ -4626,91 +5195,140 @@ namespace PowerSDR
             float* out_r_ptr1 = null;
             if (vac_stereo || vac_output_iq) out_r_ptr1 = (float*)array_ptr[1];
 
-            if (vac_rb_reset)
+            if (varsampEnabledVAC1)
             {
-                vac_rb_reset = false;
-                ClearBuffer(out_l_ptr1, frameCount);
-                if (vac_stereo || vac_output_iq) ClearBuffer(out_r_ptr1, frameCount);
-                Win32.EnterCriticalSection(cs_vacw);
-                rb_vacIN_l.Reset();
-                rb_vacIN_r.Reset();
-                Win32.LeaveCriticalSection(cs_vacw);
-                Win32.EnterCriticalSection(cs_vac);
-                rb_vacOUT_l.Reset();
-                rb_vacOUT_r.Reset();
-                Win32.LeaveCriticalSection(cs_vac);
-                return 0;
-            }
-            if (vac_stereo || vac_output_iq)
-            {
-                if (vac_resample)
+                if (vac_stereo || vac_output_iq)
                 {
-                    int outsamps = 0;
-                    fixed (float* res_inl_ptr = &(res_inl[0]))
-                    fixed (float* res_inr_ptr = &(res_inr[0]))
+                    fixed (double* resampBufPtr = &(resampBufVac1InWrite[0]))
                     {
-                        //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
-                        wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
-                        //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
-                        wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
-                        if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
-                        {
-                            Win32.EnterCriticalSection(cs_vacw);
-                            rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
-                            rb_vacIN_r.WritePtr(res_inr_ptr, outsamps);
-                            Win32.LeaveCriticalSection(cs_vacw);
-                        }
-                        else
-                        {
-                            vac_rb_reset = true;
-                            VACDebug("rb_vacIN overflow stereo CBvac");
-                        }
+                        Swizzle(resampBufPtr, in_l_ptr1, in_r_ptr1, frameCount);
+                        wdsp.xrmatchIN(rmatchVac1In, resampBufPtr);
                     }
-                }
-                else
-                {
-                    if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
-                    {
-                        Win32.EnterCriticalSection(cs_vacw);
-                        rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
-                        rb_vacIN_r.WritePtr(in_r_ptr1, frameCount);
-                        Win32.LeaveCriticalSection(cs_vacw);
-                    }
-                    else
-                    {
-                        //vac_rb_reset = true;
-                        VACDebug("rb_vacIN overflow mono CBvac");
-                    }
-                }
 
-                if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
-                {
-                    Win32.EnterCriticalSection(cs_vac);
-                    rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
-                    rb_vacOUT_r.ReadPtr(out_r_ptr1, frameCount);
-                    Win32.LeaveCriticalSection(cs_vac);
+                    fixed (double* resampBufPtr = &(resampBufVac1OutRead[0]))
+                    {
+                        wdsp.xrmatchOUT(rmatchVac1Out, resampBufPtr);
+                        Deswizzle(out_l_ptr1, out_r_ptr1, resampBufPtr, frameCount);
+                    }
                 }
                 else
                 {
-                    ClearBuffer(out_l_ptr1, frameCount);
-                    ClearBuffer(out_r_ptr1, frameCount);
-                    VACDebug("rb_vacOUT underflow");
+                    fixed (double* resampBufPtr = &(resampBufVac1InWrite[0]))
+                    {
+                        Swizzle(resampBufPtr, in_l_ptr1, in_l_ptr1, frameCount);
+                        wdsp.xrmatchIN(rmatchVac1In, resampBufPtr);
+                    }
+
+                    fixed (double* resampBufPtr = &(resampBufVac1OutRead[0]))
+                    {
+                        wdsp.xrmatchOUT(rmatchVac1Out, resampBufPtr);
+                        Deswizzle(out_l_ptr1, out_l_ptr1, resampBufPtr, frameCount);
+                    }
                 }
             }
             else
             {
-                if (vac_resample)
+                if (vac_rb_reset)
                 {
-                    int outsamps = 0;
-                    fixed (float* res_inl_ptr = &(res_inl[0]))
+                    vac_rb_reset = false;
+                    ClearBuffer(out_l_ptr1, frameCount);
+                    if (vac_stereo || vac_output_iq) ClearBuffer(out_r_ptr1, frameCount);
+                    Win32.EnterCriticalSection(cs_vacw);
+                    rb_vacIN_l.Reset();
+                    rb_vacIN_r.Reset();
+                    Win32.LeaveCriticalSection(cs_vacw);
+                    Win32.EnterCriticalSection(cs_vac);
+                    rb_vacOUT_l.Reset();
+                    rb_vacOUT_r.Reset();
+                    Win32.LeaveCriticalSection(cs_vac);
+                    return 0;
+                }
+                if (vac_stereo || vac_output_iq)
+                {
+                    if (vac_resample)
                     {
-                        //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
-                        wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
-                        if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
+                        int outsamps = 0;
+                        fixed (float* res_inl_ptr = &(res_inl[0]))
+                        fixed (float* res_inr_ptr = &(res_inr[0]))
+                        {
+                            //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+                            wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+                            //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
+                            wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
+                            if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
+                            {
+                                Win32.EnterCriticalSection(cs_vacw);
+                                rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
+                                rb_vacIN_r.WritePtr(res_inr_ptr, outsamps);
+                                Win32.LeaveCriticalSection(cs_vacw);
+                            }
+                            else
+                            {
+                                vac_rb_reset = true;
+                                VACDebug("rb_vacIN overflow stereo CBvac");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
                         {
                             Win32.EnterCriticalSection(cs_vacw);
-                            rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
-                            rb_vacIN_r.WritePtr(res_inl_ptr, outsamps);
+                            rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
+                            rb_vacIN_r.WritePtr(in_r_ptr1, frameCount);
+                            Win32.LeaveCriticalSection(cs_vacw);
+                        }
+                        else
+                        {
+                            //vac_rb_reset = true;
+                            VACDebug("rb_vacIN overflow mono CBvac");
+                        }
+                    }
+
+                    if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
+                    {
+                        Win32.EnterCriticalSection(cs_vac);
+                        rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
+                        rb_vacOUT_r.ReadPtr(out_r_ptr1, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac);
+                    }
+                    else
+                    {
+                        ClearBuffer(out_l_ptr1, frameCount);
+                        ClearBuffer(out_r_ptr1, frameCount);
+                        VACDebug("rb_vacOUT underflow");
+                    }
+                }
+                else
+                {
+                    if (vac_resample)
+                    {
+                        int outsamps = 0;
+                        fixed (float* res_inl_ptr = &(res_inl[0]))
+                        {
+                            //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+                            wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+                            if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
+                            {
+                                Win32.EnterCriticalSection(cs_vacw);
+                                rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
+                                rb_vacIN_r.WritePtr(res_inl_ptr, outsamps);
+                                Win32.LeaveCriticalSection(cs_vacw);
+                            }
+                            else
+                            {
+                                //vac_rb_reset = true;
+                                VACDebug("rb_vacIN_l overflow");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
+                        {
+                            Win32.EnterCriticalSection(cs_vacw);
+                            rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
+                            rb_vacIN_r.WritePtr(in_l_ptr1, frameCount);
                             Win32.LeaveCriticalSection(cs_vacw);
                         }
                         else
@@ -4719,38 +5337,165 @@ namespace PowerSDR
                             VACDebug("rb_vacIN_l overflow");
                         }
                     }
-                }
-                else
-                {
-                    if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
+                    if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
                     {
-                        Win32.EnterCriticalSection(cs_vacw);
-                        rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
-                        rb_vacIN_r.WritePtr(in_l_ptr1, frameCount);
-                        Win32.LeaveCriticalSection(cs_vacw);
+                        Win32.EnterCriticalSection(cs_vac);
+                        rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
+                        rb_vacOUT_r.ReadPtr(out_l_ptr1, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac);
                     }
                     else
                     {
-                        //vac_rb_reset = true;
-                        VACDebug("rb_vacIN_l overflow");
+                        ClearBuffer(out_l_ptr1, frameCount);
+                        VACDebug("rb_vacOUT_l underflow");
                     }
-                }
-                if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
-                {
-                    Win32.EnterCriticalSection(cs_vac);
-                    rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
-                    rb_vacOUT_r.ReadPtr(out_l_ptr1, frameCount);
-                    Win32.LeaveCriticalSection(cs_vac);
-                }
-                else
-                {
-                    ClearBuffer(out_l_ptr1, frameCount);
-                    VACDebug("rb_vacOUT_l underflow");
                 }
             }
 
+
             return 0;
         }
+
+        //// The VAC callback from 1.8.0 untouched in any way.
+        //unsafe public static int CallbackVAC(void* input, void* output, int frameCount,
+        //    PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
+        //{
+        //    if (!vac_enabled) return 0;
+
+        //    int** array_ptr = (int**)input;
+        //    float* in_l_ptr1 = (float*)array_ptr[0];
+        //    float* in_r_ptr1 = null;
+        //    if (vac_stereo || vac_output_iq) in_r_ptr1 = (float*)array_ptr[1];
+        //    array_ptr = (int**)output;
+        //    float* out_l_ptr1 = (float*)array_ptr[0];
+        //    float* out_r_ptr1 = null;
+        //    if (vac_stereo || vac_output_iq) out_r_ptr1 = (float*)array_ptr[1];
+
+        //    if (vac_rb_reset)
+        //    {
+        //        vac_rb_reset = false;
+        //        ClearBuffer(out_l_ptr1, frameCount);
+        //        if (vac_stereo || vac_output_iq) ClearBuffer(out_r_ptr1, frameCount);
+        //        Win32.EnterCriticalSection(cs_vacw);
+        //        rb_vacIN_l.Reset();
+        //        rb_vacIN_r.Reset();
+        //        Win32.LeaveCriticalSection(cs_vacw);
+        //        Win32.EnterCriticalSection(cs_vac);
+        //        rb_vacOUT_l.Reset();
+        //        rb_vacOUT_r.Reset();
+        //        Win32.LeaveCriticalSection(cs_vac);
+        //        return 0;
+        //    }
+        //    if (vac_stereo || vac_output_iq)
+        //    {
+        //        if (vac_resample)
+        //        {
+        //            int outsamps = 0;
+        //            fixed (float* res_inl_ptr = &(res_inl[0]))
+        //            fixed (float* res_inr_ptr = &(res_inr[0]))
+        //            {
+        //                //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+        //                wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+        //                //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
+        //                wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampPtrIn_r);
+        //                if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
+        //                {
+        //                    Win32.EnterCriticalSection(cs_vacw);
+        //                    rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
+        //                    rb_vacIN_r.WritePtr(res_inr_ptr, outsamps);
+        //                    Win32.LeaveCriticalSection(cs_vacw);
+        //                }
+        //                else
+        //                {
+        //                    vac_rb_reset = true;
+        //                    VACDebug("rb_vacIN overflow stereo CBvac");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
+        //            {
+        //                Win32.EnterCriticalSection(cs_vacw);
+        //                rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
+        //                rb_vacIN_r.WritePtr(in_r_ptr1, frameCount);
+        //                Win32.LeaveCriticalSection(cs_vacw);
+        //            }
+        //            else
+        //            {
+        //                //vac_rb_reset = true;
+        //                VACDebug("rb_vacIN overflow mono CBvac");
+        //            }
+        //        }
+
+        //        if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
+        //        {
+        //            Win32.EnterCriticalSection(cs_vac);
+        //            rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
+        //            rb_vacOUT_r.ReadPtr(out_r_ptr1, frameCount);
+        //            Win32.LeaveCriticalSection(cs_vac);
+        //        }
+        //        else
+        //        {
+        //            ClearBuffer(out_l_ptr1, frameCount);
+        //            ClearBuffer(out_r_ptr1, frameCount);
+        //            VACDebug("rb_vacOUT underflow");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (vac_resample)
+        //        {
+        //            int outsamps = 0;
+        //            fixed (float* res_inl_ptr = &(res_inl[0]))
+        //            {
+        //                //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+        //                wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampPtrIn_l);
+        //                if ((rb_vacIN_l.WriteSpace() >= outsamps) && (rb_vacIN_r.WriteSpace() >= outsamps))
+        //                {
+        //                    Win32.EnterCriticalSection(cs_vacw);
+        //                    rb_vacIN_l.WritePtr(res_inl_ptr, outsamps);
+        //                    rb_vacIN_r.WritePtr(res_inl_ptr, outsamps);
+        //                    Win32.LeaveCriticalSection(cs_vacw);
+        //                }
+        //                else
+        //                {
+        //                    //vac_rb_reset = true;
+        //                    VACDebug("rb_vacIN_l overflow");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
+        //            {
+        //                Win32.EnterCriticalSection(cs_vacw);
+        //                rb_vacIN_l.WritePtr(in_l_ptr1, frameCount);
+        //                rb_vacIN_r.WritePtr(in_l_ptr1, frameCount);
+        //                Win32.LeaveCriticalSection(cs_vacw);
+        //            }
+        //            else
+        //            {
+        //                //vac_rb_reset = true;
+        //                VACDebug("rb_vacIN_l overflow");
+        //            }
+        //        }
+        //        if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
+        //        {
+        //            Win32.EnterCriticalSection(cs_vac);
+        //            rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
+        //            rb_vacOUT_r.ReadPtr(out_l_ptr1, frameCount);
+        //            Win32.LeaveCriticalSection(cs_vac);
+        //        }
+        //        else
+        //        {
+        //            ClearBuffer(out_l_ptr1, frameCount);
+        //            VACDebug("rb_vacOUT_l underflow");
+        //        }
+        //    }
+
+        //    return 0;
+        //}
 
         unsafe public static int CallbackVAC2(void* input, void* output, int frameCount,
             PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
@@ -4766,91 +5511,140 @@ namespace PowerSDR
             float* out_r_ptr1 = null;
             if (vac2_stereo || vac2_output_iq) out_r_ptr1 = (float*)array_ptr[1];
 
-            if (vac2_rb_reset)
+            if (varsampEnabledVAC2)
             {
-                vac2_rb_reset = false;
-                ClearBuffer(out_l_ptr1, frameCount);
-                if (vac2_stereo || vac2_output_iq) ClearBuffer(out_r_ptr1, frameCount);
-                Win32.EnterCriticalSection(cs_vac2w);
-                rb_vac2IN_l.Reset();
-                rb_vac2IN_r.Reset();
-                Win32.LeaveCriticalSection(cs_vac2w);
-                Win32.EnterCriticalSection(cs_vac2);
-                rb_vac2OUT_l.Reset();
-                rb_vac2OUT_r.Reset();
-                Win32.LeaveCriticalSection(cs_vac2);
-                return 0;
-            }
-            if (vac2_stereo || vac2_output_iq)
-            {
-                if (vac2_resample)
+                if (vac2_stereo || vac2_output_iq)
                 {
-                    int outsamps = 0;
-                    fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
-                    fixed (float* res_inr_ptr = &(res_vac2_inr[0]))
+                    fixed (double* resampBufPtr = &(resampBufVac2InWrite[0]))
                     {
-                        //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
-                        wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
-                        //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
-                        wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
-                        if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
-                        {
-                            Win32.EnterCriticalSection(cs_vac2w);
-                            rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
-                            rb_vac2IN_r.WritePtr(res_inr_ptr, outsamps);
-                            Win32.LeaveCriticalSection(cs_vac2w);
-                        }
-                        else
-                        {
-                            vac2_rb_reset = true;
-                            VACDebug("rb_vac2IN overflow stereo CBvac");
-                        }
+                        Swizzle(resampBufPtr, in_l_ptr1, in_r_ptr1, frameCount);
+                        wdsp.xrmatchIN(rmatchVac2In, resampBufPtr);
                     }
-                }
-                else
-                {
-                    if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
-                    {
-                        Win32.EnterCriticalSection(cs_vac2w);
-                        rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
-                        rb_vac2IN_r.WritePtr(in_r_ptr1, frameCount);
-                        Win32.LeaveCriticalSection(cs_vac2w);
-                    }
-                    else
-                    {
-                        //vac2_rb_reset = true;
-                        VACDebug("rb_vac2IN overflow mono CBvac");
-                    }
-                }
 
-                if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
-                {
-                    Win32.EnterCriticalSection(cs_vac2);
-                    rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
-                    rb_vac2OUT_r.ReadPtr(out_r_ptr1, frameCount);
-                    Win32.LeaveCriticalSection(cs_vac2);
+                    fixed (double* resampBufPtr = &(resampBufVac2OutRead[0]))
+                    {
+                        wdsp.xrmatchOUT(rmatchVac2Out, resampBufPtr);
+                        Deswizzle(out_l_ptr1, out_r_ptr1, resampBufPtr, frameCount);
+                    }
                 }
                 else
                 {
-                    ClearBuffer(out_l_ptr1, frameCount);
-                    ClearBuffer(out_r_ptr1, frameCount);
-                    VACDebug("rb_vac2OUT underflow");
+                    fixed (double* resampBufPtr = &(resampBufVac2InWrite[0]))
+                    {
+                        Swizzle(resampBufPtr, in_l_ptr1, in_l_ptr1, frameCount);
+                        wdsp.xrmatchIN(rmatchVac2In, resampBufPtr);
+                    }
+
+                    fixed (double* resampBufPtr = &(resampBufVac2OutRead[0]))
+                    {
+                        wdsp.xrmatchOUT(rmatchVac2Out, resampBufPtr);
+                        Deswizzle(out_l_ptr1, out_l_ptr1, resampBufPtr, frameCount);
+                    }
                 }
             }
             else
             {
-                if (vac2_resample)
+                if (vac2_rb_reset)
                 {
-                    int outsamps = 0;
-                    fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
+                    vac2_rb_reset = false;
+                    ClearBuffer(out_l_ptr1, frameCount);
+                    if (vac2_stereo || vac2_output_iq) ClearBuffer(out_r_ptr1, frameCount);
+                    Win32.EnterCriticalSection(cs_vac2w);
+                    rb_vac2IN_l.Reset();
+                    rb_vac2IN_r.Reset();
+                    Win32.LeaveCriticalSection(cs_vac2w);
+                    Win32.EnterCriticalSection(cs_vac2);
+                    rb_vac2OUT_l.Reset();
+                    rb_vac2OUT_r.Reset();
+                    Win32.LeaveCriticalSection(cs_vac2);
+                    return 0;
+                }
+                if (vac2_stereo || vac2_output_iq)
+                {
+                    if (vac2_resample)
                     {
-                        //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
-                        wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
-                        if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
+                        int outsamps = 0;
+                        fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
+                        fixed (float* res_inr_ptr = &(res_vac2_inr[0]))
+                        {
+                            //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+                            wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+                            //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
+                            wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
+                            if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
+                            {
+                                Win32.EnterCriticalSection(cs_vac2w);
+                                rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
+                                rb_vac2IN_r.WritePtr(res_inr_ptr, outsamps);
+                                Win32.LeaveCriticalSection(cs_vac2w);
+                            }
+                            else
+                            {
+                                vac2_rb_reset = true;
+                                VACDebug("rb_vac2IN overflow stereo CBvac");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
                         {
                             Win32.EnterCriticalSection(cs_vac2w);
-                            rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
-                            rb_vac2IN_r.WritePtr(res_inl_ptr, outsamps);
+                            rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
+                            rb_vac2IN_r.WritePtr(in_r_ptr1, frameCount);
+                            Win32.LeaveCriticalSection(cs_vac2w);
+                        }
+                        else
+                        {
+                            //vac2_rb_reset = true;
+                            VACDebug("rb_vac2IN overflow mono CBvac");
+                        }
+                    }
+
+                    if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
+                    {
+                        Win32.EnterCriticalSection(cs_vac2);
+                        rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
+                        rb_vac2OUT_r.ReadPtr(out_r_ptr1, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac2);
+                    }
+                    else
+                    {
+                        ClearBuffer(out_l_ptr1, frameCount);
+                        ClearBuffer(out_r_ptr1, frameCount);
+                        VACDebug("rb_vac2OUT underflow");
+                    }
+                }
+                else
+                {
+                    if (vac2_resample)
+                    {
+                        int outsamps = 0;
+                        fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
+                        {
+                            //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+                            wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+                            if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
+                            {
+                                Win32.EnterCriticalSection(cs_vac2w);
+                                rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
+                                rb_vac2IN_r.WritePtr(res_inl_ptr, outsamps);
+                                Win32.LeaveCriticalSection(cs_vac2w);
+                            }
+                            else
+                            {
+                                //vac_rb_reset = true;
+                                VACDebug("rb_vac2IN_l overflow");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
+                        {
+                            Win32.EnterCriticalSection(cs_vac2w);
+                            rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
+                            rb_vac2IN_r.WritePtr(in_l_ptr1, frameCount);
                             Win32.LeaveCriticalSection(cs_vac2w);
                         }
                         else
@@ -4859,38 +5653,164 @@ namespace PowerSDR
                             VACDebug("rb_vac2IN_l overflow");
                         }
                     }
-                }
-                else
-                {
-                    if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
+                    if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
                     {
-                        Win32.EnterCriticalSection(cs_vac2w);
-                        rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
-                        rb_vac2IN_r.WritePtr(in_l_ptr1, frameCount);
-                        Win32.LeaveCriticalSection(cs_vac2w);
+                        Win32.EnterCriticalSection(cs_vac2);
+                        rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
+                        rb_vac2OUT_r.ReadPtr(out_l_ptr1, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac2);
                     }
                     else
                     {
-                        //vac_rb_reset = true;
-                        VACDebug("rb_vac2IN_l overflow");
+                        ClearBuffer(out_l_ptr1, frameCount);
+                        VACDebug("rb_vac2OUT_l underflow");
                     }
                 }
-                if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
-                {
-                    Win32.EnterCriticalSection(cs_vac2);
-                    rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
-                    rb_vac2OUT_r.ReadPtr(out_l_ptr1, frameCount);
-                    Win32.LeaveCriticalSection(cs_vac2);
-                }
-                else
-                {
-                    ClearBuffer(out_l_ptr1, frameCount);
-                    VACDebug("rb_vac2OUT_l underflow");
-                }
+
             }
 
             return 0;
         }
+
+        //unsafe public static int CallbackVAC2(void* input, void* output, int frameCount,
+        //    PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
+        //{
+        //    if (!vac2_enabled) return 0;
+
+        //    int** array_ptr = (int**)input;
+        //    float* in_l_ptr1 = (float*)array_ptr[0];
+        //    float* in_r_ptr1 = null;
+        //    if (vac2_stereo || vac2_output_iq) in_r_ptr1 = (float*)array_ptr[1];
+        //    array_ptr = (int**)output;
+        //    float* out_l_ptr1 = (float*)array_ptr[0];
+        //    float* out_r_ptr1 = null;
+        //    if (vac2_stereo || vac2_output_iq) out_r_ptr1 = (float*)array_ptr[1];
+
+        //    if (vac2_rb_reset)
+        //    {
+        //        vac2_rb_reset = false;
+        //        ClearBuffer(out_l_ptr1, frameCount);
+        //        if (vac2_stereo || vac2_output_iq) ClearBuffer(out_r_ptr1, frameCount);
+        //        Win32.EnterCriticalSection(cs_vac2w);
+        //        rb_vac2IN_l.Reset();
+        //        rb_vac2IN_r.Reset();
+        //        Win32.LeaveCriticalSection(cs_vac2w);
+        //        Win32.EnterCriticalSection(cs_vac2);
+        //        rb_vac2OUT_l.Reset();
+        //        rb_vac2OUT_r.Reset();
+        //        Win32.LeaveCriticalSection(cs_vac2);
+        //        return 0;
+        //    }
+        //    if (vac2_stereo || vac2_output_iq)
+        //    {
+        //        if (vac2_resample)
+        //        {
+        //            int outsamps = 0;
+        //            fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
+        //            fixed (float* res_inr_ptr = &(res_vac2_inr[0]))
+        //            {
+        //                //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+        //                wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+        //                //DttSP.DoResamplerF(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
+        //                wdsp.xresampleFV(in_r_ptr1, res_inr_ptr, frameCount, &outsamps, resampVAC2PtrIn_r);
+        //                if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
+        //                {
+        //                    Win32.EnterCriticalSection(cs_vac2w);
+        //                    rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
+        //                    rb_vac2IN_r.WritePtr(res_inr_ptr, outsamps);
+        //                    Win32.LeaveCriticalSection(cs_vac2w);
+        //                }
+        //                else
+        //                {
+        //                    vac2_rb_reset = true;
+        //                    VACDebug("rb_vac2IN overflow stereo CBvac");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
+        //            {
+        //                Win32.EnterCriticalSection(cs_vac2w);
+        //                rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
+        //                rb_vac2IN_r.WritePtr(in_r_ptr1, frameCount);
+        //                Win32.LeaveCriticalSection(cs_vac2w);
+        //            }
+        //            else
+        //            {
+        //                //vac2_rb_reset = true;
+        //                VACDebug("rb_vac2IN overflow mono CBvac");
+        //            }
+        //        }
+
+        //        if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
+        //        {
+        //            Win32.EnterCriticalSection(cs_vac2);
+        //            rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
+        //            rb_vac2OUT_r.ReadPtr(out_r_ptr1, frameCount);
+        //            Win32.LeaveCriticalSection(cs_vac2);
+        //        }
+        //        else
+        //        {
+        //            ClearBuffer(out_l_ptr1, frameCount);
+        //            ClearBuffer(out_r_ptr1, frameCount);
+        //            VACDebug("rb_vac2OUT underflow");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (vac2_resample)
+        //        {
+        //            int outsamps = 0;
+        //            fixed (float* res_inl_ptr = &(res_vac2_inl[0]))
+        //            {
+        //                //DttSP.DoResamplerF(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+        //                wdsp.xresampleFV(in_l_ptr1, res_inl_ptr, frameCount, &outsamps, resampVAC2PtrIn_l);
+        //                if ((rb_vac2IN_l.WriteSpace() >= outsamps) && (rb_vac2IN_r.WriteSpace() >= outsamps))
+        //                {
+        //                    Win32.EnterCriticalSection(cs_vac2w);
+        //                    rb_vac2IN_l.WritePtr(res_inl_ptr, outsamps);
+        //                    rb_vac2IN_r.WritePtr(res_inl_ptr, outsamps);
+        //                    Win32.LeaveCriticalSection(cs_vac2w);
+        //                }
+        //                else
+        //                {
+        //                    //vac_rb_reset = true;
+        //                    VACDebug("rb_vac2IN_l overflow");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if ((rb_vac2IN_l.WriteSpace() >= frameCount) && (rb_vac2IN_r.WriteSpace() >= frameCount))
+        //            {
+        //                Win32.EnterCriticalSection(cs_vac2w);
+        //                rb_vac2IN_l.WritePtr(in_l_ptr1, frameCount);
+        //                rb_vac2IN_r.WritePtr(in_l_ptr1, frameCount);
+        //                Win32.LeaveCriticalSection(cs_vac2w);
+        //            }
+        //            else
+        //            {
+        //                //vac_rb_reset = true;
+        //                VACDebug("rb_vac2IN_l overflow");
+        //            }
+        //        }
+        //        if ((rb_vac2OUT_l.ReadSpace() >= frameCount) && (rb_vac2OUT_r.ReadSpace() >= frameCount))
+        //        {
+        //            Win32.EnterCriticalSection(cs_vac2);
+        //            rb_vac2OUT_l.ReadPtr(out_l_ptr1, frameCount);
+        //            rb_vac2OUT_r.ReadPtr(out_l_ptr1, frameCount);
+        //            Win32.LeaveCriticalSection(cs_vac2);
+        //        }
+        //        else
+        //        {
+        //            ClearBuffer(out_l_ptr1, frameCount);
+        //            VACDebug("rb_vac2OUT_l underflow");
+        //        }
+        //    }
+
+        //    return 0;
+        //}
 
         unsafe public static int Pipe(void* input, void* output, int frameCount,
             PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
@@ -5268,6 +6188,26 @@ namespace PowerSDR
             }
         }
 
+        // convert non-interleaved floats into interleaved doubles
+        unsafe public static void Swizzle(double* dest, float* sourceL, float* sourceR, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                dest[2 * i] = (double)sourceL[i];
+                dest[2 * i + 1] = (double)(sourceR[i]);
+            }
+        }
+
+        // convert interleaved doubles into non-interleaved floats
+        unsafe public static void Deswizzle(float* destL, float* destR, double* source, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                destL[i] = (float)source[2 * i];
+                destR[i] = (float)source[2 * i + 1];
+            }
+        }
+
         #endregion
 
         #region Misc Routines
@@ -5298,292 +6238,741 @@ namespace PowerSDR
 
         unsafe private static void InitVAC()
         {
-            //K5IT - Size the VAC ring buffer to hold twice the samples of the target latency
-            int vac_ringbuffer_size = 2 * sample_rate2 * latency2 / 1000;
-            if (block_size_vac * 2 > vac_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+            if (varsampEnabledVAC1)
             {
-                vac_ringbuffer_size = block_size_vac * 2;
-            }
-            else if (vac_ringbuffer_size % block_size_vac > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
-            {
-                vac_ringbuffer_size = vac_ringbuffer_size + block_size_vac - (vac_ringbuffer_size % block_size_vac); //round up to nearest buffer size
-            }
-            VACDebug(string.Format("VAC ringbuffer size {0}", vac_ringbuffer_size));
-
-            if (rb_vacOUT_l == null) rb_vacOUT_l = new RingBufferFloat(vac_ringbuffer_size);
-            rb_vacOUT_l.Restart(vac_output_iq ? block_size1 : block_size_vac);
-
-            if (rb_vacOUT_r == null) rb_vacOUT_r = new RingBufferFloat(vac_ringbuffer_size);
-            rb_vacOUT_r.Restart(vac_output_iq ? block_size1 : block_size_vac);
-
-            if (rb_vacIN_l == null) rb_vacIN_l = new RingBufferFloat(vac_ringbuffer_size); 
-            rb_vacIN_l.Restart(block_size_vac);
-
-            if (rb_vacIN_r == null) rb_vacIN_r = new RingBufferFloat(vac_ringbuffer_size);
-            rb_vacIN_r.Restart(block_size_vac);
-
-            if (sample_rate2 != sample_rate1 && !vac_output_iq)
-            {
-                vac_resample = true;
-                //if (res_outl == null) res_outl = new float[65536];
-                //if (res_outr == null) res_outr = new float[65536];
-                if (res_inl == null) res_inl = new float[4 * 65536];
-                if (res_inr == null) res_inr = new float[4 * 65536];
-
-                if (resampPtrIn_l != null)
-                    wdsp.destroy_resampleFV(resampPtrIn_l);
-                resampPtrIn_l = wdsp.create_resampleFV(sample_rate2, sample_rate1);
-
-                if (resampPtrIn_r != null)
-                    wdsp.destroy_resampleFV(resampPtrIn_r);
-                resampPtrIn_r = wdsp.create_resampleFV(sample_rate2, sample_rate1);
-
-                /*if (resampPtrOut_l != null)
-                    wdsp.destroy_resampleFV(resampPtrOut_l);
-                resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
-
-                if (resampPtrOut_r != null)
-                    wdsp.destroy_resampleFV(resampPtrOut_r);
-                resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);*/
-            }
-            else
-            {
-                vac_resample = false;
-                /*if (vac_output_iq)
+                // size the ringbuffers
+                int n, insertSize, vac_in_ringbuffer_size, vac_out_ringbuffer_size = 0;
+                if (!vac_output_iq)
                 {
-                    if (res_outl == null) res_outl = new float[65536];
-                    if (res_outr == null) res_outr = new float[65536];
-                }*/
-            }
+                    if (sample_rate1 > sample_rate2)
+                        insertSize = block_size_vac * (sample_rate1 / sample_rate2);
+                    else
+                        insertSize = block_size_vac / (sample_rate2 / sample_rate1);
+                    n = sample_rate2 * latency2 / 1000;
+                    if (insertSize > n) n = insertSize;
+                    if (block_size1 > n) n = block_size1;
+                    vac_in_ringbuffer_size = 4 * n;
 
-            if (sample_rate2 != out_rate && !vac_output_iq)
-            {
-                if (res_outl == null) res_outl = new float[2 * 65536];
-                if (res_outr == null) res_outr = new float[2 * 65536];
+                    if (sample_rate2 > out_rate)
+                        insertSize = out_count * (sample_rate2 / out_rate);
+                    else
+                        insertSize = out_count / (out_rate / sample_rate2);
+                    n = sample_rate2 * latency2 / 1000;
+                    if (insertSize > n) n = insertSize;
+                    if (block_size_vac > n) n = block_size_vac;
+                    vac_out_ringbuffer_size = 4 * n;
+                }
+                else
+                {
+                    n = sample_rate1 * latency2 / 1000;
+                    if (block_size1 > n) n = block_size1;
+                    vac_in_ringbuffer_size = 4 * n;
+                    vac_out_ringbuffer_size = 4 * n;
+                }
 
-                if (resampPtrOut_l != null)
-                    wdsp.destroy_resampleFV(resampPtrOut_l);
-                resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
+                // adaptive variable resamplers
+                // buffers for rmatch i/o
+                if (!vac_output_iq)
+                {
+                    rmatchVac1In = wdsp.create_rmatchLegacyV(block_size_vac, block_size1, sample_rate2, sample_rate1, vac_in_ringbuffer_size);
+                    rmatchVac1Out = wdsp.create_rmatchLegacyV(out_count, block_size_vac, out_rate, sample_rate2, vac_out_ringbuffer_size);
+                    resampBufVac1InWrite = new double[2 * block_size_vac];
+                    resampBufVac1InRead = new double[2 * block_size1];
+                    resampBufVac1OutWrite = new double[2 * out_count];
+                    resampBufVac1OutRead = new double[2 * block_size_vac];
+                }
+                else
+                {
+                    rmatchVac1In = wdsp.create_rmatchLegacyV(block_size1, block_size1, sample_rate1, sample_rate1, vac_in_ringbuffer_size);
+                    rmatchVac1Out = wdsp.create_rmatchLegacyV(block_size1, block_size1, sample_rate1, sample_rate1, vac_out_ringbuffer_size);
+                    resampBufVac1InWrite = new double[2 * block_size1];
+                    resampBufVac1InRead = new double[2 * block_size1];
+                    resampBufVac1OutWrite = new double[2 * block_size1];
+                    resampBufVac1OutRead = new double[2 * block_size1];
+                }
 
-                if (resampPtrOut_r != null)
-                    wdsp.destroy_resampleFV(resampPtrOut_r);
-                resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);
+                Trace.Write("****** InitVAC ******");
+                Trace.Write("Pri Block Size " + block_size1);
+                Trace.Write("Pri Sample Rate " + sample_rate1);
+                Trace.Write("VAC Block Size " + block_size_vac);
+                Trace.Write("VAC Sample Rate  " + sample_rate2);
+                Trace.Write("Latency " + latency2);
+                Trace.Write("Ringbuffer Size " + vac_in_ringbuffer_size + " In");
+                Trace.Write("Ringbuffer Size " + vac_out_ringbuffer_size + " Out");
+                Trace.Write("*********************");
             }
             else
             {
-                if (vac_output_iq)
+                //K5IT - Size the VAC ring buffer to hold twice the samples of the target latency
+                int vac_ringbuffer_size = 2 * sample_rate2 * latency2 / 1000;
+                if (block_size_vac * 2 > vac_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+                {
+                    vac_ringbuffer_size = block_size_vac * 2;
+                }
+                else if (vac_ringbuffer_size % block_size_vac > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
+                {
+                    vac_ringbuffer_size = vac_ringbuffer_size + block_size_vac - (vac_ringbuffer_size % block_size_vac); //round up to nearest buffer size
+                }
+                VACDebug(string.Format("VAC ringbuffer size {0}", vac_ringbuffer_size));
+
+                if (rb_vacOUT_l == null) rb_vacOUT_l = new RingBufferFloat(vac_ringbuffer_size);
+                rb_vacOUT_l.Restart(vac_output_iq ? block_size1 : block_size_vac);
+
+                if (rb_vacOUT_r == null) rb_vacOUT_r = new RingBufferFloat(vac_ringbuffer_size);
+                rb_vacOUT_r.Restart(vac_output_iq ? block_size1 : block_size_vac);
+
+                if (rb_vacIN_l == null) rb_vacIN_l = new RingBufferFloat(vac_ringbuffer_size);
+                rb_vacIN_l.Restart(block_size_vac);
+
+                if (rb_vacIN_r == null) rb_vacIN_r = new RingBufferFloat(vac_ringbuffer_size);
+                rb_vacIN_r.Restart(block_size_vac);
+
+                if (sample_rate2 != sample_rate1 && !vac_output_iq)
+                {
+                    vac_resample = true;
+                    //if (res_outl == null) res_outl = new float[65536];
+                    //if (res_outr == null) res_outr = new float[65536];
+                    if (res_inl == null) res_inl = new float[4 * 65536];
+                    if (res_inr == null) res_inr = new float[4 * 65536];
+
+                    if (resampPtrIn_l != null)
+                        wdsp.destroy_resampleFV(resampPtrIn_l);
+                    resampPtrIn_l = wdsp.create_resampleFV(sample_rate2, sample_rate1);
+
+                    if (resampPtrIn_r != null)
+                        wdsp.destroy_resampleFV(resampPtrIn_r);
+                    resampPtrIn_r = wdsp.create_resampleFV(sample_rate2, sample_rate1);
+
+                    /*if (resampPtrOut_l != null)
+                        wdsp.destroy_resampleFV(resampPtrOut_l);
+                    resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
+
+                    if (resampPtrOut_r != null)
+                        wdsp.destroy_resampleFV(resampPtrOut_r);
+                    resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);*/
+                }
+                else
+                {
+                    vac_resample = false;
+                    /*if (vac_output_iq)
+                    {
+                        if (res_outl == null) res_outl = new float[65536];
+                        if (res_outr == null) res_outr = new float[65536];
+                    }*/
+                }
+
+                if (sample_rate2 != out_rate && !vac_output_iq)
                 {
                     if (res_outl == null) res_outl = new float[2 * 65536];
                     if (res_outr == null) res_outr = new float[2 * 65536];
+
+                    if (resampPtrOut_l != null)
+                        wdsp.destroy_resampleFV(resampPtrOut_l);
+                    resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
+
+                    if (resampPtrOut_r != null)
+                        wdsp.destroy_resampleFV(resampPtrOut_r);
+                    resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);
+                }
+                else
+                {
+                    if (vac_output_iq)
+                    {
+                        if (res_outl == null) res_outl = new float[2 * 65536];
+                        if (res_outr == null) res_outr = new float[2 * 65536];
+                    }
+                }
+
+                cs_vac = (void*)0x0;
+                cs_vac = Win32.NewCriticalSection();
+                if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac, 0x00000080) == 0)
+                {
+                    vac_enabled = false;
+                    Debug.WriteLine("CriticalSection Failed");
+                }
+                cs_vacw = (void*)0x0;
+                cs_vacw = Win32.NewCriticalSection();
+                if (Win32.InitializeCriticalSectionAndSpinCount(cs_vacw, 0x00000080) == 0)
+                {
+                    vac_enabled = false;
+                    Debug.WriteLine("CriticalSection Failed");
                 }
             }
-
-            cs_vac = (void*)0x0;
-            cs_vac = Win32.NewCriticalSection();
-            if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac, 0x00000080) == 0)
-            {
-                vac_enabled = false;
-                Debug.WriteLine("CriticalSection Failed");
-            }
-            cs_vacw = (void*)0x0;
-            cs_vacw = Win32.NewCriticalSection();
-            if (Win32.InitializeCriticalSectionAndSpinCount(cs_vacw, 0x00000080) == 0)
-            {
-                vac_enabled = false;
-                Debug.WriteLine("CriticalSection Failed");
-            }
         }
+
+        //unsafe private static void InitVAC()
+        //{
+        //    //K5IT - Size the VAC ring buffer to hold twice the samples of the target latency
+        //    int vac_ringbuffer_size = 2 * sample_rate2 * latency2 / 1000;
+        //    if (block_size_vac * 2 > vac_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+        //    {
+        //        vac_ringbuffer_size = block_size_vac * 2;
+        //    }
+        //    else if (vac_ringbuffer_size % block_size_vac > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
+        //    {
+        //        vac_ringbuffer_size = vac_ringbuffer_size + block_size_vac - (vac_ringbuffer_size % block_size_vac); //round up to nearest buffer size
+        //    }
+        //    VACDebug(string.Format("VAC ringbuffer size {0}", vac_ringbuffer_size));
+
+        //    if (rb_vacOUT_l == null) rb_vacOUT_l = new RingBufferFloat(vac_ringbuffer_size);
+        //    rb_vacOUT_l.Restart(vac_output_iq ? block_size1 : block_size_vac);
+
+        //    if (rb_vacOUT_r == null) rb_vacOUT_r = new RingBufferFloat(vac_ringbuffer_size);
+        //    rb_vacOUT_r.Restart(vac_output_iq ? block_size1 : block_size_vac);
+
+        //    if (rb_vacIN_l == null) rb_vacIN_l = new RingBufferFloat(vac_ringbuffer_size); 
+        //    rb_vacIN_l.Restart(block_size_vac);
+
+        //    if (rb_vacIN_r == null) rb_vacIN_r = new RingBufferFloat(vac_ringbuffer_size);
+        //    rb_vacIN_r.Restart(block_size_vac);
+
+        //    if (sample_rate2 != sample_rate1 && !vac_output_iq)
+        //    {
+        //        vac_resample = true;
+        //        //if (res_outl == null) res_outl = new float[65536];
+        //        //if (res_outr == null) res_outr = new float[65536];
+        //        if (res_inl == null) res_inl = new float[4 * 65536];
+        //        if (res_inr == null) res_inr = new float[4 * 65536];
+
+        //        if (resampPtrIn_l != null)
+        //            wdsp.destroy_resampleFV(resampPtrIn_l);
+        //        resampPtrIn_l = wdsp.create_resampleFV(sample_rate2, sample_rate1);
+
+        //        if (resampPtrIn_r != null)
+        //            wdsp.destroy_resampleFV(resampPtrIn_r);
+        //        resampPtrIn_r = wdsp.create_resampleFV(sample_rate2, sample_rate1);
+
+        //        /*if (resampPtrOut_l != null)
+        //            wdsp.destroy_resampleFV(resampPtrOut_l);
+        //        resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
+
+        //        if (resampPtrOut_r != null)
+        //            wdsp.destroy_resampleFV(resampPtrOut_r);
+        //        resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);*/
+        //    }
+        //    else
+        //    {
+        //        vac_resample = false;
+        //        /*if (vac_output_iq)
+        //        {
+        //            if (res_outl == null) res_outl = new float[65536];
+        //            if (res_outr == null) res_outr = new float[65536];
+        //        }*/
+        //    }
+
+        //    if (sample_rate2 != out_rate && !vac_output_iq)
+        //    {
+        //        if (res_outl == null) res_outl = new float[2 * 65536];
+        //        if (res_outr == null) res_outr = new float[2 * 65536];
+
+        //        if (resampPtrOut_l != null)
+        //            wdsp.destroy_resampleFV(resampPtrOut_l);
+        //        resampPtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate2);
+
+        //        if (resampPtrOut_r != null)
+        //            wdsp.destroy_resampleFV(resampPtrOut_r);
+        //        resampPtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate2);
+        //    }
+        //    else
+        //    {
+        //        if (vac_output_iq)
+        //        {
+        //            if (res_outl == null) res_outl = new float[2 * 65536];
+        //            if (res_outr == null) res_outr = new float[2 * 65536];
+        //        }
+        //    }
+
+        //    cs_vac = (void*)0x0;
+        //    cs_vac = Win32.NewCriticalSection();
+        //    if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac, 0x00000080) == 0)
+        //    {
+        //        vac_enabled = false;
+        //        Debug.WriteLine("CriticalSection Failed");
+        //    }
+        //    cs_vacw = (void*)0x0;
+        //    cs_vacw = Win32.NewCriticalSection();
+        //    if (Win32.InitializeCriticalSectionAndSpinCount(cs_vacw, 0x00000080) == 0)
+        //    {
+        //        vac_enabled = false;
+        //        Debug.WriteLine("CriticalSection Failed");
+        //    }
+        //}
 
         unsafe private static void InitVAC2()
         {
-            int block_size = block_size_vac2;
-            if (vac2_output_iq) block_size = block_size1;
-
-            //K5IT - Size the VAC2 ring buffer to hold twice the samples of the target latency
-            int vac2_ringbuffer_size = 2 * sample_rate3 * latency3 / 1000;
-            if (block_size_vac2 * 2 > vac2_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+            if (varsampEnabledVAC2)
             {
-                vac2_ringbuffer_size = block_size_vac2 * 2;
-            }
-            else if (vac2_ringbuffer_size % block_size_vac2 > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
-            {
-                vac2_ringbuffer_size = vac2_ringbuffer_size + block_size_vac2 - (vac2_ringbuffer_size % block_size_vac2); //round up to nearest buffer size
-            }
-            VACDebug(string.Format("VAC2 ringbuffer size {0}", vac2_ringbuffer_size));
-
-            if (rb_vac2OUT_l == null) rb_vac2OUT_l = new RingBufferFloat(vac2_ringbuffer_size);
-            rb_vac2OUT_l.Restart(block_size);
-
-            if (rb_vac2OUT_r == null) rb_vac2OUT_r = new RingBufferFloat(vac2_ringbuffer_size);
-            rb_vac2OUT_r.Restart(block_size);
-
-            if (rb_vac2IN_l == null) rb_vac2IN_l = new RingBufferFloat(vac2_ringbuffer_size);
-            rb_vac2IN_l.Restart(block_size_vac2);
-
-            if (rb_vac2IN_r == null) rb_vac2IN_r = new RingBufferFloat(vac2_ringbuffer_size);
-            rb_vac2IN_r.Restart(block_size_vac2);
-
-            if (sample_rate3 != sample_rate1 && !vac2_output_iq)
-            {
-                vac2_resample = true;
-                //if (res_vac2_outl == null) res_vac2_outl = new float[65536];
-                //if (res_vac2_outr == null) res_vac2_outr = new float[65536];
-                if (res_vac2_inl == null) res_vac2_inl = new float[4 * 65536];
-                if (res_vac2_inr == null) res_vac2_inr = new float[4 * 65536];
-
-                if (resampVAC2PtrIn_l != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
-                resampVAC2PtrIn_l = wdsp.create_resampleFV(sample_rate3, sample_rate1);
-
-                if (resampVAC2PtrIn_r != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
-                resampVAC2PtrIn_r = wdsp.create_resampleFV(sample_rate3, sample_rate1);
-
-                /*if (resampVAC2PtrOut_l != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
-                resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
-
-                if (resampVAC2PtrOut_r != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
-                resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);*/
-            }
-            else
-            {
-                vac2_resample = false;
-                /*if (vac2_output_iq)
+                // size the ringbuffers
+                int n, insertSize, vac2_in_ringbuffer_size, vac2_out_ringbuffer_size = 0;
+                if (!vac2_output_iq)
                 {
-                    if (res_vac2_outl == null) res_vac2_outl = new float[65536];
-                    if (res_vac2_outr == null) res_vac2_outr = new float[65536];
-                }*/
-            }
+                    if (sample_rate1 > sample_rate3)
+                        insertSize = block_size_vac2 * (sample_rate1 / sample_rate3);
+                    else
+                        insertSize = block_size_vac2 / (sample_rate3 / sample_rate1);
+                    n = sample_rate3 * latency3 / 1000;
+                    if (insertSize > n) n = insertSize;
+                    if (block_size1 > n) n = block_size1;
+                    vac2_in_ringbuffer_size = 4 * n;
 
-            if (sample_rate3 != out_rate && !vac2_output_iq)
-            {
-                if (res_vac2_outl == null) res_vac2_outl = new float[2 * 65536];
-                if (res_vac2_outr == null) res_vac2_outr = new float[2 * 65536];
+                    if (sample_rate3 > out_rate)
+                        insertSize = out_count * (sample_rate3 / out_rate);
+                    else
+                        insertSize = out_count / (out_rate / sample_rate3);
+                    n = sample_rate3 * latency3 / 1000;
+                    if (insertSize > n) n = insertSize;
+                    if (block_size_vac2 > n) n = block_size_vac2;
+                    vac2_out_ringbuffer_size = 4 * n;
+                }
+                else
+                {
+                    n = sample_rate1 * latency3 / 1000;
+                    if (block_size1 > n) n = block_size1;
+                    vac2_in_ringbuffer_size = 4 * n;
+                    vac2_out_ringbuffer_size = 4 * n;
+                }
 
-                if (resampVAC2PtrOut_l != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
-                resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
+                // adaptive variable resamplers
+                // buffers for rmatch i/o
+                if (!vac2_output_iq)
+                {
+                    rmatchVac2In = wdsp.create_rmatchLegacyV(block_size_vac2, block_size1, sample_rate3, sample_rate1, vac2_in_ringbuffer_size);
+                    rmatchVac2Out = wdsp.create_rmatchLegacyV(out_count, block_size_vac2, out_rate, sample_rate3, vac2_out_ringbuffer_size);
+                    resampBufVac2InWrite = new double[2 * block_size_vac2];
+                    resampBufVac2InRead = new double[2 * block_size1];
+                    resampBufVac2OutWrite = new double[2 * out_count];
+                    resampBufVac2OutRead = new double[2 * block_size_vac2];
+                }
+                else
+                {
+                    rmatchVac2In = wdsp.create_rmatchLegacyV(block_size1, block_size1, sample_rate1, sample_rate1, vac2_in_ringbuffer_size);
+                    rmatchVac2Out = wdsp.create_rmatchLegacyV(block_size1, block_size1, sample_rate1, sample_rate1, vac2_out_ringbuffer_size);
+                    resampBufVac2InWrite = new double[2 * block_size1];
+                    resampBufVac2InRead = new double[2 * block_size1];
+                    resampBufVac2OutWrite = new double[2 * block_size1];
+                    resampBufVac2OutRead = new double[2 * block_size1];
+                }
 
-                if (resampVAC2PtrOut_r != null)
-                    wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
-                resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);
+                Trace.Write("****** InitVAC2 ******");
+                Trace.Write("Pri Block Size " + block_size1);
+                Trace.Write("Pri Sample Rate " + sample_rate1);
+                Trace.Write("VAC Block Size " + block_size_vac2);
+                Trace.Write("VAC Sample Rate  " + sample_rate3);
+                Trace.Write("Latency " + latency3);
+                Trace.Write("Ringbuffer Size " + vac2_in_ringbuffer_size + " In");
+                Trace.Write("Ringbuffer Size " + vac2_out_ringbuffer_size + " Out");
+                Trace.Write("**********************");
             }
             else
             {
-                if (vac2_output_iq)
+                int block_size = block_size_vac2;
+                if (vac2_output_iq) block_size = block_size1;
+
+                //K5IT - Size the VAC2 ring buffer to hold twice the samples of the target latency
+                int vac2_ringbuffer_size = 2 * sample_rate3 * latency3 / 1000;
+                if (block_size_vac2 * 2 > vac2_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+                {
+                    vac2_ringbuffer_size = block_size_vac2 * 2;
+                }
+                else if (vac2_ringbuffer_size % block_size_vac2 > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
+                {
+                    vac2_ringbuffer_size = vac2_ringbuffer_size + block_size_vac2 - (vac2_ringbuffer_size % block_size_vac2); //round up to nearest buffer size
+                }
+                VACDebug(string.Format("VAC2 ringbuffer size {0}", vac2_ringbuffer_size));
+
+                if (rb_vac2OUT_l == null) rb_vac2OUT_l = new RingBufferFloat(vac2_ringbuffer_size);
+                rb_vac2OUT_l.Restart(block_size);
+
+                if (rb_vac2OUT_r == null) rb_vac2OUT_r = new RingBufferFloat(vac2_ringbuffer_size);
+                rb_vac2OUT_r.Restart(block_size);
+
+                if (rb_vac2IN_l == null) rb_vac2IN_l = new RingBufferFloat(vac2_ringbuffer_size);
+                rb_vac2IN_l.Restart(block_size_vac2);
+
+                if (rb_vac2IN_r == null) rb_vac2IN_r = new RingBufferFloat(vac2_ringbuffer_size);
+                rb_vac2IN_r.Restart(block_size_vac2);
+
+                if (sample_rate3 != sample_rate1 && !vac2_output_iq)
+                {
+                    vac2_resample = true;
+                    //if (res_vac2_outl == null) res_vac2_outl = new float[65536];
+                    //if (res_vac2_outr == null) res_vac2_outr = new float[65536];
+                    if (res_vac2_inl == null) res_vac2_inl = new float[4 * 65536];
+                    if (res_vac2_inr == null) res_vac2_inr = new float[4 * 65536];
+
+                    if (resampVAC2PtrIn_l != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
+                    resampVAC2PtrIn_l = wdsp.create_resampleFV(sample_rate3, sample_rate1);
+
+                    if (resampVAC2PtrIn_r != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
+                    resampVAC2PtrIn_r = wdsp.create_resampleFV(sample_rate3, sample_rate1);
+
+                    /*if (resampVAC2PtrOut_l != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+                    resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
+
+                    if (resampVAC2PtrOut_r != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+                    resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);*/
+                }
+                else
+                {
+                    vac2_resample = false;
+                    /*if (vac2_output_iq)
+                    {
+                        if (res_vac2_outl == null) res_vac2_outl = new float[65536];
+                        if (res_vac2_outr == null) res_vac2_outr = new float[65536];
+                    }*/
+                }
+
+                if (sample_rate3 != out_rate && !vac2_output_iq)
                 {
                     if (res_vac2_outl == null) res_vac2_outl = new float[2 * 65536];
                     if (res_vac2_outr == null) res_vac2_outr = new float[2 * 65536];
+
+                    if (resampVAC2PtrOut_l != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+                    resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
+
+                    if (resampVAC2PtrOut_r != null)
+                        wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+                    resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);
+                }
+                else
+                {
+                    if (vac2_output_iq)
+                    {
+                        if (res_vac2_outl == null) res_vac2_outl = new float[2 * 65536];
+                        if (res_vac2_outr == null) res_vac2_outr = new float[2 * 65536];
+                    }
+                }
+
+                cs_vac2 = (void*)0x0;
+                cs_vac2 = Win32.NewCriticalSection();
+                if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2, 0x00000080) == 0)
+                {
+                    vac2_enabled = false;
+                    Debug.WriteLine("CriticalSection Failed");
+                }
+                cs_vac2w = (void*)0x0;
+                cs_vac2w = Win32.NewCriticalSection();
+                if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2w, 0x00000080) == 0)
+                {
+                    vac2_enabled = false;
+                    Debug.WriteLine("CriticalSection Failed");
                 }
             }
-
-            cs_vac2 = (void*)0x0;
-            cs_vac2 = Win32.NewCriticalSection();
-            if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2, 0x00000080) == 0)
-            {
-                vac2_enabled = false;
-                Debug.WriteLine("CriticalSection Failed");
-            }
-            cs_vac2w = (void*)0x0;
-            cs_vac2w = Win32.NewCriticalSection();
-            if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2w, 0x00000080) == 0)
-            {
-                vac2_enabled = false;
-                Debug.WriteLine("CriticalSection Failed");
-            }
         }
+
+        //unsafe private static void InitVAC2()
+        //{
+        //    int block_size = block_size_vac2;
+        //    if (vac2_output_iq) block_size = block_size1;
+
+        //    //K5IT - Size the VAC2 ring buffer to hold twice the samples of the target latency
+        //    int vac2_ringbuffer_size = 2 * sample_rate3 * latency3 / 1000;
+        //    if (block_size_vac2 * 2 > vac2_ringbuffer_size) //minimum ringbuffer size is two audio buffers
+        //    {
+        //        vac2_ringbuffer_size = block_size_vac2 * 2;
+        //    }
+        //    else if (vac2_ringbuffer_size % block_size_vac2 > 0) //ringbuffer should hold an even number of buffers (prevents write past end)
+        //    {
+        //        vac2_ringbuffer_size = vac2_ringbuffer_size + block_size_vac2 - (vac2_ringbuffer_size % block_size_vac2); //round up to nearest buffer size
+        //    }
+        //    VACDebug(string.Format("VAC2 ringbuffer size {0}", vac2_ringbuffer_size));
+
+        //    if (rb_vac2OUT_l == null) rb_vac2OUT_l = new RingBufferFloat(vac2_ringbuffer_size);
+        //    rb_vac2OUT_l.Restart(block_size);
+
+        //    if (rb_vac2OUT_r == null) rb_vac2OUT_r = new RingBufferFloat(vac2_ringbuffer_size);
+        //    rb_vac2OUT_r.Restart(block_size);
+
+        //    if (rb_vac2IN_l == null) rb_vac2IN_l = new RingBufferFloat(vac2_ringbuffer_size);
+        //    rb_vac2IN_l.Restart(block_size_vac2);
+
+        //    if (rb_vac2IN_r == null) rb_vac2IN_r = new RingBufferFloat(vac2_ringbuffer_size);
+        //    rb_vac2IN_r.Restart(block_size_vac2);
+
+        //    if (sample_rate3 != sample_rate1 && !vac2_output_iq)
+        //    {
+        //        vac2_resample = true;
+        //        //if (res_vac2_outl == null) res_vac2_outl = new float[65536];
+        //        //if (res_vac2_outr == null) res_vac2_outr = new float[65536];
+        //        if (res_vac2_inl == null) res_vac2_inl = new float[4 * 65536];
+        //        if (res_vac2_inr == null) res_vac2_inr = new float[4 * 65536];
+
+        //        if (resampVAC2PtrIn_l != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
+        //        resampVAC2PtrIn_l = wdsp.create_resampleFV(sample_rate3, sample_rate1);
+
+        //        if (resampVAC2PtrIn_r != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
+        //        resampVAC2PtrIn_r = wdsp.create_resampleFV(sample_rate3, sample_rate1);
+
+        //        /*if (resampVAC2PtrOut_l != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+        //        resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
+
+        //        if (resampVAC2PtrOut_r != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+        //        resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);*/
+        //    }
+        //    else
+        //    {
+        //        vac2_resample = false;
+        //        /*if (vac2_output_iq)
+        //        {
+        //            if (res_vac2_outl == null) res_vac2_outl = new float[65536];
+        //            if (res_vac2_outr == null) res_vac2_outr = new float[65536];
+        //        }*/
+        //    }
+
+        //    if (sample_rate3 != out_rate && !vac2_output_iq)
+        //    {
+        //        if (res_vac2_outl == null) res_vac2_outl = new float[2 * 65536];
+        //        if (res_vac2_outr == null) res_vac2_outr = new float[2 * 65536];
+
+        //        if (resampVAC2PtrOut_l != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+        //        resampVAC2PtrOut_l = wdsp.create_resampleFV(out_rate, sample_rate3);
+
+        //        if (resampVAC2PtrOut_r != null)
+        //            wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+        //        resampVAC2PtrOut_r = wdsp.create_resampleFV(out_rate, sample_rate3);
+        //    }
+        //    else
+        //    {
+        //        if (vac2_output_iq)
+        //        {
+        //            if (res_vac2_outl == null) res_vac2_outl = new float[2 * 65536];
+        //            if (res_vac2_outr == null) res_vac2_outr = new float[2 * 65536];
+        //        }
+        //    }
+
+        //    cs_vac2 = (void*)0x0;
+        //    cs_vac2 = Win32.NewCriticalSection();
+        //    if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2, 0x00000080) == 0)
+        //    {
+        //        vac2_enabled = false;
+        //        Debug.WriteLine("CriticalSection Failed");
+        //    }
+        //    cs_vac2w = (void*)0x0;
+        //    cs_vac2w = Win32.NewCriticalSection();
+        //    if (Win32.InitializeCriticalSectionAndSpinCount(cs_vac2w, 0x00000080) == 0)
+        //    {
+        //        vac2_enabled = false;
+        //        Debug.WriteLine("CriticalSection Failed");
+        //    }
+        //}
 
         unsafe private static void CleanUpVAC()
         {
-            Win32.DeleteCriticalSection(cs_vac);
-            rb_vacOUT_l = null;
-            rb_vacOUT_r = null;
-            rb_vacIN_l = null;
-            rb_vacIN_r = null;
-
-            res_outl = null;
-            res_outr = null;
-            res_inl = null;
-            res_inr = null;
-
-            if (resampPtrIn_l != null)
+            if (varsampEnabledVAC1)
             {
-                //DttSP.DelResamplerF(resampPtrIn_l);
-                wdsp.destroy_resampleFV(resampPtrIn_l);
-                resampPtrIn_l = null;
-            }
+                resampBufVac1InWrite = null;
+                resampBufVac1InRead = null;
+                resampBufVac1OutWrite = null;
+                resampBufVac1OutRead = null;
 
-            if (resampPtrIn_r != null)
+                wdsp.destroy_rmatchV(rmatchVac1In);
+                wdsp.destroy_rmatchV(rmatchVac1Out);
+                Trace.Write("CleanUpVAC ");
+            }
+            else
             {
-                //DttSP.DelResamplerF(resampPtrIn_r);
-                wdsp.destroy_resampleFV(resampPtrIn_r);
-                resampPtrIn_r = null;
-            }
+                Win32.DeleteCriticalSection(cs_vac);
+                rb_vacOUT_l = null;
+                rb_vacOUT_r = null;
+                rb_vacIN_l = null;
+                rb_vacIN_r = null;
 
-            if (resampPtrOut_l != null)
-            {
-                //DttSP.DelResamplerF(resampPtrOut_l);
-                wdsp.destroy_resampleFV(resampPtrOut_l);
-                resampPtrOut_l = null;
-            }
+                res_outl = null;
+                res_outr = null;
+                res_inl = null;
+                res_inr = null;
 
-            if (resampPtrOut_r != null)
-            {
-                //DttSP.DelResamplerF(resampPtrOut_r);
-                wdsp.destroy_resampleFV(resampPtrOut_r);
-                resampPtrOut_r = null;
-            }
+                if (resampPtrIn_l != null)
+                {
+                    //DttSP.DelResamplerF(resampPtrIn_l);
+                    wdsp.destroy_resampleFV(resampPtrIn_l);
+                    resampPtrIn_l = null;
+                }
 
-            Win32.DestroyCriticalSection(cs_vac);
-            Win32.DestroyCriticalSection(cs_vacw);
+                if (resampPtrIn_r != null)
+                {
+                    //DttSP.DelResamplerF(resampPtrIn_r);
+                    wdsp.destroy_resampleFV(resampPtrIn_r);
+                    resampPtrIn_r = null;
+                }
+
+                if (resampPtrOut_l != null)
+                {
+                    //DttSP.DelResamplerF(resampPtrOut_l);
+                    wdsp.destroy_resampleFV(resampPtrOut_l);
+                    resampPtrOut_l = null;
+                }
+
+                if (resampPtrOut_r != null)
+                {
+                    //DttSP.DelResamplerF(resampPtrOut_r);
+                    wdsp.destroy_resampleFV(resampPtrOut_r);
+                    resampPtrOut_r = null;
+                }
+
+                Win32.DestroyCriticalSection(cs_vac);
+                Win32.DestroyCriticalSection(cs_vacw);
+            }
         }
+
+        //unsafe private static void CleanUpVAC()
+        //{
+        //    Win32.DeleteCriticalSection(cs_vac);
+        //    rb_vacOUT_l = null;
+        //    rb_vacOUT_r = null;
+        //    rb_vacIN_l = null;
+        //    rb_vacIN_r = null;
+
+        //    res_outl = null;
+        //    res_outr = null;
+        //    res_inl = null;
+        //    res_inr = null;
+
+        //    if (resampPtrIn_l != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampPtrIn_l);
+        //        wdsp.destroy_resampleFV(resampPtrIn_l);
+        //        resampPtrIn_l = null;
+        //    }
+
+        //    if (resampPtrIn_r != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampPtrIn_r);
+        //        wdsp.destroy_resampleFV(resampPtrIn_r);
+        //        resampPtrIn_r = null;
+        //    }
+
+        //    if (resampPtrOut_l != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampPtrOut_l);
+        //        wdsp.destroy_resampleFV(resampPtrOut_l);
+        //        resampPtrOut_l = null;
+        //    }
+
+        //    if (resampPtrOut_r != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampPtrOut_r);
+        //        wdsp.destroy_resampleFV(resampPtrOut_r);
+        //        resampPtrOut_r = null;
+        //    }
+
+        //    Win32.DestroyCriticalSection(cs_vac);
+        //    Win32.DestroyCriticalSection(cs_vacw);
+        //}
 
         unsafe private static void CleanUpVAC2()
         {
-            Win32.DeleteCriticalSection(cs_vac2);
-            rb_vac2OUT_l = null;
-            rb_vac2OUT_r = null;
-            rb_vac2IN_l = null;
-            rb_vac2IN_r = null;
-
-            res_vac2_outl = null;
-            res_vac2_outr = null;
-            res_vac2_inl = null;
-            res_vac2_inr = null;
-
-            if (resampVAC2PtrIn_l != null)
+            if (varsampEnabledVAC2)
             {
-                //DttSP.DelResamplerF(resampVAC2PtrIn_l);
-                wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
-                resampVAC2PtrIn_l = null;
-            }
+                resampBufVac2InWrite = null;
+                resampBufVac2InRead = null;
+                resampBufVac2OutWrite = null;
+                resampBufVac2OutRead = null;
 
-            if (resampVAC2PtrIn_r != null)
+                wdsp.destroy_rmatchV(rmatchVac2In);
+                wdsp.destroy_rmatchV(rmatchVac2Out);
+                Trace.Write("CleanUpVAC2 ");
+            }
+            else
             {
-                //DttSP.DelResamplerF(resampVAC2PtrIn_r);
-                wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
-                resampVAC2PtrIn_r = null;
-            }
+                Win32.DeleteCriticalSection(cs_vac2);
+                rb_vac2OUT_l = null;
+                rb_vac2OUT_r = null;
+                rb_vac2IN_l = null;
+                rb_vac2IN_r = null;
 
-            if (resampVAC2PtrOut_l != null)
-            {
-                //DttSP.DelResamplerF(resampVAC2PtrOut_l);
-                wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
-                resampVAC2PtrOut_l = null;
-            }
+                res_vac2_outl = null;
+                res_vac2_outr = null;
+                res_vac2_inl = null;
+                res_vac2_inr = null;
 
-            if (resampVAC2PtrOut_r != null)
-            {
-                //DttSP.DelResamplerF(resampVAC2PtrOut_r);
-                wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
-                resampVAC2PtrOut_r = null;
-            }
+                if (resampVAC2PtrIn_l != null)
+                {
+                    //DttSP.DelResamplerF(resampVAC2PtrIn_l);
+                    wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
+                    resampVAC2PtrIn_l = null;
+                }
 
-            Win32.DestroyCriticalSection(cs_vac2);
-            Win32.DestroyCriticalSection(cs_vac2w);
+                if (resampVAC2PtrIn_r != null)
+                {
+                    //DttSP.DelResamplerF(resampVAC2PtrIn_r);
+                    wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
+                    resampVAC2PtrIn_r = null;
+                }
+
+                if (resampVAC2PtrOut_l != null)
+                {
+                    //DttSP.DelResamplerF(resampVAC2PtrOut_l);
+                    wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+                    resampVAC2PtrOut_l = null;
+                }
+
+                if (resampVAC2PtrOut_r != null)
+                {
+                    //DttSP.DelResamplerF(resampVAC2PtrOut_r);
+                    wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+                    resampVAC2PtrOut_r = null;
+                }
+
+                Win32.DestroyCriticalSection(cs_vac2);
+                Win32.DestroyCriticalSection(cs_vac2w);
+            }
         }
+
+        //unsafe private static void CleanUpVAC2()
+        //{
+        //    Win32.DeleteCriticalSection(cs_vac2);
+        //    rb_vac2OUT_l = null;
+        //    rb_vac2OUT_r = null;
+        //    rb_vac2IN_l = null;
+        //    rb_vac2IN_r = null;
+
+        //    res_vac2_outl = null;
+        //    res_vac2_outr = null;
+        //    res_vac2_inl = null;
+        //    res_vac2_inr = null;
+
+        //    if (resampVAC2PtrIn_l != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampVAC2PtrIn_l);
+        //        wdsp.destroy_resampleFV(resampVAC2PtrIn_l);
+        //        resampVAC2PtrIn_l = null;
+        //    }
+
+        //    if (resampVAC2PtrIn_r != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampVAC2PtrIn_r);
+        //        wdsp.destroy_resampleFV(resampVAC2PtrIn_r);
+        //        resampVAC2PtrIn_r = null;
+        //    }
+
+        //    if (resampVAC2PtrOut_l != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampVAC2PtrOut_l);
+        //        wdsp.destroy_resampleFV(resampVAC2PtrOut_l);
+        //        resampVAC2PtrOut_l = null;
+        //    }
+
+        //    if (resampVAC2PtrOut_r != null)
+        //    {
+        //        //DttSP.DelResamplerF(resampVAC2PtrOut_r);
+        //        wdsp.destroy_resampleFV(resampVAC2PtrOut_r);
+        //        resampVAC2PtrOut_r = null;
+        //    }
+
+        //    Win32.DestroyCriticalSection(cs_vac2);
+        //    Win32.DestroyCriticalSection(cs_vac2w);
+        //}
 
         unsafe public static double GetCPULoad()
         {

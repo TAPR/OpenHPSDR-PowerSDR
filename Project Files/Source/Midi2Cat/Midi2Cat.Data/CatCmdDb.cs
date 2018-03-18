@@ -75,7 +75,7 @@ namespace Midi2Cat.Data
         MultiRxOnOff = 10,
         [CatCommandAttribute("Vfo Sync On Off", ControlType.Button, true)]  
         VfoSyncOnOff = 11,
-        [CatCommandAttribute("Lock VFO On Off", ControlType.Button, true)]
+        [CatCommandAttribute("Toggle VFO Lock - A,both,off", ControlType.Button, true)]
         LockVFOOnOff = 12,
         [CatCommandAttribute("MOX On Off", ControlType.Button, true)]
         MOXOnOff = 13,
@@ -395,6 +395,12 @@ namespace Midi2Cat.Data
         MidiMessagesPerTuneStepDown = 253,
         [CatCommandAttribute("VFO Wheel Sensitivity High/Low Toggle", ControlType.Button, true)]
         MidiMessagesPerTuneStepToggle = 254,
+        [CatCommandAttribute("Drive Level Increment", ControlType.Wheel)]
+        DriveLevel_inc = 255,
+        [CatCommandAttribute("Lock VFO A", ControlType.Button, true)]
+        LockVFOAOnOff = 256,
+        [CatCommandAttribute("Lock VFO B", ControlType.Button, true)]
+        LockVFOBOnOff = 257,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

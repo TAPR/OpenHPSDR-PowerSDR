@@ -644,6 +644,43 @@ namespace PowerSDR
         [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G);
 
+        // Adaptive Variable Resampler
+        [DllImport("wdsp.dll", EntryPoint = "create_rmatchLegacyV", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void* create_rmatchLegacyV(int in_size, int out_size, int nom_inrate, int nom_outrate, int ringsize);
+
+        [DllImport("wdsp.dll", EntryPoint = "destroy_rmatchV", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void destroy_rmatchV (void* ptr);
+
+        [DllImport("wdsp.dll", EntryPoint = "xrmatchOUT", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void xrmatchOUT (void* b, double* outBuf);  //W4WMT had to add the "Buf" to identifier to avoid keyword conflict
+
+        [DllImport("wdsp.dll", EntryPoint = "xrmatchIN", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void xrmatchIN (void* b, double* inBuf);  //W4WMT had to add the "Buf" to identifier to avoid keyword conflict
+
+        [DllImport("wdsp.dll", EntryPoint = "setRMatchInsize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void setRMatchInsize (void* ptr, int insize);
+
+        [DllImport("wdsp.dll", EntryPoint = "setRMatchOutsize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void setRMatchOutsize (void* ptr, int outsize);
+
+        [DllImport("wdsp.dll", EntryPoint = "setRMatchNomInrate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void setRMatchNomInrate (void* ptr, int nom_inrate);
+
+        [DllImport("wdsp.dll", EntryPoint = "setRMatchNomOutrate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void setRMatchNomOutrate (void* ptr, int nom_outrate);
+
+        [DllImport("wdsp.dll", EntryPoint = "setRMatchRingsize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void setRMatchRingsize (void* ptr, int ringsize);
+
+        [DllImport("wdsp.dll", EntryPoint = "getRMatchDiags", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void getRMatchDiags (void* b, int* underflows, int* overflows, double* var, int* ringsize);
+
+        [DllImport("wdsp.dll", EntryPoint = "forceRMatchVar", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void forceRMatchVar (void* b, bool force, double fvar);
+
+        [DllImport("wdsp.dll", EntryPoint = "resetRMatchDiags", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void resetRMatchDiags(void* b);
+
         #endregion
 
         #region Enums

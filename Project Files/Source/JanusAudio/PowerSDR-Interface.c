@@ -360,8 +360,10 @@ KD5TFDVK6APHAUDIO_API void StopAudio() {
 
 		DotDashBits = 0;
 
-		if (prop != NULL)
+		if (prop != NULL){
 		destroy_pro (prop);
+			prop = NULL;
+		}
 
         return;
 }
@@ -1671,6 +1673,24 @@ KD5TFDVK6APHAUDIO_API void SetProLpacks(int lpacks)
 	prop->base_set = 0;
 	prop->in_order_count = 0;
 	prop->lastseqnum = 0;
+	LeaveCriticalSection(&prop->cspro);
+	return;
+}
+
+KD5TFDVK6APHAUDIO_API int GetOoopCounter()
+{
+	if (prop == NULL) return;
+	EnterCriticalSection(&prop->cspro);
+	int n = prop->ooopCounter;
+	LeaveCriticalSection(&prop->cspro);
+	return n;
+}
+
+KD5TFDVK6APHAUDIO_API void ResetOoopCounter()
+{
+	if (prop == NULL) return;
+	EnterCriticalSection(&prop->cspro);
+	prop->ooopCounter = 0;
 	LeaveCriticalSection(&prop->cspro);
 }
 

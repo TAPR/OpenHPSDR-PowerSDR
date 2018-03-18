@@ -43,7 +43,9 @@ typedef struct _pro
 	int mask;
 	int base_set;
 	int in_order_count;
-	int lastseqnum;
+	unsigned int lastseqnum;
+	int ooopCounter;
+	unsigned int* sbuff;
 	CRITICAL_SECTION cspro;
 } pro, *PRO;
 

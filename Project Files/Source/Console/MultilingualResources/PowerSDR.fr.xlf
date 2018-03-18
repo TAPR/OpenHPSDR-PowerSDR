@@ -5517,8 +5517,8 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
           <target state="new">Waterfall</target>
         </trans-unit>
         <trans-unit id="comboRX2DisplayMode.Items2" translate="yes" xml:space="preserve">
-          <source>Off</source>
-          <target state="new">Off</target>
+          <source>Panafall</source>
+          <target state="new">Panafall</target>
         </trans-unit>
         <trans-unit id="comboRX2DisplayMode.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
           <source>9, 15</source>
@@ -7925,20 +7925,22 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
           <target state="needs-review-translation">Off</target>
         </trans-unit>
         <trans-unit id="chkVFOLock.Location" translate="yes" extype="System.Drawing.Point, System.Drawing" xml:space="preserve">
-          <source>12, 35</source>
+          <source>46, 34</source>
           <target state="needs-review-translation">12, 35</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="chkVFOLock.Size" translate="yes" extype="System.Drawing.Size, System.Drawing" xml:space="preserve">
-          <source>80, 23</source>
+          <source>23, 23</source>
           <target state="needs-review-translation">80, 23</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="chkVFOLock.TabIndex" translate="yes" extype="System.Int32, mscorlib" xml:space="preserve">
           <source>62</source>
           <target state="needs-review-translation">62</target>
         </trans-unit>
         <trans-unit id="chkVFOLock.Text" translate="yes" xml:space="preserve">
-          <source>VFO Lock</source>
-          <target state="new">VFO Lock</target>
+          <source>A</source>
+          <target state="new">A</target>
         </trans-unit>
         <trans-unit id="chkVFOLock.TextAlign" translate="yes" extype="System.Drawing.ContentAlignment, System.Drawing" xml:space="preserve">
           <source>MiddleCenter</source>
@@ -16814,6 +16816,89 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
         <trans-unit id="btnTNFAdd.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggles receive antenna between RX and TX antennas for RX1</source>
           <target state="new">Toggles receive antenna between RX and TX antennas for RX1</target>
+        </trans-unit>
+        <trans-unit id="chkSyncIT.Image" translate="yes" xml:space="preserve" extype="System.Resources.ResXNullRef, System.Windows.Forms">
+          <source></source>
+          <target state="needs-review-translation"></target>
+        </trans-unit>
+        <trans-unit id="comboRX2DisplayMode.Items3" translate="yes" xml:space="preserve">
+          <source>Off</source>
+          <target state="new">Off</target>
+        </trans-unit>
+        <trans-unit id="labelTS1.Image" translate="yes" xml:space="preserve" extype="System.Resources.ResXNullRef, System.Windows.Forms">
+          <source></source>
+          <target state="needs-review-translation"></target>
+        </trans-unit>
+        <trans-unit id="labelTS1.Location" translate="yes" xml:space="preserve" extype="System.Drawing.Point, System.Drawing">
+          <source>12, 33</source>
+          <target state="needs-review-translation">2, 33</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+        </trans-unit>
+        <trans-unit id="labelTS1.Size" translate="yes" xml:space="preserve" extype="System.Drawing.Size, System.Drawing">
+          <source>34, 28</source>
+          <target state="needs-review-translation">35, 28</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+        </trans-unit>
+        <trans-unit id="labelTS1.TabIndex" translate="yes" xml:space="preserve" extype="System.Int32, mscorlib">
+          <source>83</source>
+          <target state="needs-review-translation">83</target>
+        </trans-unit>
+        <trans-unit id="labelTS1.Text" translate="yes" xml:space="preserve">
+          <source>VFO Lock:</source>
+          <target state="new">VFO Lock:</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Appearance" translate="yes" xml:space="preserve" extype="System.Windows.Forms.Appearance, System.Windows.Forms">
+          <source>Button</source>
+          <target state="needs-review-translation">Button</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Enabled" translate="yes" xml:space="preserve" extype="System.Boolean, mscorlib">
+          <source>False</source>
+          <target state="needs-review-translation">False</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.FlatStyle" translate="yes" xml:space="preserve" extype="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+          <source>Flat</source>
+          <target state="needs-review-translation">Flat</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Font" translate="yes" xml:space="preserve" extype="System.Drawing.Font, System.Drawing">
+          <source>Microsoft Sans Serif, 8.25pt, style=Bold</source>
+          <target state="needs-review-translation">Microsoft Sans Serif, 8.25pt, style=Bold</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Image" translate="yes" xml:space="preserve" extype="System.Resources.ResXNullRef, System.Windows.Forms">
+          <source></source>
+          <target state="needs-review-translation"></target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.ImeMode" translate="yes" xml:space="preserve" extype="System.Windows.Forms.ImeMode, System.Windows.Forms">
+          <source>Off</source>
+          <target state="needs-review-translation">Off</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Location" translate="yes" xml:space="preserve" extype="System.Drawing.Point, System.Drawing">
+          <source>69, 34</source>
+          <target state="needs-review-translation">58, 38</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Size" translate="yes" xml:space="preserve" extype="System.Drawing.Size, System.Drawing">
+          <source>23, 23</source>
+          <target state="needs-review-translation">23, 23</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.TabIndex" translate="yes" xml:space="preserve" extype="System.Int32, mscorlib">
+          <source>82</source>
+          <target state="needs-review-translation">82</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.Text" translate="yes" xml:space="preserve">
+          <source>B</source>
+          <target state="new">B</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.TextAlign" translate="yes" xml:space="preserve" extype="System.Drawing.ContentAlignment, System.Drawing">
+          <source>MiddleCenter</source>
+          <target state="needs-review-translation">MiddleCenter</target>
+        </trans-unit>
+        <trans-unit id="chkVFOBLock.ToolTip" translate="yes" xml:space="preserve">
+          <source>Keeps the VFO from changing while in the middle of a QSO.</source>
+          <target state="new">Keeps the VFO from changing while in the middle of a QSO.</target>
+        </trans-unit>
+        <trans-unit id="labelTS1.ImeMode" translate="yes" xml:space="preserve" extype="System.Windows.Forms.ImeMode, System.Windows.Forms">
+          <source>Off</source>
+          <target state="needs-review-translation">Off</target>
         </trans-unit>
       </group>
     </body>

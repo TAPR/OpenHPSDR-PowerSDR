@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.7.0 December 22, 2017
+# PowerSDR_mRX_PS 3.4.8.0 March 17, 2018
 
 
 # 3.2.22 (2015-1-24) 
@@ -346,3 +346,43 @@ Fixed a bug resulting in incorrect vertical display scale in transmit under cert
 - Control added to force the LPF to the 6m/ByPass posistion during receive. Filters must be under manual control to use. (Setup=>General=>Ant/Filters=>LPF, HPF/LPF, BPF1)
 - VFO Lock correctly locks VFOA and VFOB.
 - TX Amplitude scaling added to waterfall display. (Setup=>Display=>TX)
+
+# 3.4.8 (2018-3-17)
+- Creates new wisdom file for each folder when using the -datapath command
+- Bug fix for Behringer mini-wheels mapping issue when mapping AGC gain
+- Added support for mapping drive level to a Behringer mini-wheel
+- Added Panafall display for RX2
+- Corrected a resizing problem when enabling RX2
+- NB/NB2 is turned OFF while transmitting when DUP is enabled
+- Added 2kHz Tune Step
+- Changed ANF behavior so that it is disabled when in CW mode
+- Removed the 750Hz CW filter and added a 150Hz CW filter (requires database reset to update)
+- Added an Audio Adaptive Variable Resampler with monitor tools
+- Increased display buffer to support larger than 4k displays
+- Added separate VFO Lock controls for VFOA and VFOB. New VFO Lock button will require additional skin files to operate correctly. Skins packaged with OpenHPSDR/PowerSDR will contain the required files. You may need to create them for other skin packages.
+- Added a dropped packet ("OOOPs") counter that measures the number of dropped receive packets from radio to PC. This may be useful in identifying problems with network setup.
+- fixed bug in CAT Command ZZPT## to change TXProfiles in different modes
+
+MIDI interface:
+Bug fix for Behringer mini-wheels when mapping to AGC gain.
+Added support for mapping drive level to a Behringer mini-wheel.
+Added individual button mappings for VFOA and VFOB.
+Changed previous VFO Lock function to a round-robin toggle: Unlocked, VFOA locked, VFOA&B locked, Unlocked.
+
+CAT interface:
+Added two functions to individually lock the two VFOs:
+- ZZUX and ZZUY locks/unlocks VFOA and VFOB, respectively. 1=lock, 0=unlock
+- ZZVL now implements a round-robin toggle for VFO locks: Unlocked, VFOA locked, VFOA&B locked, Unlocked.
+
+Added the following new functions:
+- ZZUS initiates a PureSignal single cal function
+- ZZUT turns a two-tone test on or off (1 or 0)
+- ZZGU sets RX2 AGC speed
+- ZZAF,ZZAE sets VFOA N tune steps up,down respectively
+- ZZBF,ZZBE sets VFOB N tune steps up,down respectively
+- ZZXH sets VOX delay
+- ZZCN/CO sets VFO A/B CTUN state
+- ZZNU sets RX2 ANF state
+- ZZXN gets combined RX1 status
+- ZZXO gets combined RX2 status
+- ZZXV gets combined VFO status

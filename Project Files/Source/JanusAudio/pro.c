@@ -42,10 +42,12 @@ PRO create_pro (
 	a->pbuff = (char **) calloc (a->npacks, sizeof (char *));
 	for (i = 0; i < a->npacks; i++)
 		a->pbuff[i] = a->pbuffs + i * a->psize;
+	a->sbuff = (unsigned int *)calloc(a->npacks, sizeof(unsigned int));
 	a->mask = a->npacks - 1;
 	a->base_set = 0;
 	a->in_order_count = 0;
 	a->lastseqnum = 0;
+	a->ooopCounter = 0;
 	InitializeCriticalSectionAndSpinCount (&a->cspro, 2500);
 	return a;
 }
@@ -55,6 +57,7 @@ void destroy_pro ( PRO a )
 	DeleteCriticalSection (&a->cspro);
 	free (a->pbuff);
 	free (a->pbuffs);
+	free(a->sbuff);
 	free (a);
 }
 
@@ -75,15 +78,20 @@ void xpro (PRO a, unsigned int seqnum, char* buffer)
 				}
 			}
 			else
+			{
 				a->in_order_count = 0;
+			}
 			a->lastseqnum = seqnum;
 		}
 		else
 		{
 			a->in_idx = seqnum & a->mask;
 			memcpy (a->pbuff[a->in_idx], buffer, a->psize * sizeof (char));
+			a->sbuff[a->in_idx] = seqnum;
 			a->out_idx = (a->out_idx + 1) & a->mask;
 			memcpy (buffer, a->pbuff[a->out_idx], a->psize * sizeof (char));
+			if (a->sbuff[a->out_idx] != a->lastseqnum + 1) a->ooopCounter++;
+			a->lastseqnum = a->sbuff[a->out_idx];
 		}
 		LeaveCriticalSection (&a->cspro);
 	}

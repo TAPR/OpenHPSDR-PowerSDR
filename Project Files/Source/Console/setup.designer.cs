@@ -210,6 +210,7 @@
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
             this.grpPROLatency = new System.Windows.Forms.GroupBoxTS();
+            this.radPROLatency0 = new System.Windows.Forms.RadioButtonTS();
             this.radPROLatency4 = new System.Windows.Forms.RadioButtonTS();
             this.radPROLatency2 = new System.Windows.Forms.RadioButtonTS();
             this.radPROLatency1 = new System.Windows.Forms.RadioButtonTS();
@@ -1139,6 +1140,32 @@
             this.grpAudioSampleRate1 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioSampleRate1 = new System.Windows.Forms.ComboBoxTS();
             this.tpVAC = new System.Windows.Forms.TabPage();
+            this.labelTS404 = new System.Windows.Forms.LabelTS();
+            this.lblOoopCounter = new System.Windows.Forms.LabelTS();
+            this.chkVAC1Varsamp = new System.Windows.Forms.CheckBoxTS();
+            this.grpVAC1monitor = new System.Windows.Forms.GroupBoxTS();
+            this.lblRingbufferIn = new System.Windows.Forms.LabelTS();
+            this.lblRingbufferOut = new System.Windows.Forms.LabelTS();
+            this.lblRingsizeIn = new System.Windows.Forms.LabelTS();
+            this.lblRingsizeOut = new System.Windows.Forms.LabelTS();
+            this.udVAC1_Force2 = new System.Windows.Forms.NumericUpDownTS();
+            this.chkVAC1_Force2 = new System.Windows.Forms.CheckBoxTS();
+            this.lblVAC1_FROMVAC = new System.Windows.Forms.LabelTS();
+            this.lblVAC1var2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC1VarRatio2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC1unfl2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC1ovfl2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC1underflows2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC1overflows2 = new System.Windows.Forms.LabelTS();
+            this.udVAC1_Force = new System.Windows.Forms.NumericUpDownTS();
+            this.chkVAC1_Force = new System.Windows.Forms.CheckBoxTS();
+            this.lblVAC1_TOVAC = new System.Windows.Forms.LabelTS();
+            this.lblVAC1var = new System.Windows.Forms.LabelTS();
+            this.lblVAC1varratio = new System.Windows.Forms.LabelTS();
+            this.lblVAC1unfl = new System.Windows.Forms.LabelTS();
+            this.lblVAC1ovfl = new System.Windows.Forms.LabelTS();
+            this.lblVAC1underflows = new System.Windows.Forms.LabelTS();
+            this.lblVAC1overflows = new System.Windows.Forms.LabelTS();
             this.chkMOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
             this.chkSPACEAllowBypass = new System.Windows.Forms.CheckBoxTS();
             this.grpDirectIQOutput = new System.Windows.Forms.GroupBoxTS();
@@ -1172,6 +1199,30 @@
             this.comboAudioDriver2 = new System.Windows.Forms.ComboBoxTS();
             this.chkAudioEnableVAC = new System.Windows.Forms.CheckBoxTS();
             this.tpVAC2 = new System.Windows.Forms.TabPage();
+            this.chkVAC2Varsamp = new System.Windows.Forms.CheckBoxTS();
+            this.grpVAC2monitor = new System.Windows.Forms.GroupBoxTS();
+            this.lblRingbufferInVAC2 = new System.Windows.Forms.LabelTS();
+            this.lblRingbufferOutVAC2 = new System.Windows.Forms.LabelTS();
+            this.lblRingsizeInVAC2 = new System.Windows.Forms.LabelTS();
+            this.lblRingsizeOutVAC2 = new System.Windows.Forms.LabelTS();
+            this.udVAC2_Force2 = new System.Windows.Forms.NumericUpDownTS();
+            this.chkVAC2_Force2 = new System.Windows.Forms.CheckBoxTS();
+            this.lblVAC2_FROMVAC = new System.Windows.Forms.LabelTS();
+            this.lblVAC2var2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC2VarRatio2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC2unfl2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC2ovfl2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC2underflows2 = new System.Windows.Forms.LabelTS();
+            this.lblVAC2overflows2 = new System.Windows.Forms.LabelTS();
+            this.udVAC2_Force = new System.Windows.Forms.NumericUpDownTS();
+            this.chkVAC2_Force = new System.Windows.Forms.CheckBoxTS();
+            this.lblVAC2_TOVAC = new System.Windows.Forms.LabelTS();
+            this.lblVAC2var = new System.Windows.Forms.LabelTS();
+            this.lblVAC2varratio = new System.Windows.Forms.LabelTS();
+            this.lblVAC2unfl = new System.Windows.Forms.LabelTS();
+            this.lblVAC2ovfl = new System.Windows.Forms.LabelTS();
+            this.lblVAC2underflows = new System.Windows.Forms.LabelTS();
+            this.lblVAC2overflows = new System.Windows.Forms.LabelTS();
             this.chkVAC2UseRX2 = new System.Windows.Forms.CheckBoxTS();
             this.grpVAC2DirectIQ = new System.Windows.Forms.GroupBoxTS();
             this.chkVAC2DirectIQCal = new System.Windows.Forms.CheckBoxTS();
@@ -2924,6 +2975,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.timerVACrmatchMonitor = new System.Windows.Forms.Timer(this.components);
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             grpKBCW = new System.Windows.Forms.GroupBoxTS();
             tpAlexAntCtrl.SuspendLayout();
@@ -3162,6 +3214,9 @@
             this.grpAudioBufferSize1.SuspendLayout();
             this.grpAudioSampleRate1.SuspendLayout();
             this.tpVAC.SuspendLayout();
+            this.grpVAC1monitor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).BeginInit();
             this.grpDirectIQOutput.SuspendLayout();
             this.grpAudioVACAutoEnable.SuspendLayout();
             this.grpAudioVACGain.SuspendLayout();
@@ -3174,6 +3229,9 @@
             this.grpAudioBuffer2.SuspendLayout();
             this.grpAudioDetails2.SuspendLayout();
             this.tpVAC2.SuspendLayout();
+            this.grpVAC2monitor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force)).BeginInit();
             this.grpVAC2DirectIQ.SuspendLayout();
             this.grpVAC2AutoEnable.SuspendLayout();
             this.grpVAC2Gain.SuspendLayout();
@@ -6262,6 +6320,7 @@
             // 
             // grpPROLatency
             // 
+            this.grpPROLatency.Controls.Add(this.radPROLatency0);
             this.grpPROLatency.Controls.Add(this.radPROLatency4);
             this.grpPROLatency.Controls.Add(this.radPROLatency2);
             this.grpPROLatency.Controls.Add(this.radPROLatency1);
@@ -6273,12 +6332,24 @@
             this.grpPROLatency.Text = "PRO Latency";
             this.toolTip1.SetToolTip(this.grpPROLatency, "Packet ReOrdering Latency");
             // 
+            // radPROLatency0
+            // 
+            this.radPROLatency0.AutoSize = true;
+            this.radPROLatency0.Image = null;
+            this.radPROLatency0.Location = new System.Drawing.Point(17, 27);
+            this.radPROLatency0.Name = "radPROLatency0";
+            this.radPROLatency0.Size = new System.Drawing.Size(31, 17);
+            this.radPROLatency0.TabIndex = 3;
+            this.radPROLatency0.Text = "0";
+            this.radPROLatency0.UseVisualStyleBackColor = true;
+            this.radPROLatency0.CheckedChanged += new System.EventHandler(this.radPROLatency0_CheckedChanged);
+            // 
             // radPROLatency4
             // 
             this.radPROLatency4.AutoSize = true;
             this.radPROLatency4.Checked = true;
             this.radPROLatency4.Image = null;
-            this.radPROLatency4.Location = new System.Drawing.Point(105, 27);
+            this.radPROLatency4.Location = new System.Drawing.Point(113, 27);
             this.radPROLatency4.Name = "radPROLatency4";
             this.radPROLatency4.Size = new System.Drawing.Size(31, 17);
             this.radPROLatency4.TabIndex = 2;
@@ -6291,7 +6362,7 @@
             // 
             this.radPROLatency2.AutoSize = true;
             this.radPROLatency2.Image = null;
-            this.radPROLatency2.Location = new System.Drawing.Point(65, 27);
+            this.radPROLatency2.Location = new System.Drawing.Point(81, 27);
             this.radPROLatency2.Name = "radPROLatency2";
             this.radPROLatency2.Size = new System.Drawing.Size(31, 17);
             this.radPROLatency2.TabIndex = 1;
@@ -6303,7 +6374,7 @@
             // 
             this.radPROLatency1.AutoSize = true;
             this.radPROLatency1.Image = null;
-            this.radPROLatency1.Location = new System.Drawing.Point(20, 27);
+            this.radPROLatency1.Location = new System.Drawing.Point(49, 27);
             this.radPROLatency1.Name = "radPROLatency1";
             this.radPROLatency1.Size = new System.Drawing.Size(31, 17);
             this.radPROLatency1.TabIndex = 0;
@@ -19511,6 +19582,10 @@
             // 
             // tpVAC
             // 
+            this.tpVAC.Controls.Add(this.labelTS404);
+            this.tpVAC.Controls.Add(this.lblOoopCounter);
+            this.tpVAC.Controls.Add(this.chkVAC1Varsamp);
+            this.tpVAC.Controls.Add(this.grpVAC1monitor);
             this.tpVAC.Controls.Add(this.chkMOXAllowBypass);
             this.tpVAC.Controls.Add(this.chkSPACEAllowBypass);
             this.tpVAC.Controls.Add(this.grpDirectIQOutput);
@@ -19530,12 +19605,377 @@
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
             // 
+            // labelTS404
+            // 
+            this.labelTS404.AutoSize = true;
+            this.labelTS404.Image = null;
+            this.labelTS404.Location = new System.Drawing.Point(516, 306);
+            this.labelTS404.Name = "labelTS404";
+            this.labelTS404.Size = new System.Drawing.Size(43, 13);
+            this.labelTS404.TabIndex = 87;
+            this.labelTS404.Text = "OOOPs";
+            // 
+            // lblOoopCounter
+            // 
+            this.lblOoopCounter.AutoSize = true;
+            this.lblOoopCounter.Image = null;
+            this.lblOoopCounter.Location = new System.Drawing.Point(461, 306);
+            this.lblOoopCounter.Name = "lblOoopCounter";
+            this.lblOoopCounter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblOoopCounter.Size = new System.Drawing.Size(49, 13);
+            this.lblOoopCounter.TabIndex = 86;
+            this.lblOoopCounter.Text = "XXXXXX";
+            this.toolTip1.SetToolTip(this.lblOoopCounter, "Out-of-order or missing packet counter\r\n(click to reset)");
+            this.lblOoopCounter.Click += new System.EventHandler(this.lblOoopCounter_Click);
+            // 
+            // chkVAC1Varsamp
+            // 
+            this.chkVAC1Varsamp.AutoSize = true;
+            this.chkVAC1Varsamp.Image = null;
+            this.chkVAC1Varsamp.Location = new System.Drawing.Point(462, 275);
+            this.chkVAC1Varsamp.Name = "chkVAC1Varsamp";
+            this.chkVAC1Varsamp.Size = new System.Drawing.Size(76, 17);
+            this.chkVAC1Varsamp.TabIndex = 85;
+            this.chkVAC1Varsamp.Text = "Resampler";
+            this.toolTip1.SetToolTip(this.chkVAC1Varsamp, "Enable the adaptive variable resampler");
+            this.chkVAC1Varsamp.UseVisualStyleBackColor = true;
+            this.chkVAC1Varsamp.CheckedChanged += new System.EventHandler(this.chkVAC1Varsamp_CheckedChanged);
+            // 
+            // grpVAC1monitor
+            // 
+            this.grpVAC1monitor.Controls.Add(this.lblRingbufferIn);
+            this.grpVAC1monitor.Controls.Add(this.lblRingbufferOut);
+            this.grpVAC1monitor.Controls.Add(this.lblRingsizeIn);
+            this.grpVAC1monitor.Controls.Add(this.lblRingsizeOut);
+            this.grpVAC1monitor.Controls.Add(this.udVAC1_Force2);
+            this.grpVAC1monitor.Controls.Add(this.chkVAC1_Force2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1_FROMVAC);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1var2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1VarRatio2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1unfl2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1ovfl2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1underflows2);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1overflows2);
+            this.grpVAC1monitor.Controls.Add(this.udVAC1_Force);
+            this.grpVAC1monitor.Controls.Add(this.chkVAC1_Force);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1_TOVAC);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1var);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1varratio);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1unfl);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1ovfl);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1underflows);
+            this.grpVAC1monitor.Controls.Add(this.lblVAC1overflows);
+            this.grpVAC1monitor.Location = new System.Drawing.Point(8, 235);
+            this.grpVAC1monitor.Name = "grpVAC1monitor";
+            this.grpVAC1monitor.Size = new System.Drawing.Size(413, 99);
+            this.grpVAC1monitor.TabIndex = 84;
+            this.grpVAC1monitor.TabStop = false;
+            this.grpVAC1monitor.Text = "Adaptive Variable Resampler Monitor";
+            // 
+            // lblRingbufferIn
+            // 
+            this.lblRingbufferIn.AutoSize = true;
+            this.lblRingbufferIn.Image = null;
+            this.lblRingbufferIn.Location = new System.Drawing.Point(229, 19);
+            this.lblRingbufferIn.Name = "lblRingbufferIn";
+            this.lblRingbufferIn.Size = new System.Drawing.Size(56, 13);
+            this.lblRingbufferIn.TabIndex = 21;
+            this.lblRingbufferIn.Text = "Ringbuffer";
+            // 
+            // lblRingbufferOut
+            // 
+            this.lblRingbufferOut.AutoSize = true;
+            this.lblRingbufferOut.Image = null;
+            this.lblRingbufferOut.Location = new System.Drawing.Point(6, 19);
+            this.lblRingbufferOut.Name = "lblRingbufferOut";
+            this.lblRingbufferOut.Size = new System.Drawing.Size(56, 13);
+            this.lblRingbufferOut.TabIndex = 20;
+            this.lblRingbufferOut.Text = "Ringbuffer";
+            // 
+            // lblRingsizeIn
+            // 
+            this.lblRingsizeIn.AutoSize = true;
+            this.lblRingsizeIn.Image = null;
+            this.lblRingsizeIn.Location = new System.Drawing.Point(292, 19);
+            this.lblRingsizeIn.Name = "lblRingsizeIn";
+            this.lblRingsizeIn.Size = new System.Drawing.Size(49, 13);
+            this.lblRingsizeIn.TabIndex = 19;
+            this.lblRingsizeIn.Text = "XXXXXX";
+            this.toolTip1.SetToolTip(this.lblRingsizeIn, "Transmit ringbuffer size (samples)");
+            // 
+            // lblRingsizeOut
+            // 
+            this.lblRingsizeOut.AutoSize = true;
+            this.lblRingsizeOut.Image = null;
+            this.lblRingsizeOut.Location = new System.Drawing.Point(69, 19);
+            this.lblRingsizeOut.Name = "lblRingsizeOut";
+            this.lblRingsizeOut.Size = new System.Drawing.Size(49, 13);
+            this.lblRingsizeOut.TabIndex = 18;
+            this.lblRingsizeOut.Text = "XXXXXX";
+            this.toolTip1.SetToolTip(this.lblRingsizeOut, "Receive ringbuffer size (samples)");
+            // 
+            // udVAC1_Force2
+            // 
+            this.udVAC1_Force2.DecimalPlaces = 6;
+            this.udVAC1_Force2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.udVAC1_Force2.Location = new System.Drawing.Point(332, 54);
+            this.udVAC1_Force2.Maximum = new decimal(new int[] {
+            102,
+            0,
+            0,
+            131072});
+            this.udVAC1_Force2.Minimum = new decimal(new int[] {
+            98,
+            0,
+            0,
+            131072});
+            this.udVAC1_Force2.Name = "udVAC1_Force2";
+            this.udVAC1_Force2.Size = new System.Drawing.Size(72, 20);
+            this.udVAC1_Force2.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.udVAC1_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
+            this.udVAC1_Force2.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udVAC1_Force2.ValueChanged += new System.EventHandler(this.chkVAC1_Force2_CheckedChanged);
+            // 
+            // chkVAC1_Force2
+            // 
+            this.chkVAC1_Force2.AutoSize = true;
+            this.chkVAC1_Force2.Image = null;
+            this.chkVAC1_Force2.Location = new System.Drawing.Point(332, 34);
+            this.chkVAC1_Force2.Name = "chkVAC1_Force2";
+            this.chkVAC1_Force2.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC1_Force2.TabIndex = 16;
+            this.chkVAC1_Force2.Text = "Force";
+            this.toolTip1.SetToolTip(this.chkVAC1_Force2, "Disable resampler matching loop and force to ratio setting below");
+            this.chkVAC1_Force2.UseVisualStyleBackColor = true;
+            this.chkVAC1_Force2.CheckedChanged += new System.EventHandler(this.chkVAC1_Force2_CheckedChanged);
+            // 
+            // lblVAC1_FROMVAC
+            // 
+            this.lblVAC1_FROMVAC.AutoSize = true;
+            this.lblVAC1_FROMVAC.Image = null;
+            this.lblVAC1_FROMVAC.Location = new System.Drawing.Point(343, 19);
+            this.lblVAC1_FROMVAC.Name = "lblVAC1_FROMVAC";
+            this.lblVAC1_FROMVAC.Size = new System.Drawing.Size(65, 13);
+            this.lblVAC1_FROMVAC.TabIndex = 15;
+            this.lblVAC1_FROMVAC.Text = "FROM VAC:";
+            this.toolTip1.SetToolTip(this.lblVAC1_FROMVAC, "Transmit audio stream");
+            // 
+            // lblVAC1var2
+            // 
+            this.lblVAC1var2.AutoSize = true;
+            this.lblVAC1var2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1var2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1var2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1var2.Image = null;
+            this.lblVAC1var2.Location = new System.Drawing.Point(295, 76);
+            this.lblVAC1var2.Name = "lblVAC1var2";
+            this.lblVAC1var2.Size = new System.Drawing.Size(24, 15);
+            this.lblVAC1var2.TabIndex = 14;
+            this.lblVAC1var2.Text = "var";
+            this.toolTip1.SetToolTip(this.lblVAC1var2, "Sampling rate conversion ratio being applied by matching loop");
+            // 
+            // lblVAC1VarRatio2
+            // 
+            this.lblVAC1VarRatio2.AutoSize = true;
+            this.lblVAC1VarRatio2.Image = null;
+            this.lblVAC1VarRatio2.Location = new System.Drawing.Point(231, 76);
+            this.lblVAC1VarRatio2.Name = "lblVAC1VarRatio2";
+            this.lblVAC1VarRatio2.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC1VarRatio2.TabIndex = 13;
+            this.lblVAC1VarRatio2.Text = "Var Ratio";
+            // 
+            // lblVAC1unfl2
+            // 
+            this.lblVAC1unfl2.AutoSize = true;
+            this.lblVAC1unfl2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1unfl2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1unfl2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1unfl2.Image = null;
+            this.lblVAC1unfl2.Location = new System.Drawing.Point(295, 57);
+            this.lblVAC1unfl2.Name = "lblVAC1unfl2";
+            this.lblVAC1unfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1unfl2.TabIndex = 12;
+            this.lblVAC1unfl2.Text = "unfl";
+            this.toolTip1.SetToolTip(this.lblVAC1unfl2, "Ringbuffer underflow counter (click to reset)");
+            this.lblVAC1unfl2.Click += new System.EventHandler(this.lblVAC1unfl2_Click);
+            // 
+            // lblVAC1ovfl2
+            // 
+            this.lblVAC1ovfl2.AutoSize = true;
+            this.lblVAC1ovfl2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1ovfl2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1ovfl2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1ovfl2.Image = null;
+            this.lblVAC1ovfl2.Location = new System.Drawing.Point(295, 38);
+            this.lblVAC1ovfl2.Name = "lblVAC1ovfl2";
+            this.lblVAC1ovfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1ovfl2.TabIndex = 11;
+            this.lblVAC1ovfl2.Text = "ovfl";
+            this.toolTip1.SetToolTip(this.lblVAC1ovfl2, "Ringbuffer overflow counter (click to reset)");
+            this.lblVAC1ovfl2.Click += new System.EventHandler(this.lblVAC1ovfl2_Click);
+            // 
+            // lblVAC1underflows2
+            // 
+            this.lblVAC1underflows2.AutoSize = true;
+            this.lblVAC1underflows2.Image = null;
+            this.lblVAC1underflows2.Location = new System.Drawing.Point(229, 57);
+            this.lblVAC1underflows2.Name = "lblVAC1underflows2";
+            this.lblVAC1underflows2.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC1underflows2.TabIndex = 10;
+            this.lblVAC1underflows2.Text = "Underflows";
+            // 
+            // lblVAC1overflows2
+            // 
+            this.lblVAC1overflows2.AutoSize = true;
+            this.lblVAC1overflows2.Image = null;
+            this.lblVAC1overflows2.Location = new System.Drawing.Point(229, 38);
+            this.lblVAC1overflows2.Name = "lblVAC1overflows2";
+            this.lblVAC1overflows2.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC1overflows2.TabIndex = 9;
+            this.lblVAC1overflows2.Text = "Overflows";
+            // 
+            // udVAC1_Force
+            // 
+            this.udVAC1_Force.DecimalPlaces = 6;
+            this.udVAC1_Force.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.udVAC1_Force.Location = new System.Drawing.Point(109, 54);
+            this.udVAC1_Force.Maximum = new decimal(new int[] {
+            102,
+            0,
+            0,
+            131072});
+            this.udVAC1_Force.Minimum = new decimal(new int[] {
+            98,
+            0,
+            0,
+            131072});
+            this.udVAC1_Force.Name = "udVAC1_Force";
+            this.udVAC1_Force.Size = new System.Drawing.Size(72, 20);
+            this.udVAC1_Force.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.udVAC1_Force, "Rate conversion ratio imposed when \"Force\" is checked");
+            this.udVAC1_Force.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udVAC1_Force.ValueChanged += new System.EventHandler(this.chkVAC1_Force_CheckedChanged);
+            // 
+            // chkVAC1_Force
+            // 
+            this.chkVAC1_Force.AutoSize = true;
+            this.chkVAC1_Force.Image = null;
+            this.chkVAC1_Force.Location = new System.Drawing.Point(109, 36);
+            this.chkVAC1_Force.Name = "chkVAC1_Force";
+            this.chkVAC1_Force.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC1_Force.TabIndex = 7;
+            this.chkVAC1_Force.Text = "Force";
+            this.toolTip1.SetToolTip(this.chkVAC1_Force, "Disable resampler matching loop and force to ratio setting below");
+            this.chkVAC1_Force.UseVisualStyleBackColor = true;
+            this.chkVAC1_Force.CheckedChanged += new System.EventHandler(this.chkVAC1_Force_CheckedChanged);
+            // 
+            // lblVAC1_TOVAC
+            // 
+            this.lblVAC1_TOVAC.AutoSize = true;
+            this.lblVAC1_TOVAC.Image = null;
+            this.lblVAC1_TOVAC.Location = new System.Drawing.Point(122, 19);
+            this.lblVAC1_TOVAC.Name = "lblVAC1_TOVAC";
+            this.lblVAC1_TOVAC.Size = new System.Drawing.Size(49, 13);
+            this.lblVAC1_TOVAC.TabIndex = 6;
+            this.lblVAC1_TOVAC.Text = "TO VAC:";
+            this.toolTip1.SetToolTip(this.lblVAC1_TOVAC, "Receive audio stream");
+            // 
+            // lblVAC1var
+            // 
+            this.lblVAC1var.AutoSize = true;
+            this.lblVAC1var.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1var.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1var.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1var.Image = null;
+            this.lblVAC1var.Location = new System.Drawing.Point(72, 76);
+            this.lblVAC1var.Name = "lblVAC1var";
+            this.lblVAC1var.Size = new System.Drawing.Size(24, 15);
+            this.lblVAC1var.TabIndex = 5;
+            this.lblVAC1var.Text = "var";
+            this.toolTip1.SetToolTip(this.lblVAC1var, "Sampling rate conversion ratio being applied by matching loop");
+            // 
+            // lblVAC1varratio
+            // 
+            this.lblVAC1varratio.AutoSize = true;
+            this.lblVAC1varratio.Image = null;
+            this.lblVAC1varratio.Location = new System.Drawing.Point(8, 76);
+            this.lblVAC1varratio.Name = "lblVAC1varratio";
+            this.lblVAC1varratio.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC1varratio.TabIndex = 4;
+            this.lblVAC1varratio.Text = "Var Ratio";
+            // 
+            // lblVAC1unfl
+            // 
+            this.lblVAC1unfl.AutoSize = true;
+            this.lblVAC1unfl.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1unfl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1unfl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1unfl.Image = null;
+            this.lblVAC1unfl.Location = new System.Drawing.Point(72, 57);
+            this.lblVAC1unfl.Name = "lblVAC1unfl";
+            this.lblVAC1unfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1unfl.TabIndex = 3;
+            this.lblVAC1unfl.Text = "unfl";
+            this.toolTip1.SetToolTip(this.lblVAC1unfl, "Ringbuffer underflow counter (click to reset)");
+            this.lblVAC1unfl.Click += new System.EventHandler(this.lblVAC1unfl_Click);
+            // 
+            // lblVAC1ovfl
+            // 
+            this.lblVAC1ovfl.AutoSize = true;
+            this.lblVAC1ovfl.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC1ovfl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC1ovfl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC1ovfl.Image = null;
+            this.lblVAC1ovfl.Location = new System.Drawing.Point(72, 38);
+            this.lblVAC1ovfl.Name = "lblVAC1ovfl";
+            this.lblVAC1ovfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1ovfl.TabIndex = 2;
+            this.lblVAC1ovfl.Text = "ovfl";
+            this.toolTip1.SetToolTip(this.lblVAC1ovfl, "Ringbuffer overflow counter (click to reset)");
+            this.lblVAC1ovfl.Click += new System.EventHandler(this.lblVAC1ovfl_Click);
+            // 
+            // lblVAC1underflows
+            // 
+            this.lblVAC1underflows.AutoSize = true;
+            this.lblVAC1underflows.Image = null;
+            this.lblVAC1underflows.Location = new System.Drawing.Point(6, 57);
+            this.lblVAC1underflows.Name = "lblVAC1underflows";
+            this.lblVAC1underflows.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC1underflows.TabIndex = 1;
+            this.lblVAC1underflows.Text = "Underflows";
+            // 
+            // lblVAC1overflows
+            // 
+            this.lblVAC1overflows.AutoSize = true;
+            this.lblVAC1overflows.Image = null;
+            this.lblVAC1overflows.Location = new System.Drawing.Point(6, 38);
+            this.lblVAC1overflows.Name = "lblVAC1overflows";
+            this.lblVAC1overflows.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC1overflows.TabIndex = 0;
+            this.lblVAC1overflows.Text = "Overflows";
+            // 
             // chkMOXAllowBypass
             // 
             this.chkMOXAllowBypass.Image = null;
-            this.chkMOXAllowBypass.Location = new System.Drawing.Point(250, 232);
+            this.chkMOXAllowBypass.Location = new System.Drawing.Point(250, 210);
             this.chkMOXAllowBypass.Name = "chkMOXAllowBypass";
-            this.chkMOXAllowBypass.Size = new System.Drawing.Size(184, 37);
+            this.chkMOXAllowBypass.Size = new System.Drawing.Size(184, 30);
             this.chkMOXAllowBypass.TabIndex = 82;
             this.chkMOXAllowBypass.Text = "Allow MOX to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkMOXAllowBypass, "Using the MOX control will override the PTT input to allow for easy phone operati" +
@@ -19545,9 +19985,9 @@
             // chkSPACEAllowBypass
             // 
             this.chkSPACEAllowBypass.Image = null;
-            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(250, 195);
+            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(250, 180);
             this.chkSPACEAllowBypass.Name = "chkSPACEAllowBypass";
-            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(192, 37);
+            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(192, 30);
             this.chkSPACEAllowBypass.TabIndex = 81;
             this.chkSPACEAllowBypass.Text = "Allow SPACE to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkSPACEAllowBypass, "Using theSPACE BAR will override the PTT input to allow for easy phone operation " +
@@ -19617,9 +20057,9 @@
             this.chkVACAllowBypass.Checked = true;
             this.chkVACAllowBypass.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVACAllowBypass.Image = null;
-            this.chkVACAllowBypass.Location = new System.Drawing.Point(250, 158);
+            this.chkVACAllowBypass.Location = new System.Drawing.Point(250, 150);
             this.chkVACAllowBypass.Name = "chkVACAllowBypass";
-            this.chkVACAllowBypass.Size = new System.Drawing.Size(184, 32);
+            this.chkVACAllowBypass.Size = new System.Drawing.Size(184, 30);
             this.chkVACAllowBypass.TabIndex = 75;
             this.chkVACAllowBypass.Text = "Allow PTT to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkVACAllowBypass, "Using the hardware PTT inputs will override the PTT input to allow for easy phone" +
@@ -19745,7 +20185,7 @@
             this.grpAudio2Stereo.Controls.Add(this.chkAudio2Stereo);
             this.grpAudio2Stereo.Location = new System.Drawing.Point(344, 96);
             this.grpAudio2Stereo.Name = "grpAudio2Stereo";
-            this.grpAudio2Stereo.Size = new System.Drawing.Size(96, 56);
+            this.grpAudio2Stereo.Size = new System.Drawing.Size(96, 50);
             this.grpAudio2Stereo.TabIndex = 71;
             this.grpAudio2Stereo.TabStop = false;
             this.grpAudio2Stereo.Text = "Mono/Stereo";
@@ -19753,7 +20193,7 @@
             // chkAudio2Stereo
             // 
             this.chkAudio2Stereo.Image = null;
-            this.chkAudio2Stereo.Location = new System.Drawing.Point(16, 24);
+            this.chkAudio2Stereo.Location = new System.Drawing.Point(16, 22);
             this.chkAudio2Stereo.Name = "chkAudio2Stereo";
             this.chkAudio2Stereo.Size = new System.Drawing.Size(64, 16);
             this.chkAudio2Stereo.TabIndex = 0;
@@ -19965,6 +20405,8 @@
             // tpVAC2
             // 
             this.tpVAC2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpVAC2.Controls.Add(this.chkVAC2Varsamp);
+            this.tpVAC2.Controls.Add(this.grpVAC2monitor);
             this.tpVAC2.Controls.Add(this.chkVAC2UseRX2);
             this.tpVAC2.Controls.Add(this.grpVAC2DirectIQ);
             this.tpVAC2.Controls.Add(this.chkVAC2Combine);
@@ -19982,6 +20424,348 @@
             this.tpVAC2.Size = new System.Drawing.Size(584, 338);
             this.tpVAC2.TabIndex = 2;
             this.tpVAC2.Text = "VAC 2";
+            // 
+            // chkVAC2Varsamp
+            // 
+            this.chkVAC2Varsamp.AutoSize = true;
+            this.chkVAC2Varsamp.Image = null;
+            this.chkVAC2Varsamp.Location = new System.Drawing.Point(462, 275);
+            this.chkVAC2Varsamp.Name = "chkVAC2Varsamp";
+            this.chkVAC2Varsamp.Size = new System.Drawing.Size(76, 17);
+            this.chkVAC2Varsamp.TabIndex = 91;
+            this.chkVAC2Varsamp.Text = "Resampler";
+            this.toolTip1.SetToolTip(this.chkVAC2Varsamp, "Enable the adaptive variable resampler");
+            this.chkVAC2Varsamp.UseVisualStyleBackColor = true;
+            this.chkVAC2Varsamp.CheckedChanged += new System.EventHandler(this.chkVAC2Varsamp_CheckedChanged);
+            // 
+            // grpVAC2monitor
+            // 
+            this.grpVAC2monitor.Controls.Add(this.lblRingbufferInVAC2);
+            this.grpVAC2monitor.Controls.Add(this.lblRingbufferOutVAC2);
+            this.grpVAC2monitor.Controls.Add(this.lblRingsizeInVAC2);
+            this.grpVAC2monitor.Controls.Add(this.lblRingsizeOutVAC2);
+            this.grpVAC2monitor.Controls.Add(this.udVAC2_Force2);
+            this.grpVAC2monitor.Controls.Add(this.chkVAC2_Force2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2_FROMVAC);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2var2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2VarRatio2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2unfl2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2ovfl2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2underflows2);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2overflows2);
+            this.grpVAC2monitor.Controls.Add(this.udVAC2_Force);
+            this.grpVAC2monitor.Controls.Add(this.chkVAC2_Force);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2_TOVAC);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2var);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2varratio);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2unfl);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2ovfl);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2underflows);
+            this.grpVAC2monitor.Controls.Add(this.lblVAC2overflows);
+            this.grpVAC2monitor.Location = new System.Drawing.Point(8, 235);
+            this.grpVAC2monitor.Name = "grpVAC2monitor";
+            this.grpVAC2monitor.Size = new System.Drawing.Size(413, 99);
+            this.grpVAC2monitor.TabIndex = 90;
+            this.grpVAC2monitor.TabStop = false;
+            this.grpVAC2monitor.Text = "Adaptive Variable Resampler Monitor";
+            // 
+            // lblRingbufferInVAC2
+            // 
+            this.lblRingbufferInVAC2.AutoSize = true;
+            this.lblRingbufferInVAC2.Image = null;
+            this.lblRingbufferInVAC2.Location = new System.Drawing.Point(229, 19);
+            this.lblRingbufferInVAC2.Name = "lblRingbufferInVAC2";
+            this.lblRingbufferInVAC2.Size = new System.Drawing.Size(56, 13);
+            this.lblRingbufferInVAC2.TabIndex = 21;
+            this.lblRingbufferInVAC2.Text = "Ringbuffer";
+            // 
+            // lblRingbufferOutVAC2
+            // 
+            this.lblRingbufferOutVAC2.AutoSize = true;
+            this.lblRingbufferOutVAC2.Image = null;
+            this.lblRingbufferOutVAC2.Location = new System.Drawing.Point(6, 19);
+            this.lblRingbufferOutVAC2.Name = "lblRingbufferOutVAC2";
+            this.lblRingbufferOutVAC2.Size = new System.Drawing.Size(56, 13);
+            this.lblRingbufferOutVAC2.TabIndex = 20;
+            this.lblRingbufferOutVAC2.Text = "Ringbuffer";
+            // 
+            // lblRingsizeInVAC2
+            // 
+            this.lblRingsizeInVAC2.AutoSize = true;
+            this.lblRingsizeInVAC2.Image = null;
+            this.lblRingsizeInVAC2.Location = new System.Drawing.Point(292, 19);
+            this.lblRingsizeInVAC2.Name = "lblRingsizeInVAC2";
+            this.lblRingsizeInVAC2.Size = new System.Drawing.Size(49, 13);
+            this.lblRingsizeInVAC2.TabIndex = 19;
+            this.lblRingsizeInVAC2.Text = "XXXXXX";
+            this.toolTip1.SetToolTip(this.lblRingsizeInVAC2, "Transmit ringbuffer size (samples)");
+            // 
+            // lblRingsizeOutVAC2
+            // 
+            this.lblRingsizeOutVAC2.AutoSize = true;
+            this.lblRingsizeOutVAC2.Image = null;
+            this.lblRingsizeOutVAC2.Location = new System.Drawing.Point(69, 19);
+            this.lblRingsizeOutVAC2.Name = "lblRingsizeOutVAC2";
+            this.lblRingsizeOutVAC2.Size = new System.Drawing.Size(49, 13);
+            this.lblRingsizeOutVAC2.TabIndex = 18;
+            this.lblRingsizeOutVAC2.Text = "XXXXXX";
+            this.toolTip1.SetToolTip(this.lblRingsizeOutVAC2, "Receive ringbuffer size (samples)");
+            // 
+            // udVAC2_Force2
+            // 
+            this.udVAC2_Force2.DecimalPlaces = 6;
+            this.udVAC2_Force2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.udVAC2_Force2.Location = new System.Drawing.Point(332, 54);
+            this.udVAC2_Force2.Maximum = new decimal(new int[] {
+            102,
+            0,
+            0,
+            131072});
+            this.udVAC2_Force2.Minimum = new decimal(new int[] {
+            98,
+            0,
+            0,
+            131072});
+            this.udVAC2_Force2.Name = "udVAC2_Force2";
+            this.udVAC2_Force2.Size = new System.Drawing.Size(72, 20);
+            this.udVAC2_Force2.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.udVAC2_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
+            this.udVAC2_Force2.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udVAC2_Force2.ValueChanged += new System.EventHandler(this.chkVAC2_Force2_CheckedChanged);
+            // 
+            // chkVAC2_Force2
+            // 
+            this.chkVAC2_Force2.AutoSize = true;
+            this.chkVAC2_Force2.Image = null;
+            this.chkVAC2_Force2.Location = new System.Drawing.Point(332, 34);
+            this.chkVAC2_Force2.Name = "chkVAC2_Force2";
+            this.chkVAC2_Force2.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC2_Force2.TabIndex = 16;
+            this.chkVAC2_Force2.Text = "Force";
+            this.toolTip1.SetToolTip(this.chkVAC2_Force2, "Disable resampler matching loop and force to ratio setting below");
+            this.chkVAC2_Force2.UseVisualStyleBackColor = true;
+            this.chkVAC2_Force2.CheckedChanged += new System.EventHandler(this.chkVAC2_Force2_CheckedChanged);
+            // 
+            // lblVAC2_FROMVAC
+            // 
+            this.lblVAC2_FROMVAC.AutoSize = true;
+            this.lblVAC2_FROMVAC.Image = null;
+            this.lblVAC2_FROMVAC.Location = new System.Drawing.Point(343, 19);
+            this.lblVAC2_FROMVAC.Name = "lblVAC2_FROMVAC";
+            this.lblVAC2_FROMVAC.Size = new System.Drawing.Size(65, 13);
+            this.lblVAC2_FROMVAC.TabIndex = 15;
+            this.lblVAC2_FROMVAC.Text = "FROM VAC:";
+            this.toolTip1.SetToolTip(this.lblVAC2_FROMVAC, "Transmit audio stream");
+            // 
+            // lblVAC2var2
+            // 
+            this.lblVAC2var2.AutoSize = true;
+            this.lblVAC2var2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2var2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2var2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2var2.Image = null;
+            this.lblVAC2var2.Location = new System.Drawing.Point(295, 76);
+            this.lblVAC2var2.Name = "lblVAC2var2";
+            this.lblVAC2var2.Size = new System.Drawing.Size(24, 15);
+            this.lblVAC2var2.TabIndex = 14;
+            this.lblVAC2var2.Text = "var";
+            this.toolTip1.SetToolTip(this.lblVAC2var2, "Sampling rate conversion ratio being applied by matching loop");
+            // 
+            // lblVAC2VarRatio2
+            // 
+            this.lblVAC2VarRatio2.AutoSize = true;
+            this.lblVAC2VarRatio2.Image = null;
+            this.lblVAC2VarRatio2.Location = new System.Drawing.Point(231, 76);
+            this.lblVAC2VarRatio2.Name = "lblVAC2VarRatio2";
+            this.lblVAC2VarRatio2.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC2VarRatio2.TabIndex = 13;
+            this.lblVAC2VarRatio2.Text = "Var Ratio";
+            // 
+            // lblVAC2unfl2
+            // 
+            this.lblVAC2unfl2.AutoSize = true;
+            this.lblVAC2unfl2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2unfl2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2unfl2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2unfl2.Image = null;
+            this.lblVAC2unfl2.Location = new System.Drawing.Point(295, 57);
+            this.lblVAC2unfl2.Name = "lblVAC2unfl2";
+            this.lblVAC2unfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2unfl2.TabIndex = 12;
+            this.lblVAC2unfl2.Text = "unfl";
+            this.toolTip1.SetToolTip(this.lblVAC2unfl2, "Ringbuffer underflow counter (click to reset)");
+            this.lblVAC2unfl2.Click += new System.EventHandler(this.lblVAC2unfl2_Click);
+            // 
+            // lblVAC2ovfl2
+            // 
+            this.lblVAC2ovfl2.AutoSize = true;
+            this.lblVAC2ovfl2.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2ovfl2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2ovfl2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2ovfl2.Image = null;
+            this.lblVAC2ovfl2.Location = new System.Drawing.Point(295, 38);
+            this.lblVAC2ovfl2.Name = "lblVAC2ovfl2";
+            this.lblVAC2ovfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2ovfl2.TabIndex = 11;
+            this.lblVAC2ovfl2.Text = "ovfl";
+            this.toolTip1.SetToolTip(this.lblVAC2ovfl2, "Ringbuffer overflow counter (click to reset)");
+            this.lblVAC2ovfl2.Click += new System.EventHandler(this.lblVAC2ovfl2_Click);
+            // 
+            // lblVAC2underflows2
+            // 
+            this.lblVAC2underflows2.AutoSize = true;
+            this.lblVAC2underflows2.Image = null;
+            this.lblVAC2underflows2.Location = new System.Drawing.Point(229, 57);
+            this.lblVAC2underflows2.Name = "lblVAC2underflows2";
+            this.lblVAC2underflows2.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC2underflows2.TabIndex = 10;
+            this.lblVAC2underflows2.Text = "Underflows";
+            // 
+            // lblVAC2overflows2
+            // 
+            this.lblVAC2overflows2.AutoSize = true;
+            this.lblVAC2overflows2.Image = null;
+            this.lblVAC2overflows2.Location = new System.Drawing.Point(229, 38);
+            this.lblVAC2overflows2.Name = "lblVAC2overflows2";
+            this.lblVAC2overflows2.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC2overflows2.TabIndex = 9;
+            this.lblVAC2overflows2.Text = "Overflows";
+            // 
+            // udVAC2_Force
+            // 
+            this.udVAC2_Force.DecimalPlaces = 6;
+            this.udVAC2_Force.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.udVAC2_Force.Location = new System.Drawing.Point(109, 54);
+            this.udVAC2_Force.Maximum = new decimal(new int[] {
+            102,
+            0,
+            0,
+            131072});
+            this.udVAC2_Force.Minimum = new decimal(new int[] {
+            98,
+            0,
+            0,
+            131072});
+            this.udVAC2_Force.Name = "udVAC2_Force";
+            this.udVAC2_Force.Size = new System.Drawing.Size(72, 20);
+            this.udVAC2_Force.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.udVAC2_Force, "Rate conversion ratio imposed when \"Force\" is checked");
+            this.udVAC2_Force.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udVAC2_Force.ValueChanged += new System.EventHandler(this.chkVAC2_Force_CheckedChanged);
+            // 
+            // chkVAC2_Force
+            // 
+            this.chkVAC2_Force.AutoSize = true;
+            this.chkVAC2_Force.Image = null;
+            this.chkVAC2_Force.Location = new System.Drawing.Point(109, 36);
+            this.chkVAC2_Force.Name = "chkVAC2_Force";
+            this.chkVAC2_Force.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC2_Force.TabIndex = 7;
+            this.chkVAC2_Force.Text = "Force";
+            this.toolTip1.SetToolTip(this.chkVAC2_Force, "Disable resampler matching loop and force to ratio setting below");
+            this.chkVAC2_Force.UseVisualStyleBackColor = true;
+            this.chkVAC2_Force.CheckedChanged += new System.EventHandler(this.chkVAC2_Force_CheckedChanged);
+            // 
+            // lblVAC2_TOVAC
+            // 
+            this.lblVAC2_TOVAC.AutoSize = true;
+            this.lblVAC2_TOVAC.Image = null;
+            this.lblVAC2_TOVAC.Location = new System.Drawing.Point(122, 19);
+            this.lblVAC2_TOVAC.Name = "lblVAC2_TOVAC";
+            this.lblVAC2_TOVAC.Size = new System.Drawing.Size(49, 13);
+            this.lblVAC2_TOVAC.TabIndex = 6;
+            this.lblVAC2_TOVAC.Text = "TO VAC:";
+            this.toolTip1.SetToolTip(this.lblVAC2_TOVAC, "Receive audio stream");
+            // 
+            // lblVAC2var
+            // 
+            this.lblVAC2var.AutoSize = true;
+            this.lblVAC2var.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2var.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2var.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2var.Image = null;
+            this.lblVAC2var.Location = new System.Drawing.Point(72, 76);
+            this.lblVAC2var.Name = "lblVAC2var";
+            this.lblVAC2var.Size = new System.Drawing.Size(24, 15);
+            this.lblVAC2var.TabIndex = 5;
+            this.lblVAC2var.Text = "var";
+            this.toolTip1.SetToolTip(this.lblVAC2var, "Sampling rate conversion ratio being applied by matching loop");
+            // 
+            // lblVAC2varratio
+            // 
+            this.lblVAC2varratio.AutoSize = true;
+            this.lblVAC2varratio.Image = null;
+            this.lblVAC2varratio.Location = new System.Drawing.Point(8, 76);
+            this.lblVAC2varratio.Name = "lblVAC2varratio";
+            this.lblVAC2varratio.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC2varratio.TabIndex = 4;
+            this.lblVAC2varratio.Text = "Var Ratio";
+            // 
+            // lblVAC2unfl
+            // 
+            this.lblVAC2unfl.AutoSize = true;
+            this.lblVAC2unfl.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2unfl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2unfl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2unfl.Image = null;
+            this.lblVAC2unfl.Location = new System.Drawing.Point(72, 57);
+            this.lblVAC2unfl.Name = "lblVAC2unfl";
+            this.lblVAC2unfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2unfl.TabIndex = 3;
+            this.lblVAC2unfl.Text = "unfl";
+            this.toolTip1.SetToolTip(this.lblVAC2unfl, "Ringbuffer underflow counter (click to reset)");
+            this.lblVAC2unfl.Click += new System.EventHandler(this.lblVAC2unfl_Click);
+            // 
+            // lblVAC2ovfl
+            // 
+            this.lblVAC2ovfl.AutoSize = true;
+            this.lblVAC2ovfl.BackColor = System.Drawing.Color.LightCoral;
+            this.lblVAC2ovfl.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblVAC2ovfl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblVAC2ovfl.Image = null;
+            this.lblVAC2ovfl.Location = new System.Drawing.Point(72, 38);
+            this.lblVAC2ovfl.Name = "lblVAC2ovfl";
+            this.lblVAC2ovfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2ovfl.TabIndex = 2;
+            this.lblVAC2ovfl.Text = "ovfl";
+            this.toolTip1.SetToolTip(this.lblVAC2ovfl, "Ringbuffer overflow counter (click to reset)");
+            this.lblVAC2ovfl.Click += new System.EventHandler(this.lblVAC2ovfl_Click);
+            // 
+            // lblVAC2underflows
+            // 
+            this.lblVAC2underflows.AutoSize = true;
+            this.lblVAC2underflows.Image = null;
+            this.lblVAC2underflows.Location = new System.Drawing.Point(6, 57);
+            this.lblVAC2underflows.Name = "lblVAC2underflows";
+            this.lblVAC2underflows.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC2underflows.TabIndex = 1;
+            this.lblVAC2underflows.Text = "Underflows";
+            // 
+            // lblVAC2overflows
+            // 
+            this.lblVAC2overflows.AutoSize = true;
+            this.lblVAC2overflows.Image = null;
+            this.lblVAC2overflows.Location = new System.Drawing.Point(6, 38);
+            this.lblVAC2overflows.Name = "lblVAC2overflows";
+            this.lblVAC2overflows.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC2overflows.TabIndex = 0;
+            this.lblVAC2overflows.Text = "Overflows";
             // 
             // chkVAC2UseRX2
             // 
@@ -49417,6 +50201,11 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // timerVACrmatchMonitor
+            // 
+            this.timerVACrmatchMonitor.Enabled = true;
+            this.timerVACrmatchMonitor.Tick += new System.EventHandler(this.timerVACrmatchMonitor_Tick);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -49715,6 +50504,11 @@
             this.grpAudioBufferSize1.ResumeLayout(false);
             this.grpAudioSampleRate1.ResumeLayout(false);
             this.tpVAC.ResumeLayout(false);
+            this.tpVAC.PerformLayout();
+            this.grpVAC1monitor.ResumeLayout(false);
+            this.grpVAC1monitor.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).EndInit();
             this.grpDirectIQOutput.ResumeLayout(false);
             this.grpAudioVACAutoEnable.ResumeLayout(false);
             this.grpAudioVACGain.ResumeLayout(false);
@@ -49727,6 +50521,11 @@
             this.grpAudioBuffer2.ResumeLayout(false);
             this.grpAudioDetails2.ResumeLayout(false);
             this.tpVAC2.ResumeLayout(false);
+            this.tpVAC2.PerformLayout();
+            this.grpVAC2monitor.ResumeLayout(false);
+            this.grpVAC2monitor.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force)).EndInit();
             this.grpVAC2DirectIQ.ResumeLayout(false);
             this.grpVAC2AutoEnable.ResumeLayout(false);
             this.grpVAC2Gain.ResumeLayout(false);
@@ -52015,6 +52814,58 @@
         public System.Windows.Forms.NumericUpDownTS udTXWFAmpMax;
         private System.Windows.Forms.LabelTS lblTXWFAmpMin;
         private System.Windows.Forms.LabelTS lblTXWFAmpMax;
+        private System.Windows.Forms.GroupBoxTS grpVAC1monitor;
+        private System.Windows.Forms.LabelTS lblRingsizeIn;
+        private System.Windows.Forms.LabelTS lblRingsizeOut;
+        private System.Windows.Forms.NumericUpDownTS udVAC1_Force2;
+        private System.Windows.Forms.CheckBoxTS chkVAC1_Force2;
+        private System.Windows.Forms.LabelTS lblVAC1_FROMVAC;
+        private System.Windows.Forms.LabelTS lblVAC1var2;
+        private System.Windows.Forms.LabelTS lblVAC1VarRatio2;
+        private System.Windows.Forms.LabelTS lblVAC1unfl2;
+        private System.Windows.Forms.LabelTS lblVAC1ovfl2;
+        private System.Windows.Forms.LabelTS lblVAC1underflows2;
+        private System.Windows.Forms.LabelTS lblVAC1overflows2;
+        private System.Windows.Forms.NumericUpDownTS udVAC1_Force;
+        private System.Windows.Forms.CheckBoxTS chkVAC1_Force;
+        private System.Windows.Forms.LabelTS lblVAC1_TOVAC;
+        private System.Windows.Forms.LabelTS lblVAC1var;
+        private System.Windows.Forms.LabelTS lblVAC1varratio;
+        private System.Windows.Forms.LabelTS lblVAC1unfl;
+        private System.Windows.Forms.LabelTS lblVAC1ovfl;
+        private System.Windows.Forms.LabelTS lblVAC1underflows;
+        private System.Windows.Forms.LabelTS lblVAC1overflows;
+        private System.Windows.Forms.Timer timerVACrmatchMonitor;
+        private System.Windows.Forms.LabelTS lblRingbufferIn;
+        private System.Windows.Forms.LabelTS lblRingbufferOut;
+        private System.Windows.Forms.GroupBoxTS grpVAC2monitor;
+        private System.Windows.Forms.LabelTS lblRingbufferInVAC2;
+        private System.Windows.Forms.LabelTS lblRingbufferOutVAC2;
+        private System.Windows.Forms.LabelTS lblRingsizeInVAC2;
+        private System.Windows.Forms.LabelTS lblRingsizeOutVAC2;
+        private System.Windows.Forms.NumericUpDownTS udVAC2_Force2;
+        private System.Windows.Forms.CheckBoxTS chkVAC2_Force2;
+        private System.Windows.Forms.LabelTS lblVAC2_FROMVAC;
+        private System.Windows.Forms.LabelTS lblVAC2var2;
+        private System.Windows.Forms.LabelTS lblVAC2VarRatio2;
+        private System.Windows.Forms.LabelTS lblVAC2unfl2;
+        private System.Windows.Forms.LabelTS lblVAC2ovfl2;
+        private System.Windows.Forms.LabelTS lblVAC2underflows2;
+        private System.Windows.Forms.LabelTS lblVAC2overflows2;
+        private System.Windows.Forms.NumericUpDownTS udVAC2_Force;
+        private System.Windows.Forms.CheckBoxTS chkVAC2_Force;
+        private System.Windows.Forms.LabelTS lblVAC2_TOVAC;
+        private System.Windows.Forms.LabelTS lblVAC2var;
+        private System.Windows.Forms.LabelTS lblVAC2varratio;
+        private System.Windows.Forms.LabelTS lblVAC2unfl;
+        private System.Windows.Forms.LabelTS lblVAC2ovfl;
+        private System.Windows.Forms.LabelTS lblVAC2underflows;
+        private System.Windows.Forms.LabelTS lblVAC2overflows;
+        private System.Windows.Forms.CheckBoxTS chkVAC1Varsamp;
+        private System.Windows.Forms.CheckBoxTS chkVAC2Varsamp;
+        private System.Windows.Forms.LabelTS lblOoopCounter;
+        private System.Windows.Forms.LabelTS labelTS404;
+        private System.Windows.Forms.RadioButtonTS radPROLatency0;
 
     }
 }

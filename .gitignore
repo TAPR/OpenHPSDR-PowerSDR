@@ -12,4 +12,4 @@ Project Files/lib/portaudio_VS2008/build/msvc/x64
 Project Files/lib/portaudio_VS2008/build/msvc/Win32
 Project Files/lib/fftw_wisdom/temp
 Project Files/lib/pthread/Win32
-Project Files/*.bak
+Project Files/Source/*.bak

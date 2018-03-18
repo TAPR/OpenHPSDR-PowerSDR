@@ -1,7 +1,7 @@
 /*
 *
 * Copyright (C) 2008 Bill Tracey, KD5TFD, bill@ewjt.com 
-* Copyright (C) 2010-2013  Doug Wigley
+* Copyright (C) 2010-2018  Doug Wigley
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -235,7 +235,7 @@ namespace PowerSDR
             return result;
         }
 
-        public void UpdateAlexAntSelection(Band band, bool tx, bool xvtr)  
+        public void UpdateAlexAntSelection(Band band, bool tx, bool xvtr) 
 		{ 
 			UpdateAlexAntSelection(band, tx, true, xvtr); 
 		}

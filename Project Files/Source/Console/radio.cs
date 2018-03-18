@@ -89,10 +89,10 @@ namespace PowerSDR
 
 		public static void CreateDSP()
 		{
-            String app_data_path = "";
-            app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                //+ "\\FlexRadio Systems\\PowerSDR mRX\\wisdom";
-                + "\\FlexRadio Systems\\PowerSDR mRX PS\\";
+            //String app_data_path = "";
+            //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            //    //+ "\\FlexRadio Systems\\PowerSDR mRX\\wisdom";
+            //    + "\\FlexRadio Systems\\PowerSDR mRX PS\\";
             wdsp.WDSPwisdom(app_data_path);
             wdsp.OpenChannel(wdsp.id(0, 0), 1024, 4096, 192000, 48000, 48000, 0, 0, 0.010, 0.025, 0.000, 0.010, 0);
             wdsp.OpenChannel(wdsp.id(0, 1), 1024, 4096, 192000, 48000, 48000, 0, 0, 0.010, 0.025, 0.000, 0.010, 0);
@@ -166,6 +166,12 @@ namespace PowerSDR
                 wdsp.SetEERSamplerate(0, 48000);
 			}		
 		}
+
+        private static string app_data_path = "";
+        public static string AppDataPath
+        {
+            set { app_data_path = value; }
+        }
 
 		//public static void SetThreadNumber(uint num)
 		//{

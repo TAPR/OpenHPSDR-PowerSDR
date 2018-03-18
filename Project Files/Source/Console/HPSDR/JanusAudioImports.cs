@@ -391,5 +391,11 @@ namespace PowerSDR
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetProLpacks(int lpacks);
         
+        [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetOoopCounter();
+
+        [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ResetOoopCounter();
+        
     }
 }

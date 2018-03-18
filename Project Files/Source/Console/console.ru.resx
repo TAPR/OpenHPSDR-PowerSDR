@@ -8769,4 +8769,52 @@ PWR, EQ, микрофонный вход</value>
   <data name="comboAMTXProfile.TabIndex" type="System.Int32, mscorlib">
     <value>115</value>
   </data>
+  <data name="chkSyncIT.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value></value>
+  </data>
+  <data name="labelTS1.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value></value>
+  </data>
+  <data name="labelTS1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 33</value>
+  </data>
+  <data name="labelTS1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 28</value>
+  </data>
+  <data name="labelTS1.TabIndex" type="System.Int32, mscorlib">
+    <value>83</value>
+  </data>
+  <data name="chkVFOBLock.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
+    <value>Button</value>
+  </data>
+  <data name="chkVFOBLock.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="chkVFOBLock.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="chkVFOBLock.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="chkVFOBLock.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value></value>
+  </data>
+  <data name="chkVFOBLock.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkVFOBLock.Location" type="System.Drawing.Point, System.Drawing">
+    <value>58, 38</value>
+  </data>
+  <data name="chkVFOBLock.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 23</value>
+  </data>
+  <data name="chkVFOBLock.TabIndex" type="System.Int32, mscorlib">
+    <value>82</value>
+  </data>
+  <data name="chkVFOBLock.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="labelTS1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
 </root>

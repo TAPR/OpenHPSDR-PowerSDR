@@ -2673,6 +2673,7 @@ namespace PowerSDR
             radOrionMicTip_CheckedChanged(this, e);
             radOrionBiasOn_CheckedChanged(this, e);
             chkRX2StepAtt_CheckedChanged(this, e);
+            radPROLatency0_CheckedChanged(this, e);
             radPROLatency1_CheckedChanged(this, e);
             radPROLatency2_CheckedChanged(this, e);
             radPROLatency4_CheckedChanged(this, e);
@@ -2700,6 +2701,8 @@ namespace PowerSDR
             udAudioLineIn1_ValueChanged(this, e);
             udAudioVoltage1_ValueChanged(this, e);
             chkAudioLatencyManual1_CheckedChanged(this, e);
+            chkVAC1Varsamp_CheckedChanged(this, e);
+            chkVAC2Varsamp_CheckedChanged(this, e);
 
             // Calibration Tab
             udTXDisplayCalOffset_ValueChanged(this, e);
@@ -4397,6 +4400,18 @@ namespace PowerSDR
             }
         }
 
+        public int VOXHangTime
+        {
+            get
+            {
+                if (udTXVOXHangTime != null) return (int)udTXVOXHangTime.Value;
+                else return 125;
+            }
+            set
+            {
+                if (udTXVOXHangTime != null) udTXVOXHangTime.Value = value;
+            }
+        }
         public int AGCMaxGain
         {
             get
@@ -8708,6 +8723,8 @@ namespace PowerSDR
 
             if (radGenModelANAN8000D.Checked || radGenModelANAN7000D.Checked)
             {
+                chkLPFBypass.Checked = false;
+                chkLPFBypass.Visible = false;
                 console.MKIIBPFPresent = true;
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
@@ -8716,6 +8733,7 @@ namespace PowerSDR
             }
             else
             {
+                chkLPFBypass.Visible = true;
                 console.MKIIBPFPresent = false;
                 chkDisableRXOut.Visible = true;
                 chkBPF2Gnd.Visible = false;
@@ -10251,8 +10269,8 @@ namespace PowerSDR
 
             udAudioLatency2.Enabled = chkAudioLatencyManual2.Checked;
 
-            if (!chkAudioLatencyManual2.Checked)
-                Audio.Latency2 = 120;
+            if (!chkAudioLatencyManual2.Checked) Audio.Latency2 = 120;
+            else Audio.Latency2 = (int)udAudioLatency2.Value;
 
             if (power && chkAudioEnableVAC.Checked)
                 console.PowerOn = true;
@@ -21529,24 +21547,263 @@ namespace PowerSDR
             radAlexR_6_CheckedChanged(this, EventArgs.Empty);
         }
 
+        private void radPROLatency0_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radPROLatency0.Checked) { JanusAudio.SetProLpacks(0); }
+        }
+
         private void radPROLatency1_CheckedChanged(object sender, EventArgs e)
         {
-            if (radPROLatency1.Checked) JanusAudio.SetProLpacks(1);
+            if (radPROLatency1.Checked) { JanusAudio.SetProLpacks(1); }
         }
 
         private void radPROLatency2_CheckedChanged(object sender, EventArgs e)
         {
-            if (radPROLatency2.Checked ) JanusAudio.SetProLpacks(2);
+            if (radPROLatency2.Checked) { JanusAudio.SetProLpacks(2); }
         }
 
         private void radPROLatency4_CheckedChanged(object sender, EventArgs e)
         {
-            if (radPROLatency4.Checked) JanusAudio.SetProLpacks(4);
+            if (radPROLatency4.Checked) { JanusAudio.SetProLpacks(4); }
         }
 
         private void chkLPFBypass_CheckedChanged(object sender, EventArgs e)
         {
-           // console.LPFBypass = chkLPFBypass.Checked;
+            console.LPFBypass = chkLPFBypass.Checked;
+        }
+
+        private void timerVACrmatchMonitor_Tick(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled && chkVAC1Varsamp.Checked)
+            {
+                int underflows, overflows, ringsize;
+                double var;
+                unsafe
+                {
+                    wdsp.getRMatchDiags(Audio.RmatchVac1Out, &underflows, &overflows, &var, &ringsize);
+                }
+                lblVAC1ovfl.Text = overflows.ToString();
+                lblVAC1unfl.Text = underflows.ToString();
+                lblVAC1var.Text = var.ToString("F6");
+                lblRingsizeOut.Text = ringsize.ToString();
+                unsafe
+                {
+                    wdsp.getRMatchDiags(Audio.RmatchVac1In, &underflows, &overflows, &var, &ringsize);
+                }
+                lblVAC1ovfl2.Text = overflows.ToString();
+                lblVAC1unfl2.Text = underflows.ToString();
+                lblVAC1var2.Text = var.ToString("F6");
+                lblRingsizeIn.Text = ringsize.ToString();
+
+            }
+
+            if (console.PowerOn)
+            {
+                int n = JanusAudio.GetOoopCounter();
+                lblOoopCounter.Text = n.ToString();
+            }
+
+            if (Audio.VAC2Enabled && chkVAC2Varsamp.Checked)
+            {
+                int underflows, overflows, ringsize;
+                double var;
+                unsafe
+                {
+                    wdsp.getRMatchDiags(Audio.RmatchVac2Out, &underflows, &overflows, &var, &ringsize);
+                }
+                lblVAC2ovfl.Text = overflows.ToString();
+                lblVAC2unfl.Text = underflows.ToString();
+                lblVAC2var.Text = var.ToString("F6");
+                lblRingsizeOutVAC2.Text = ringsize.ToString();
+                unsafe
+                {
+                    wdsp.getRMatchDiags(Audio.RmatchVac2In, &underflows, &overflows, &var, &ringsize);
+                }
+                lblVAC2ovfl2.Text = overflows.ToString();
+                lblVAC2unfl2.Text = underflows.ToString();
+                lblVAC2var2.Text = var.ToString("F6");
+                lblRingsizeInVAC2.Text = ringsize.ToString();
+            }
+        }
+
+        private void chkVAC1_Force_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    bool force = chkVAC1_Force.Checked;
+                    double fvar = (double)udVAC1_Force.Value;
+                    wdsp.forceRMatchVar(Audio.RmatchVac1Out, force, fvar);
+                }
+            }
+        }
+
+        private void chkVAC1_Force2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    bool force = chkVAC1_Force2.Checked;
+                    double fvar = (double)udVAC1_Force2.Value;
+                    wdsp.forceRMatchVar(Audio.RmatchVac1In, force, fvar);
+                }
+            }
+        }
+
+        private void lblVAC1ovfl_Click(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac1Out);
+                }
+            }
+        }
+
+        private void lblVAC1unfl_Click(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac1Out);
+                }
+            }
+        }
+
+        private void lblVAC1ovfl2_Click(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac1In);
+                }
+            }
+        }
+
+        private void lblVAC1unfl2_Click(object sender, EventArgs e)
+        {
+            if (Audio.VACEnabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac1In);
+                }
+            }
+        }
+
+        private void chkVAC2_Force_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    bool force = chkVAC2_Force.Checked;
+                    double fvar = (double)udVAC2_Force.Value;
+                    wdsp.forceRMatchVar(Audio.RmatchVac2Out, force, fvar);
+                }
+            }
+        }
+
+        private void chkVAC2_Force2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    bool force = chkVAC2_Force2.Checked;
+                    double fvar = (double)udVAC2_Force2.Value;
+                    wdsp.forceRMatchVar(Audio.RmatchVac2In, force, fvar);
+                }
+            }
+        }
+
+        private void lblVAC2ovfl_Click(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac2Out);
+                }
+            }
+        }
+
+        private void lblVAC2unfl_Click(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac2Out);
+                }
+            }
+        }
+
+        private void lblVAC2ovfl2_Click(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac2In);
+                }
+            }
+        }
+
+        private void lblVAC2unfl2_Click(object sender, EventArgs e)
+        {
+            if (Audio.VAC2Enabled)
+            {
+                unsafe
+                {
+                    wdsp.resetRMatchDiags(Audio.RmatchVac2In);
+                }
+            }
+        }
+
+        private void chkVAC1Varsamp_CheckedChanged(object sender, EventArgs e)
+        {
+            bool power = console.PowerOn;
+            if (power)
+            {
+                console.PowerOn = false;
+                Thread.Sleep(100);
+            }
+
+            bool b = chkVAC1Varsamp.Checked;
+            Audio.VarsampEnabledVAC1 = b;
+            grpVAC1monitor.Visible = b;
+
+            if (power) console.PowerOn = true;
+        }
+
+        private void chkVAC2Varsamp_CheckedChanged(object sender, EventArgs e)
+        {
+            bool power = console.PowerOn;
+            if (power)
+            {
+                console.PowerOn = false;
+                Thread.Sleep(100);
+            }
+
+            bool b = chkVAC2Varsamp.Checked;
+            Audio.VarsampEnabledVAC2 = b;
+            grpVAC2monitor.Visible = b;
+
+            if (power) console.PowerOn = true;
+        }
+
+        private void lblOoopCounter_Click(object sender, EventArgs e)
+        {
+            if (console.PowerOn)
+            {
+                JanusAudio.ResetOoopCounter();
+            }
         }
 
         //private void chkCTUNScroll_CheckedChanged(object sender, EventArgs e)
