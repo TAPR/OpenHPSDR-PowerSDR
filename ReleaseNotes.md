@@ -388,7 +388,7 @@ Added the following new functions:
 - ZZXO gets combined RX2 status
 - ZZXV gets combined VFO status
 
-# Adaptive Vaiable Resampler:
+# Adaptive Variable Resampler:
 
 This release of PowerSDR mRX introduces an optional Adaptive Variable Resampler option for VAC audio. The implementation is a true resampler and not just a data "smoother".
 
