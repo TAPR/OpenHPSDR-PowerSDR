@@ -21769,7 +21769,7 @@ namespace PowerSDR
         private void chkVAC1Varsamp_CheckedChanged(object sender, EventArgs e)
         {
             bool power = console.PowerOn;
-            if (power)
+            if (power && Audio.VACEnabled)
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
@@ -21779,13 +21779,13 @@ namespace PowerSDR
             Audio.VarsampEnabledVAC1 = b;
             grpVAC1monitor.Visible = b;
 
-            if (power) console.PowerOn = true;
+            if (power && Audio.VACEnabled) console.PowerOn = true;
         }
 
         private void chkVAC2Varsamp_CheckedChanged(object sender, EventArgs e)
         {
             bool power = console.PowerOn;
-            if (power)
+            if (power && Audio.VAC2Enabled)
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
@@ -21795,7 +21795,7 @@ namespace PowerSDR
             Audio.VarsampEnabledVAC2 = b;
             grpVAC2monitor.Visible = b;
 
-            if (power) console.PowerOn = true;
+            if (power && Audio.VAC2Enabled) console.PowerOn = true;
         }
 
         private void lblOoopCounter_Click(object sender, EventArgs e)

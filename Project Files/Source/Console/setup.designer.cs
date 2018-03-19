@@ -1140,7 +1140,7 @@
             this.grpAudioSampleRate1 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioSampleRate1 = new System.Windows.Forms.ComboBoxTS();
             this.tpVAC = new System.Windows.Forms.TabPage();
-            this.labelTS404 = new System.Windows.Forms.LabelTS();
+            this.lblOOOPs = new System.Windows.Forms.LabelTS();
             this.lblOoopCounter = new System.Windows.Forms.LabelTS();
             this.chkVAC1Varsamp = new System.Windows.Forms.CheckBoxTS();
             this.grpVAC1monitor = new System.Windows.Forms.GroupBoxTS();
@@ -19582,7 +19582,7 @@
             // 
             // tpVAC
             // 
-            this.tpVAC.Controls.Add(this.labelTS404);
+            this.tpVAC.Controls.Add(this.lblOOOPs);
             this.tpVAC.Controls.Add(this.lblOoopCounter);
             this.tpVAC.Controls.Add(this.chkVAC1Varsamp);
             this.tpVAC.Controls.Add(this.grpVAC1monitor);
@@ -19605,15 +19605,15 @@
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
             // 
-            // labelTS404
+            // lblOOOPs
             // 
-            this.labelTS404.AutoSize = true;
-            this.labelTS404.Image = null;
-            this.labelTS404.Location = new System.Drawing.Point(516, 306);
-            this.labelTS404.Name = "labelTS404";
-            this.labelTS404.Size = new System.Drawing.Size(43, 13);
-            this.labelTS404.TabIndex = 87;
-            this.labelTS404.Text = "OOOPs";
+            this.lblOOOPs.AutoSize = true;
+            this.lblOOOPs.Image = null;
+            this.lblOOOPs.Location = new System.Drawing.Point(516, 306);
+            this.lblOOOPs.Name = "lblOOOPs";
+            this.lblOOOPs.Size = new System.Drawing.Size(43, 13);
+            this.lblOOOPs.TabIndex = 87;
+            this.lblOOOPs.Text = "OOOPs";
             // 
             // lblOoopCounter
             // 
@@ -52864,7 +52864,7 @@
         private System.Windows.Forms.CheckBoxTS chkVAC1Varsamp;
         private System.Windows.Forms.CheckBoxTS chkVAC2Varsamp;
         private System.Windows.Forms.LabelTS lblOoopCounter;
-        private System.Windows.Forms.LabelTS labelTS404;
+        private System.Windows.Forms.LabelTS lblOOOPs;
         private System.Windows.Forms.RadioButtonTS radPROLatency0;
 
     }
