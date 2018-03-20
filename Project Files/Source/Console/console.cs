@@ -34521,18 +34521,21 @@ namespace PowerSDR
             }
             else if (!e.Alt && !e.Control)
             {
-                // 3/10/2018 - Commented out to fix spacebar not activating PTT when text box controls have focus.
-                //if (this.ActiveControl is TextBoxTS) return;
-                //if (this.ActiveControl is NumericUpDownTS) return;
+                if (this.ActiveControl is TextBoxTS || this.ActiveControl is NumericUpDownTS)
+                {
+                    if (e.KeyCode == Keys.Space)
+                    {
+                        btnHidden.Focus();
+                        e.SuppressKeyPress = true;
+                    }
+                    else
+                      return;
+                }
 
                 switch (e.KeyCode)
                 {
                     case Keys.Space:
                         {
-                            // Disables windows system "beep" when spacebar is pressed.
-                            e.Handled = true;
-                            e.SuppressKeyPress = true;
-
                             if (chkPower.Checked)
                             {
                                 if (spacebar_ptt)
@@ -45382,9 +45385,6 @@ namespace PowerSDR
             }
             if (chkRIT.Checked && !click_tune_display) Display.RIT = (int)udRIT.Value;
 
-            /*if(udRIT.Focused)
-                btnHidden.Focus();*/
-
             setRIT_LEDs();  //-W2PA Behringer LEDs
 
             //-W2PA Sync XIT/XIT if selected
@@ -45393,7 +45393,9 @@ namespace PowerSDR
                 udXIT.Value = udRIT.Value;
                 setXIT_LEDs();
             }
-        }
+  
+            if(udRIT.Focused) btnHidden.Focus();
+      }
 
         private void setRIT_LEDs()
         {
@@ -45453,8 +45455,6 @@ namespace PowerSDR
 
             if (chkXIT.Checked) Display.XIT = (int)udXIT.Value;
 
-            //if(udXIT.Focused)
-            //btnHidden.Focus();
 
             setXIT_LEDs(); //-W2PA Behringer LEDs
 
@@ -45464,7 +45464,9 @@ namespace PowerSDR
                 udRIT.Value = udXIT.Value;
                 setRIT_LEDs();
             }
-        }
+
+            if(udXIT.Focused) btnHidden.Focus();
+     }
 
         private void btnXITReset_Click(object sender, System.EventArgs e)
         {

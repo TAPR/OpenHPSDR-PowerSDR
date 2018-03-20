@@ -1,4 +1,4 @@
-# PowerSDR_mRX_PS 3.4.8.0 March 17, 2018
+# PowerSDR_mRX_PS 3.4.9 March 19, 2018
 
 
 # 3.2.22 (2015-1-24) 
@@ -412,3 +412,6 @@ If you get poor audio quality, try un-checking and checking the Buffer Latency M
  
 4. If you absolutely can't get it to run, let Buffer Latency go back to automatic. If that works, you can then try various values for manual buffer latency until you find the smallest one that works for you.
 5. Once things seem stable, you can experiment with reducing the primary buffer size in order to obtain smaller ringbuffer sizes while still maintaining good audio quality.
+
+# 3.4.9 (2018-3-19)
+- Bug fix for manually entering frequency
