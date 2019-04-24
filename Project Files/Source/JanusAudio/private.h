@@ -373,6 +373,7 @@ int ApolloTuner;
 int ApolloATU;
 int HermesFilt;
 
+extern int SeqError;
 extern int ADC_Overload; // Single ADC
 extern int ADC1_Overload;
 extern int ADC2_Overload;

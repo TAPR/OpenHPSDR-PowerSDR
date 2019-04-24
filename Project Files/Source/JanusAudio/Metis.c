@@ -144,13 +144,13 @@ KD5TFDVK6APHAUDIO_API int nativeInitMetis(char *netaddr) {
 
 	fflush(stdout);
 
-	sndbufsize = 0xffff;
+	sndbufsize = 0x10000;
 	rc = setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));
 	if (rc == SOCKET_ERROR) {
 		printf("CreateSockets Warning: setsockopt SO_SNDBUF failed!\n");
 	}
 
-	sndbufsize = 0xffff;
+	sndbufsize = 0xfa000;
 	rc = setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
 	if (rc == SOCKET_ERROR) {
 		printf("CreateSockets Warning: setsockopt SO_RCVBUF failed!\n");
@@ -197,6 +197,7 @@ int SendStartToMetis(void) 	 {
 		/* printf("start sent\n"); */
 		ForceCandCFrame(1);
 		sendto(listenSock, (char *)&outpacket, sizeof(outpacket), 0, (SOCKADDR *)&MetisSockAddr, sizeof(MetisSockAddr));
+		//Sleep(2000); // Minerva Debug
 		MetisReadDirect((char *)&inpacket, sizeof(inpacket));
 		if (MetisLastRecvSeq != starting_seq) {
 			break;
@@ -212,6 +213,7 @@ int SendStartToMetis(void) 	 {
 	if (MetisLastRecvSeq == starting_seq) {
 		return -1;
 	}
+	
 	return 0;
 }
 
@@ -276,11 +278,12 @@ int MetisReadDirect(char *bufp, int buflen) {
 			seqbytep[2] = inpacket.readbuf[5];
 			seqbytep[1] = inpacket.readbuf[6];
 			seqbytep[0] = inpacket.readbuf[7];
-			if (seqnum != (1 + MetisLastRecvSeq))  {
-				printf("MRD: seq error this: %d last: %d\n", seqnum, MetisLastRecvSeq);
-				fflush(stdout);
-			}
-			MetisLastRecvSeq = seqnum;
+			//if (seqnum != (1 + MetisLastRecvSeq))  {
+			//	SeqError += 1;
+			//	printf("MRD: seq error this: %d last: %d\n", seqnum, MetisLastRecvSeq);
+			//	fflush(stdout);
+			//}
+			//MetisLastRecvSeq = seqnum;
 
 			if (endpoint == 6) {
 				if ((inpacket.readbuf[8] == 0x7f) && (inpacket.readbuf[9] == 0x7f) && (inpacket.readbuf[10] == 0x7f)) {
@@ -293,6 +296,13 @@ int MetisReadDirect(char *bufp, int buflen) {
 				}
 				memcpy(bufp, inpacket.readbuf + 8, 1024);
 				xpro (prop, seqnum, bufp); // resequence out of order packets
+				if (seqnum != (1 + MetisLastRecvSeq))  {
+					SeqError += 1;
+					//printf("MRD: seq error this: %d last: %d\n", seqnum, MetisLastRecvSeq);
+					//fflush(stdout);
+				}
+				MetisLastRecvSeq = seqnum;
+
 				return 1024;
 			}
 			else {

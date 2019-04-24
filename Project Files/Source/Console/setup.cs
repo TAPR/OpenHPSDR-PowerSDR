@@ -2947,6 +2947,9 @@ namespace PowerSDR
             // Alex
             radAlexAutoControl_CheckedChanged(this, e);
             radAlexManualControl_CheckedChanged(this, e);
+            chkBPF1HFLNAControl_CheckedChanged(this, e);
+            chkBPF2HFLNAControl_CheckedChanged(this, e);
+
             // CAT
             comboFocusMasterMode_SelectedIndexChanged(this, e);
             // SNB
@@ -8723,13 +8726,15 @@ namespace PowerSDR
 
             if (radGenModelANAN8000D.Checked || radGenModelANAN7000D.Checked)
             {
-                chkLPFBypass.Checked = false;
-                chkLPFBypass.Visible = false;
+               // chkLPFBypass.Checked = false;
+               // chkLPFBypass.Visible = false;
                 console.MKIIBPFPresent = true;
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
+                chkBPF1HFLNAControl.Visible = true;
+                chkBPF2HFLNAControl.Visible = true;
             }
             else
             {
@@ -8739,6 +8744,8 @@ namespace PowerSDR
                 chkBPF2Gnd.Visible = false;
                 chkEnableXVTRHF.Visible = false;
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable RX 1 IN on Alex or Ext 2 on ANAN during transmit.");
+                chkBPF1HFLNAControl.Visible = false;
+                chkBPF2HFLNAControl.Visible = false;
             }
 
             if (radGenModelANAN10.Checked || radGenModelANAN10E.Checked)
@@ -20630,8 +20637,6 @@ namespace PowerSDR
 
         private void udATTOnTX_ValueChanged(object sender, EventArgs e)
         {
-            // if (chkATTOnTX.Checked)
-            //JanusAudio.SetTxAttenData((int)udATTOnTX.Value);
             console.TxAttenData = (int)udATTOnTX.Value;
         }
 
@@ -21804,6 +21809,16 @@ namespace PowerSDR
             {
                 JanusAudio.ResetOoopCounter();
             }
+        }
+
+        private void chkBPF1HFLNAControl_CheckedChanged(object sender, EventArgs e)
+        {
+            console.BPF1HFLNA = chkBPF1HFLNAControl.Checked;
+        }
+
+        private void chkBPF2HFLNAControl_CheckedChanged(object sender, EventArgs e)
+        {
+            console.BPF2HFLNA = chkBPF2HFLNAControl.Checked;
         }
 
         //private void chkCTUNScroll_CheckedChanged(object sender, EventArgs e)

@@ -417,6 +417,11 @@ KD5TFDVK6APHAUDIO_API int getAndResetADC_Overload() {
 	return n; 
 } 
 
+KD5TFDVK6APHAUDIO_API int getSeqError() {
+
+	return SeqError; 
+}
+
 KD5TFDVK6APHAUDIO_API int getUserI01() { 
 
 	return User_I01; // IO4

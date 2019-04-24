@@ -230,6 +230,9 @@ namespace PowerSDR
         public static extern int getAndResetADC_Overload();
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int getSeqError();
+        
+        [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int getMercuryFWVersion();
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]

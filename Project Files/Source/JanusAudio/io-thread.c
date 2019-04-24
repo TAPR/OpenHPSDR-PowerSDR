@@ -857,6 +857,7 @@ void IOThreadMainLoop(void) {
 	delay_Xmit = 0;
 	reset_delay_xmit = 0;
 	delay_Xmit_loop = 0;
+	SeqError = 0;
 
 	// how big is outbuf ... account for us being fixed at 48 khz on output side
 	outbuflen = 4 * sizeof(short) * BlockSize;

@@ -8193,6 +8193,7 @@ namespace PowerSDR
 
             tune_step_list = new List<TuneStep>();  // initialize wheel tuning list array
             tune_step_list.Add(new TuneStep(1, "1Hz"));
+            tune_step_list.Add(new TuneStep(2, "2Hz"));
             tune_step_list.Add(new TuneStep(10, "10Hz"));
             tune_step_list.Add(new TuneStep(25, "25Hz"));
             tune_step_list.Add(new TuneStep(50, "50Hz"));
@@ -14736,6 +14737,7 @@ namespace PowerSDR
             }
         }
 
+        public float bpf1_hf_lna_offset = 0.0f;
         public void SetBPF1(double freq)
         {
             if (chkPower.Checked && alexpresent && SetupForm.radAlexManualCntl.Checked)
@@ -14753,6 +14755,20 @@ namespace PowerSDR
                     SetupForm.BPBPF1led = true;
                     return;
                 }
+
+                if (bpf1_hf_lna)
+                {
+                    if ((freq >= 21.0 && freq <= 21.45) ||
+                        (freq >= 24.89 && freq <= 24.99) ||
+                        (freq >= 28.0 && freq <= 29.7))
+                    {
+                        JanusAudio.SetAlexHPFBits(0x40);
+                        SetupForm.BPF1_6led = true;
+                        bpf1_hf_lna_offset = -15.0f;
+                        return;
+                    }
+                }
+                else bpf1_hf_lna_offset = 0.0f;
 
                 if (freq >= SetupForm.BPF1_1_5Start && // 1.5 MHz HPF
                      freq <= SetupForm.BPF1_1_5End)
@@ -14849,9 +14865,18 @@ namespace PowerSDR
                     SetupForm.BPBPF1led = true;
                 }
             }
+            else if (chkPower.Checked && alexpresent && SetupForm.radAlexAutoCntl.Checked && JanusAudio.MetisCodeVersion >= 24)
+            {
+                if (freq >= 21.0 && freq <= 61.44)                       
+                {                   
+                    bpf1_hf_lna_offset = -15.0f;
+                }
+                else bpf1_hf_lna_offset = 0.0f;
+            }
+            else bpf1_hf_lna_offset = 0.0f;
         }
 
-
+        public float bpf2_hf_lna_offset = 0.0f;
         public void SetAlex2HPF(double freq)
         {
             if (chkPower.Checked && alexpresent && SetupForm.radAlexManualCntl.Checked)
@@ -14864,6 +14889,20 @@ namespace PowerSDR
                     SetupForm.radAlex2BPHPFled.Checked = true;
                     return;
                 }
+
+                if (bpf2_hf_lna)
+                {
+                    if ((freq >= 21.0 && freq <= 21.45) ||
+                        (freq >= 24.89 && freq <= 24.99) ||
+                        (freq >= 28.0 && freq <= 29.7))
+                    {
+                        JanusAudio.SetAlex2HPFBits(0x40);
+                        SetupForm.radAlex26BPFled.Checked = true;
+                        bpf2_hf_lna_offset = -15.0f;
+                        return;
+                    }
+                }
+                else bpf2_hf_lna_offset = 0.0f;
 
                 if ((decimal)freq >= SetupForm.udAlex21_5HPFStart.Value && // 1.5 MHz HPF
                      (decimal)freq <= SetupForm.udAlex21_5HPFEnd.Value)
@@ -14960,6 +14999,15 @@ namespace PowerSDR
                     SetupForm.radAlex2BPHPFled.Checked = true;
                 }
             }
+            else if (chkPower.Checked && alexpresent && SetupForm.radAlexAutoCntl.Checked && JanusAudio.MetisCodeVersion >= 24)
+            {
+                if (freq >= 21.0 && freq <= 61.44)
+                {
+                    bpf2_hf_lna_offset = -15.0f;
+                }
+                else bpf2_hf_lna_offset = 0.0f;
+            }
+            else bpf2_hf_lna_offset = 0.0f;
         }
 
         public void SetAlexLPF(double freq)
@@ -18276,6 +18324,8 @@ namespace PowerSDR
             set
             {
                 tx_attenuator_data = value;
+                if (value < 0) value = 0;
+                if (value > 31) value = 31;
                 if (!initializing)
                 {
                     tx_step_attenuator_by_band[(int)rx1_band] = tx_attenuator_data;
@@ -18535,6 +18585,8 @@ namespace PowerSDR
             set
             {
                 enable_xvtr_hf = value;
+                if (!initializing)
+                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             }
         }
 
@@ -19256,18 +19308,6 @@ namespace PowerSDR
             set { last_tx_xvtr_index = value; }
         }
 
-        private float rx1_path_offset = 0.0f;
-        public float RX1PathOffset
-        {
-            get { return rx1_path_offset; }
-        }
-
-        private float rx2_path_offset = 0.0f;
-        public float RX2PathOffset
-        {
-            get { return rx2_path_offset; }
-        }
-
         private PreampMode[] rx1_preamp_by_band;
         public void SetRX1Preamp(Band b, PreampMode mode)
         {
@@ -19376,19 +19416,30 @@ namespace PowerSDR
                     Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
             }
 
-            switch (Display.CurrentDisplayMode)
+            //switch (Display.CurrentDisplayMode)
+            //{
+            //    case DisplayMode.WATERFALL:
+            //    case DisplayMode.PANADAPTER:
+            //    case DisplayMode.PANAFALL:
+            //    case DisplayMode.PANASCOPE:
+            //    case DisplayMode.SPECTRUM:
+            //    case DisplayMode.HISTOGRAM:
+            //    case DisplayMode.SPECTRASCOPE:
+            //        Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset + bpf1_hf_lna_offset;
+            //        break;
+            //    default:
+            //        Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + bpf1_hf_lna_offset;
+            //        break;
+            //}
+
+            switch (current_hpsdr_model)
             {
-                case DisplayMode.WATERFALL:
-                case DisplayMode.PANADAPTER:
-                case DisplayMode.PANAFALL:
-                case DisplayMode.PANASCOPE:
-                case DisplayMode.SPECTRUM:
-                case DisplayMode.HISTOGRAM:
-                case DisplayMode.SPECTRASCOPE:
-                    Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN8000D:
+                    Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + bpf1_hf_lna_offset;
                     break;
                 default:
-                    Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_path_offset + rx1_xvtr_gain_offset;
+                    Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset;
                     break;
             }
 
@@ -19415,14 +19466,14 @@ namespace PowerSDR
                 }
             }
 
-            switch (Display.CurrentDisplayModeBottom)
+            switch (current_hpsdr_model)
             {
-                case DisplayMode.WATERFALL:
-                case DisplayMode.PANADAPTER:
-                    Display.RX2DisplayCalOffset = rx1_display_cal_offset + rx2_xvtr_gain_offset;
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN8000D:
+                    Display.RX2DisplayCalOffset = rx1_display_cal_offset + rx2_xvtr_gain_offset + bpf2_hf_lna_offset;
                     break;
                 default:
-                    Display.RX2DisplayCalOffset = rx1_display_cal_offset + rx2_path_offset + rx2_xvtr_gain_offset;
+                    Display.RX2DisplayCalOffset = rx1_display_cal_offset + rx2_xvtr_gain_offset;
                     break;
             }
         }
@@ -22768,7 +22819,11 @@ namespace PowerSDR
                 if (!rx2_preamp_present && chkRX2.Checked && SetupForm.radAlexManualCntl.Checked)
                 {
                     if (rx1_dds_freq_mhz < rx2_dds_freq_mhz) SetAlexHPF(rx1_dds_freq_mhz);
-                    else SetAlexHPF(rx2_dds_freq_mhz);
+                    else
+                    {
+                        SetAlexHPF(rx2_dds_freq_mhz);
+                       // SetAlex2HPF(rx2_dds_freq_mhz);
+                    }
                 }
             }
         }
@@ -24621,8 +24676,6 @@ namespace PowerSDR
             num = num +
                 rx1_meter_cal_offset +
                 rx1_preamp_offset[(int)rx1_preamp_mode] +
-                //rx1_filter_size_cal_offset +
-                rx1_path_offset +
                 rx1_xvtr_gain_offset;
             return num.ToString("f1") + " dBm";
         }
@@ -25819,6 +25872,40 @@ namespace PowerSDR
             }
         }
 
+        private bool bpf1_hf_lna = false;
+        public bool BPF1HFLNA
+        {
+            get { return bpf1_hf_lna; }
+            set
+            {
+                bpf1_hf_lna = value;
+                if (chkPower.Checked)
+                {
+                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    SetBPF1(freq);
+                    if (!initializing)
+                        txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private bool bpf2_hf_lna = false;
+        public bool BPF2HFLNA
+        {
+            get { return bpf2_hf_lna; }
+            set
+            {
+                bpf2_hf_lna = value;
+                if (chkPower.Checked)
+                {
+                    double freq = Double.Parse(txtVFOBFreq.Text);
+                    SetAlex2HPF(freq);
+                    if (!initializing)
+                        txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                }
+            }
+        }
+
         private bool alex_hpf_bypass = false;
         public bool AlexHPFBypass
         {
@@ -26687,7 +26774,7 @@ namespace PowerSDR
             set
             {
                 ptbSquelch.Value = value;
-                if (chkSquelch.Checked)
+                //if (chkSquelch.Checked)
                     ptbSquelch_Scroll(this, EventArgs.Empty);
             }
         }
@@ -28113,6 +28200,7 @@ namespace PowerSDR
         private const int num_oloads = 2;               // number of possible overload displays
         private void UpdatePeakText()
         {
+            int NWSeqError = JanusAudio.getSeqError();
             int adc_oload_num = JanusAudio.getAndResetADC_Overload();
             bool adc_oload = adc_oload_num > 0;
             bool amp_oload = amp_protect && JanusAudio.GetAndResetAmpProtect() == 1;
@@ -28127,7 +28215,10 @@ namespace PowerSDR
             if (adc_oload && amp_oload) oload_select = ++oload_select % num_oloads;
             else if (adc_oload) oload_select = 0;
             else if (amp_oload) oload_select = 1;
-            if (overload)
+
+           // if (NWSeqError > 0) txtOverload.Text = "SeqErr: " + NWSeqError.ToString();
+           // else 
+            if(overload)
             {
                 switch (oload_select)
                 {
@@ -31909,7 +32000,7 @@ namespace PowerSDR
                                  rx1PreampOffset +
                                  rx1_xvtr_gain_offset +
                                  rx1_6m_gain_offset;
-
+                                if (anan7000dpresent || anan8000dpresent) num += bpf1_hf_lna_offset;                              
                                 new_meter_data = num;
                                 break;
                             case MeterRXMode.SIGNAL_AVERAGE:
@@ -31919,7 +32010,7 @@ namespace PowerSDR
                                    rx1PreampOffset +
                                    rx1_xvtr_gain_offset +
                                    rx1_6m_gain_offset;
-
+                                if (anan7000dpresent || anan8000dpresent) num += bpf1_hf_lna_offset;
                                 new_meter_data = num;
                                 break;
                             case MeterRXMode.ADC_L:
@@ -32149,7 +32240,7 @@ namespace PowerSDR
                               rx1_meter_cal_offset +
                               rx2PreampOffset +
                               rx2_xvtr_gain_offset;
-                            if (anan7000dpresent || anan8000dpresent) num += rx2_6m_gain_offset;
+                            if (anan7000dpresent || anan8000dpresent) num += (rx2_6m_gain_offset + bpf2_hf_lna_offset);
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.SIGNAL_AVERAGE:
@@ -32162,7 +32253,7 @@ namespace PowerSDR
                              rx1_meter_cal_offset +
                              rx2PreampOffset +
                              rx2_xvtr_gain_offset;
-                            if (anan7000dpresent || anan8000dpresent) num += rx2_6m_gain_offset;
+                            if (anan7000dpresent || anan8000dpresent) num += (rx2_6m_gain_offset + bpf2_hf_lna_offset);
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.ADC_L:
@@ -35484,6 +35575,7 @@ namespace PowerSDR
                 UpdateRX1DDSFreq();
                 UpdateRX2DDSFreq();
                 UpdateTXDDSFreq();
+                Diversity2 = diversity2;
             }
             else
             {
@@ -35583,6 +35675,7 @@ namespace PowerSDR
 
             panelVFOAHover.Invalidate();
             panelVFOBHover.Invalidate();
+            CWFWKeyer = chkCWBreakInEnabled.Checked;                  // **K5SO
         }
 
         public void comboDisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -37148,6 +37241,13 @@ namespace PowerSDR
                 HighSWR = false;
             }
 
+            if (RX1DSPMode == DSPMode.CWL ||    // **K5SO  ...these additions are needed for external PTT-in support in CW mode
+                RX1DSPMode == DSPMode.CWU)      // **K5SO 
+            {                                   // **K5SO
+                if (mox || chkCWBreakInEnabled.Checked) CWFWKeyer = true;      // **K5SO
+                else CWFWKeyer = false;         // **K5SO
+            }                                   // **K5SO
+
             if (tx) UIMOXChangedTrue();
             else UIMOXChangedFalse();
  
@@ -37158,16 +37258,21 @@ namespace PowerSDR
             if (chkMOX.Checked)			// because the CheckedChanged event fires first
             {
                 manual_mox = true;
-                if (cw_fw_keyer &&
-                   (RX1DSPMode == DSPMode.CWL ||
-                    RX1DSPMode == DSPMode.CWU))
+                //if (cw_fw_keyer &&                // **K5SO
+                if (RX1DSPMode == DSPMode.CWL ||    // added "if"
+                    RX1DSPMode == DSPMode.CWU)      // **K5SO ...removed a parenthesis
+                {
                     JanusAudio.SetXmitBit(1);
+                    CWFWKeyer = true;                // **K5SO
+                }
+
             }
             else
             {
                 manual_mox = false;
                 if (chkTUN.Checked)
                     chkTUN.Checked = false;
+                CWFWKeyer = false;                  // **K5SO
             }
         }
 
@@ -48103,15 +48208,11 @@ namespace PowerSDR
             {
                 radio.GetDSPRX(1, 0).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
                     rx2_meter_cal_offset -
-                    rx2_preamp_offset[(int)rx2_preamp_mode] -
-                    //rx2_filter_size_cal_offset -
-                    rx2_path_offset);
+                    rx2_preamp_offset[(int)rx2_preamp_mode]);
 
                 radio.GetDSPRX(1, 1).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
                     rx2_meter_cal_offset -
-                    rx2_preamp_offset[(int)rx2_preamp_mode] -
-                    //rx2_filter_size_cal_offset -
-                    rx2_path_offset);
+                    rx2_preamp_offset[(int)rx2_preamp_mode]);
             }
 
             // if (ptbRX2Squelch.Focused) btnHidden.Focus();
