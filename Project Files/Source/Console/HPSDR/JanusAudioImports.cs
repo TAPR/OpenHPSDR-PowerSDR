@@ -132,13 +132,13 @@ namespace PowerSDR
         public static extern bool getUserI01(); // TX Inhibit input sense
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool getUserI02();
+        public static extern bool getUserI02(); // Tx Inhibit input on Orion MKII board
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool getUserI03();
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool getUserI04();
+        public static extern bool getUserI04(); // external straight key input
 
         [DllImport("JanusAudio.dll", CallingConvention = CallingConvention.Cdecl)] // sets number of receivers
         public static extern void SetNRx(int nrx);

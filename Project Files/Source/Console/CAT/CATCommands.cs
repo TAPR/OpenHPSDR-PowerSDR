@@ -971,20 +971,20 @@ namespace PowerSDR
 			{
 				level = Convert.ToDouble(s.Substring(1));
 				level = Math.Max(0, level);			// lower bound
-				level = Math.Min(255, level);		// upper bound
-				//level = level*0.62745;				// scale factor
-                level = -160 + level * 0.62745;		    // scale factor
-				console.Squelch = Convert.ToInt32(Math.Round(level,0));
+				level = Math.Min(255, level);       // upper bound
+                //level = level*0.62745;				// scale factor
+                level = -160 + level * 0.62745;         // scale factor
+                console.Squelch = Convert.ToInt32(Math.Round(level,0));
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				// return rx+AddLeadingZeros(console.Squelch).Substring(1);
+                // return rx+AddLeadingZeros(console.Squelch).Substring(1);
                 // Map -160 to 0 to 0 to 255 for TS-2000 SQ command
                 int isquelch = Convert.ToInt32((1.0 - (Math.Abs(console.Squelch / 160.0))) * 255.0);
                 return rx + AddLeadingZeros(isquelch).Substring(1);
-			}
-			else
+            }
+            else
 			{
 				return parser.Error1;
 			}
@@ -1893,7 +1893,7 @@ namespace PowerSDR
 			if(s != null && s != "")
 				n = Convert.ToInt32(s);
 			n = Math.Max(0, n);
-			n = Math.Min(10, n);
+			n = Math.Min(20, n);
 
 			if(s.Length == parser.nSet)
 			{
@@ -1937,6 +1937,95 @@ namespace PowerSDR
 
 		}
 
+        //Sets or reads the Diversity Form RX Reference radio buttons
+        public string ZZDB(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                if (s == "1")
+                {
+                    console.CATDiversityRXRefSource = true;
+                    return "";
+                }
+                else if (s == "0")
+                {
+                    console.CATDiversityRXRefSource = false;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.CATDiversityRXRefSource)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+                return parser.Error1;
+        }
+
+
+        //Sets or reads the Diversity Form RX2 gain
+        public string ZZDC(string s)
+        {
+            decimal gain;
+            int n = 0;
+            if (s.Length == parser.nSet)
+            {
+                if (s != null && s != "")
+                    n = Convert.ToInt32(s);
+                n = Math.Max(0, n);
+                n = Math.Min(5000, n);
+                gain = (decimal)n / 1000.0m;
+                console.CATDiversityRX2Gain = gain;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                gain = console.CATDiversityRX2Gain;
+                n = (int)(gain * 1000.0m);
+                return AddLeadingZeros(n);
+            }
+            else
+                return parser.Error1;
+        }
+
+
+        //Sets or reads the Diversity Form phase
+        public string ZZDD(string s)
+        {
+            decimal phase;
+            int n = 0;
+            string sign;
+            if (s.Length == parser.nSet)
+            {
+                if (s != null && s != "")
+                    n = Convert.ToInt32(s);
+                n = Math.Min(18000, n);
+                n = Math.Max(-18000, n);
+                phase = (decimal)n / 100.0m;
+                console.CATDiversityPhase = phase;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                phase = console.CATDiversityPhase;
+                n = (int)(phase * 100.0m);
+                if (n < 0)
+                    sign = "-";
+                else
+                    sign = "+";
+
+                return sign+AddLeadingZeros(Math.Abs(n)).Substring(1);
+            }
+            else
+                return parser.Error1;
+        }
+
+
+
         //Sets or reads the Diversity Form Enable Button
         public string ZZDE(string s)
         {
@@ -1944,12 +2033,12 @@ namespace PowerSDR
                 {
                     if (s == "1")
                     {
-                       // console.CATDiversityEnable = true;
+                        console.CATDiversityEnable = true;
                         return "";
                     }
                     else if (s == "0")
                     {
-                      //  console.CATDiversityEnable = false;
+                        console.CATDiversityEnable = false;
                         return "";
                     }
                     else
@@ -1957,9 +2046,9 @@ namespace PowerSDR
                 }
                 else if (s.Length == parser.nGet)
                 {
-                   // if (console.CATDiversityEnable)
-                     //   return "1";
-                  //  else
+                    if (console.CATDiversityEnable)
+                        return "1";
+                    else
                         return "0";
                 }
                 else
@@ -1996,8 +2085,70 @@ namespace PowerSDR
                     return parser.Error1;
         }
 
-		// Sets or reads the current display mode
-		public string ZZDM(string s)
+        //Sets or reads the Diversity Form RX1 gain
+        public string ZZDG(string s)
+        {
+            decimal gain;
+            int n = 0;
+            if (s.Length == parser.nSet)
+            {
+                if (s != null && s != "")
+                    n = Convert.ToInt32(s);
+                n = Math.Max(0, n);
+                n = Math.Min(5000, n);
+                gain = (decimal)n / 1000.0m;
+                console.CATDiversityRX1Gain = gain;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                gain = console.CATDiversityRX1Gain;
+                n = (int)(gain * 1000.0m);
+                return AddLeadingZeros(n);
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Sets or reads the Diversity Form RX Source radio buttons
+        public string ZZDH(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                if (s == "2")
+                {
+                    console.CATDiversityRXSource = 2;
+                    return "";
+                }
+                else if (s == "1")
+                {
+                    console.CATDiversityRXSource = 1;
+                    return "";
+                }
+                else if (s == "0")
+                {
+                    console.CATDiversityRXSource = 0;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.CATDiversityRXSource == 2)
+                    return "2";
+                else if (console.CATDiversityRXSource == 1)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+                return parser.Error1;
+        }
+
+
+        // Sets or reads the current display mode
+        public string ZZDM(string s)
 		{
 			int n = -1;
 
@@ -3778,8 +3929,32 @@ namespace PowerSDR
                     return parser.Error1;
        }
 
-		//Sets or reads the Mic gain control
-		public string ZZMG(string s)
+        // ZZMFcccccccccccccccccccc;  Set multifunction encoder text 
+        // cc are 15 pairs of digits 0-99 each making up an ASCII code -32 (so  'A' is 33 for example)
+        public string ZZMF(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                string msg = "";
+                char ch;
+                int code;
+                int cntr;
+
+                for (cntr = 0; cntr < parser.nSet / 2; cntr++)
+                {
+                    code = Convert.ToInt32(s.Substring(2 * cntr, 2), 10);     // get ascii code
+                    msg += Char.ConvertFromUtf32(code + 32);
+                }
+                console.TitleBarMultifunctionString = "   multifunction encoder = " + msg;
+                return "";
+            }
+
+            else
+                return parser.Error1;
+        }
+
+        //Sets or reads the Mic gain control
+        public string ZZMG(string s)
 		{
 			int n;
 			if(s != "")
@@ -5211,8 +5386,54 @@ namespace PowerSDR
 
         }
 
-		//Moves VFO A down one Tune Step
-		public string ZZSA()
+        // Sets or reads the RX1 step attenuation control, 0 to 31dB
+        public string ZZRX(string s)
+        {
+            int att = 0;
+
+            if (s.Length == parser.nSet)    // if the length of the parameter legal for setting this prefix
+            {
+                att = Convert.ToInt32(s);
+                att = Math.Max(0, att);
+                att = Math.Min(31, att);
+                console.SetupForm.HermesAttenuatorData = att;        // Set the console control
+                return "";
+            }
+            else if (s.Length == parser.nGet)   // if this is a read command
+            {
+                return AddLeadingZeros(console.SetupForm.HermesAttenuatorData);     // Get the console setting
+            }
+            else
+            {
+                return parser.Error1;   // return a ?
+            }
+        }
+
+        // Sets or reads the RX2 step attenuation control, 0 to 31dB
+        public string ZZRY(string s)
+        {
+            int att = 0;
+
+            if (s.Length == parser.nSet)    // if the length of the parameter legal for setting this prefix
+            {
+                att = Convert.ToInt32(s);
+                att = Math.Max(0, att);
+                att = Math.Min(31, att);
+                console.RX2ATT = att;        // Set the console control
+                return "";
+            }
+            else if (s.Length == parser.nGet)   // if this is a read command
+            {
+                return AddLeadingZeros(console.RX2ATT);     // Get the console setting
+            }
+            else
+            {
+                return parser.Error1;   // return a ?
+            }
+        }
+
+        //Moves VFO A down one Tune Step
+        public string ZZSA()
 		{
             try
             {
@@ -7059,8 +7280,35 @@ namespace PowerSDR
 			return "";
 		}
 
-		// Sets or reads the XIT frequency value
-		public string ZZXF(string s)
+        //Decrements XIT
+        public string ZZXD(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                return ZZXF(s);
+            }
+            else if (s.Length == parser.nGet) // && console.RITOn)  //-W2PA Want to be able to change RIT value even if it's off
+            {
+                //switch(console.RX1DSPMode)
+                //{
+                //	case DSPMode.CWL:
+                //	case DSPMode.CWU:
+                //		console.RITValue -= 10;
+                //		break;
+                //	case DSPMode.LSB:
+                //	case DSPMode.USB:
+                //		console.RITValue -= 50;  
+                //                    break;
+                //            }
+                console.XITValue -= 10;  //-W2PA Changed to be same step in all modes.
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        // Sets or reads the XIT frequency value
+        public string ZZXF(string s)
 		{
 			int n = 0;
 			int x = 0;
@@ -7243,6 +7491,33 @@ namespace PowerSDR
 			}
 		}
 
+        //Increments XIT
+        public string ZZXU(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                return ZZXF(s);
+            }
+            else if (s.Length == parser.nGet) // && console.RITOn)  //-W2PA Want to be able to change RIT value even if it's off
+            {
+                //switch(console.RX1DSPMode)
+                //{
+                //	case DSPMode.CWL:
+                //	case DSPMode.CWU:
+                //		console.RITValue -= 10;
+                //		break;
+                //	case DSPMode.LSB:
+                //	case DSPMode.USB:
+                //		console.RITValue -= 50;  
+                //                    break;
+                //            }
+                console.XITValue += 10;  //-W2PA Changed to be same step in all modes.
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
         //Reads VFO combined status
         public string ZZXV(string s)
         {
@@ -7265,6 +7540,10 @@ namespace PowerSDR
                     n += (1 << 6);
                 if (console.TUN == true)
                     n += (1 << 7);
+                if (console.XITOn == true)
+                    n += (1 << 8);
+                if (console.VFOSync == true)
+                    n += (1 << 9);
                 return AddLeadingZeros(n);
             }
             else
@@ -7356,7 +7635,25 @@ namespace PowerSDR
 			return "";
 		}
 
-		public string ZZZZ()
+        // Sets or reads the Rx1/RX2 radio button in collapsed mode
+        public string ZZYR(string s)
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.CATRX1RX2RadioButton = Convert.ToInt32(s);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.CATRX1RX2RadioButton.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        public string ZZZZ()
 		{
 			console.Siolisten.SIO.Close();
 			return "";

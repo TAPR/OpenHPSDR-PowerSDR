@@ -1038,13 +1038,13 @@ void IOThreadMainLoop(void) {
 
 					switch (ControlBytesIn[0] & CandCAddrMask) {
 					case 0:
-						ADC_Overload = ControlBytesIn[1] & 1;
+						ADC_Overload = ControlBytesIn[1] & 0x1;
 						if (HermesPowerEnabled) {
 						//processOverloadBit((ControlBytesIn[1] & 1), (ControlBytesIn[1] & 1));
-						User_I01 = ControlBytesIn[1] & 0x02;
-						User_I02 = ControlBytesIn[1] & 0x04;
-						User_I03 = ControlBytesIn[1] & 0x08;
-						User_I04 = ControlBytesIn[1] & 0x10;
+						User_I01 = ((ControlBytesIn[1] >> 1) & 0x1);
+						User_I02 = ((ControlBytesIn[1] >> 2) & 0x1);
+						User_I03 = ((ControlBytesIn[1] >> 3) & 0x1);
+						User_I04 = ((ControlBytesIn[1] >> 4) & 0x1);
 						}
 						break;
 					case 0x8:

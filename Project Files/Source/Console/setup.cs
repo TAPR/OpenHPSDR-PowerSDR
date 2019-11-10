@@ -2696,6 +2696,7 @@ namespace PowerSDR
             comboAudioBuffer2_SelectedIndexChanged(this, e);
             comboAudioSampleRate1_SelectedIndexChanged(this, e);
             comboAudioSampleRate2_SelectedIndexChanged(this, e);
+            comboAudioSampleRate3_SelectedIndexChanged(this, e);  //W4WMT - added this to make sure varsamp exists before diag monitor is called
             udAudioLatency1_ValueChanged(this, e);
             udAudioLatency2_ValueChanged(this, e);
             udAudioLineIn1_ValueChanged(this, e);
@@ -21639,6 +21640,7 @@ namespace PowerSDR
                 {
                     bool force = chkVAC1_Force.Checked;
                     double fvar = (double)udVAC1_Force.Value;
+                    if (Audio.RmatchVac1Out != null)
                     wdsp.forceRMatchVar(Audio.RmatchVac1Out, force, fvar);
                 }
             }
@@ -21652,6 +21654,7 @@ namespace PowerSDR
                 {
                     bool force = chkVAC1_Force2.Checked;
                     double fvar = (double)udVAC1_Force2.Value;
+                    if (Audio.RmatchVac1In != null)
                     wdsp.forceRMatchVar(Audio.RmatchVac1In, force, fvar);
                 }
             }

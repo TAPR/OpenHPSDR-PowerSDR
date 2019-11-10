@@ -375,7 +375,7 @@ namespace PowerSDR
             parser.nSet = 2;
             parser.nGet = 0;
 
-            if ((Convert.ToInt16(commands.ZZAC("")) < 26) && (msg == 127))
+            if ((Convert.ToInt16(commands.ZZAC("")) < 22) && (msg == 127))
             {
                 commands.ZZSU();
             }
@@ -861,78 +861,72 @@ namespace PowerSDR
                     d = 0000001;
                     break;
                 case 1:
-                    d = 000002;
-                    break;
-                case 2:
                     d = 000010;
                     break;
-                case 3:
+                case 2:
                     d = 000025;
                     break;
-                case 4:
+                case 3:
                     d = 000050;
                     break;
-                case 5:
+                case 4:
                     d = 000100;
                     break;
-                case 6:
+                case 5:
                     d = 000250;
                     break;
-                case 7:
+                case 6:
                     d = 000500;
                     break;
-                case 8:
+                case 7:
                     d = 001000;
                     break;
-                case 9:
-                    d = 002000;
-                    break;
-                case 10:
+                case 8:
                     d = 002500;
                     break;
-                case 11:
+                case 9:
                     d = 005000;
                     break;
-                case 12:
+                case 10:
                     d = 006250;
                     break;
-                case 13:
+                case 11:
                     d = 009000;
                     break;
-                case 14:
+                case 12:
                     d = 010000;
                     break;
-                case 15:
+                case 13:
                     d = 012500;
                     break;
-                case 16:
+                case 14:
                     d = 015000;
                     break;
-                case 17:
+                case 15:
                     d = 020000;
                     break;
-                case 18:
+                case 16:
                     d = 025000;
                     break;
-                case 19:
+                case 17:
                     d = 030000;
                     break;
-                case 20:
+                case 18:
                     d = 050000;
                     break;
-                case 21:
+                case 19:
                     d = 100000;
                     break;
-                case 22:
+                case 20:
                     d = 250000;
                     break;
-                case 23:
+                case 21:
                     d = 500000;
                     break;
-                case 24:
+                case 22:
                     d = 1000000;
                     break;
-                case 25:
+                case 23:
                     d = 10000000;
                     break;
             }
